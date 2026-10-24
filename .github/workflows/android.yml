@@ -1,0 +1,105 @@
+name: Build Android app
+
+# Runs on every push to main, and from the Actions tab with "Run workflow".
+# Each run publishes a release with the APK (to install on a phone) and the AAB (to upload to Google Play).
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["docs/**", "store/**", "**.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-build
+  cancel-in-progress: false
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund
+
+      - name: Add Firebase settings
+        env:
+          FIREBASE_WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: node scripts/write-config.mjs
+
+      - name: Build the app screens
+        run: npm run build
+
+      - name: Create the Android project
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+        run: |
+          npx cap add android
+          node scripts/patch-android.mjs
+          npx cap sync android
+
+      - name: Build
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease --no-daemon --stacktrace
+
+      # Signed with your upload key when the KEYSTORE_* secrets are set (needed for Google Play).
+      # Otherwise signed with the public test key in ci/, which is fine for trying the app on your phone.
+      - name: Sign
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          mkdir -p dist
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            if [ -z "$KEYSTORE_PASSWORD" ]; then echo "::error::KEYSTORE_BASE64 is set but KEYSTORE_PASSWORD is missing."; exit 1; fi
+            echo "$KEYSTORE_BASE64" | tr -d ' \r\n' | base64 -d > "$RUNNER_TEMP/upload-key.jks"
+            KS="$RUNNER_TEMP/upload-key.jks"; export SIGN_PASS="$KEYSTORE_PASSWORD"; ALIAS="${KEY_ALIAS:-upload}"; NAME=sleep-tracker
+            echo "Signing with your upload key."
+          else
+            KS="ci/test-key.p12"; export SIGN_PASS=android; ALIAS=test; NAME=sleep-tracker-test
+            echo "::warning::No KEYSTORE_BASE64 secret: signed with the public test key. Fine for your phone, not for Google Play."
+          fi
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          echo "Using build tools $BT"
+          IN=android/app/build/outputs/apk/release/app-release-unsigned.apk
+          "$BT/zipalign" -P 16 -f 4 "$IN" "$RUNNER_TEMP/aligned.apk" || "$BT/zipalign" -p -f 4 "$IN" "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" sign --ks "$KS" --ks-pass env:SIGN_PASS --key-pass env:SIGN_PASS --ks-key-alias "$ALIAS" --out "dist/$NAME.apk" "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" verify --print-certs "dist/$NAME.apk" | grep -E "SHA-1|SHA-256" || true
+          cp android/app/build/outputs/bundle/release/app-release.aab "dist/$NAME.aab"
+          jarsigner -keystore "$KS" -storepass:env SIGN_PASS -keypass:env SIGN_PASS -sigalg SHA256withRSA -digestalg SHA-256 "dist/$NAME.aab" "$ALIAS"
+          rm -f "$RUNNER_TEMP/upload-key.jks" "$RUNNER_TEMP/aligned.apk"
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sleep-tracker-build-${{ github.run_number }}
+          path: dist/
+          retention-days: 30
+
+      # A release per build gives a download link that works on a phone without signing in to GitHub.
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="v$VERSION-build.${{ github.run_number }}"
+          if ls dist/sleep-tracker-test.apk >/dev/null 2>&1; then KIND="Test build, signed with the public test key. Install it on your phone to try the app; don't upload it to Google Play."; else KIND="Signed with your upload key. Install the APK on your phone, or upload the AAB to Google Play."; fi
+          gh release create "$TAG" dist/* --target "$GITHUB_SHA" --title "Sleep Tracker $VERSION (build ${{ github.run_number }})" --notes "$KIND"

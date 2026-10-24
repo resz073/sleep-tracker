@@ -9,4 +9,9 @@ package-lock.json
 google-services.json
 *.jks
 *.keystore
+*.p12
 signing.txt
+upload-key*
+
+# The public test key is meant to be shared (see README)
+!ci/test-key.p12

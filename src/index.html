@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Sleep Tracker</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="boot" id="boot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.3 6.3 0 0 0 10.5 10.5z"/></svg></div>
+
+<!-- Sign in -->
+<section class="auth" id="auth" hidden aria-labelledby="authTitle">
+<div class="wrap auth-in">
+<div class="sky auth-hero">
+<svg class="auth-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.3 6.3 0 0 0 10.5 10.5z"/></svg>
+<h1 id="authTitle">Sleep Tracker</h1>
+<p class="meta">Log your sleep in two taps, see your sleep debt, and get a bedtime that fits your wake-up time.</p>
+</div>
+<div class="card auth-card">
+<button class="btn block tonal" id="aGoogle" type="button">Continue with Google</button>
+<p class="or"><span>or use email</span></p>
+<label for="aEmail">Email</label>
+<input id="aEmail" type="email" autocomplete="email" inputmode="email" spellcheck="false">
+<label for="aPass" style="margin-top:12px">Password</label>
+<div class="pw"><input id="aPass" type="password" autocomplete="current-password"><button class="btn text" id="aShow" type="button" aria-label="Show password">Show</button></div>
+<p class="err" id="aErr" role="alert"></p>
+<button class="btn block" id="aSubmit" type="button">Sign in</button>
+<div class="auth-links"><button class="btn text" id="aMode" type="button">Create an account</button><button class="btn text" id="aForgot" type="button">Forgot password?</button></div>
+</div>
+<p class="sm auth-foot">By continuing you agree to the <a id="aPrivacy" href="#">Privacy Policy</a>.</p>
+</div>
+</section>
+
+<!-- App -->
+<div id="appShell" hidden>
+<header class="appbar"><div class="wrap">
+<div><h1 id="abTitle">Today</h1><div id="abSub"></div></div>
+<button class="icon-btn" id="openSettings" type="button" aria-label="Settings"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button>
+</div></header>
+
+<main class="wrap">
+<section class="view" id="v-today" aria-labelledby="abTitle">
+<div class="sky" id="tonight"></div>
+<div class="card" id="remCard" hidden>
+<h2>Get reminders</h2>
+<p class="sm">A nudge 30 minutes before bedtime, another at bedtime, and a morning reminder to log your sleep.</p>
+<div class="row2" style="margin-top:12px"><button class="btn" id="remOn" type="button">Turn on</button><button class="btn tonal" id="remLater" type="button">Not now</button></div>
+</div>
+<div class="card" id="lastnight" hidden></div>
+<div class="card" id="missing" hidden><h2>Nights not logged</h2><div class="chips" id="missChips"></div></div>
+<div class="card" id="debtcard">
+<h2>Last 14 days</h2>
+<div class="debt"><b id="debt">–</b><span id="debtlbl">sleep debt</span></div>
+<svg class="mini" id="mini" viewBox="0 0 320 64" role="img" aria-label="Sleep on each of the last 14 days against the 8 hour goal"></svg>
+<div class="mstats" id="debtstats"></div>
+</div>
+</section>
+
+<section class="view" id="v-trends" aria-labelledby="abTitle" hidden>
+<div class="card">
+<div class="seg" role="tablist" aria-label="Trend period">
+<button type="button" role="tab" id="tab-m" data-tab="m" aria-controls="tpanel">Month</button>
+<button type="button" role="tab" id="tab-w" data-tab="w" aria-controls="tpanel">Week</button>
+<button type="button" role="tab" id="tab-r" data-tab="r" aria-controls="tpanel">3 days</button>
+</div>
+<div id="tpanel" role="tabpanel">
+<p class="sm" id="tempty" style="margin-top:14px" hidden>Your trends appear after you log your first night.</p>
+<div id="tbody">
+<div class="phead"><button class="nav-btn" id="tprev" type="button" aria-label="Previous">‹</button><b class="ptitle" id="ttitle"></b><button class="nav-btn" id="tnext" type="button" aria-label="Next">›</button><div class="pbal" id="tbal"></div></div>
+<div class="readout" id="tread" aria-live="polite"></div>
+<div class="legend" id="tlegend"></div>
+<svg class="chart pchart" id="tchart" viewBox="0 0 320 200" role="img" aria-label="Sleep per day against the 8 hour goal"></svg>
+<button class="btn text" id="tall" type="button" aria-expanded="false" aria-controls="tlist"></button>
+<div class="plist" id="tlist" hidden></div>
+</div>
+</div>
+</div>
+<div class="card"><h2>Timing</h2><p class="lead">Your last 14 nights</p><div class="grid2" id="timing"></div></div>
+<div class="card"><div class="h2row"><h2>Workdays and weekend</h2><select id="wkend" class="inline-sel" aria-label="Weekend days"><option value="fri-sat">Weekend: Fri &amp; Sat</option><option value="sat-sun">Weekend: Sat &amp; Sun</option><option value="fri">Weekend: Fri only</option></select></div><div id="weekend"></div></div>
+<div class="card"><h2>Sleep quality</h2><div id="quality"></div></div>
+</section>
+
+<section class="view" id="v-schedule" aria-labelledby="abTitle" hidden>
+<div class="sky" id="schSky"></div>
+<div class="card" id="schPlan" hidden></div>
+<div class="card" id="schDiary" hidden></div>
+<div class="card">
+<h2>Plan settings</h2>
+<div class="field">
+<span class="fl" id="wkLbl">Wake-up time</span>
+<div class="seg" role="group" aria-labelledby="wkLbl"><button type="button" id="wkAuto" aria-pressed="true">Automatic</button><button type="button" id="wkSet" aria-pressed="false">Set a time</button></div>
+<input type="time" id="wkTime" aria-label="Wake-up time" hidden>
+<p class="sm" id="wkNote"></p>
+</div>
+<div class="field">
+<label class="fl" for="latSel">Time to fall asleep</label>
+<select id="latSel"><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option><option value="45">45 minutes</option></select>
+</div>
+</div>
+</section>
+
+<section class="view" id="v-history" aria-labelledby="abTitle" hidden>
+<div class="card" id="histcard"></div>
+</section>
+</main>
+
+<button class="fab" id="fab" type="button" hidden><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add entry</button>
+
+<nav class="bnav" aria-label="Main"><div class="wrap">
+<button type="button" data-view="today"><span class="pill"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.3 6.3 0 0 0 10.5 10.5z"/></svg></span>Today</button>
+<button type="button" data-view="trends"><span class="pill"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"/><path d="M5 15l4-5 4 3 6-7"/></svg></span>Trends</button>
+<button type="button" data-view="schedule"><span class="pill"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 2M5 4 3 6M19 4l2 2"/></svg></span>Schedule</button>
+<button type="button" data-view="history"><span class="pill"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>History</button>
+</div></nav>
+</div>
+
+<dialog class="sheet" id="entrySheet" aria-labelledby="logtitle"><div class="sheet-in">
+<div class="grab" aria-hidden="true"></div>
+<div class="sheet-head"><h2 id="logtitle">Add sleep</h2><button class="icon-btn" type="button" id="closeEntry" aria-label="Close"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+<div class="fsec">Went to bed</div>
+<div class="fgrid"><div><label for="bt">Time</label><input type="time" id="bt" value="23:00"></div><div><label for="bd">Date</label><input type="date" id="bd"></div></div>
+<div class="fsec">Woke up <button class="btn text" id="now" type="button">Now</button></div>
+<div class="fgrid"><div><label for="wt">Time</label><input type="time" id="wt" value="07:00"></div><div><label for="wd">Date</label><input type="date" id="wd"></div></div>
+<div class="fsec" style="margin-bottom:6px"><label for="q" class="fl" style="margin:0">Quality</label></div>
+<select id="q"><option value="0">Not rated</option><option value="1">1 – Poor</option><option value="2">2</option><option value="3" selected>3 – OK</option><option value="4">4</option><option value="5">5 – Great</option></select>
+<p id="calc" aria-live="polite"></p>
+<div class="factions"><button class="btn danger" id="delEntry" type="button" hidden>Delete</button><span class="grow"></span><button class="btn tonal" id="cancel" type="button">Cancel</button><button class="btn" id="save" type="button">Save</button></div>
+</div></dialog>
+
+<dialog class="sheet" id="setSheet" aria-labelledby="settitle"><div class="sheet-in">
+<div class="grab" aria-hidden="true"></div>
+<div class="sheet-head"><h2 id="settitle">Settings</h2><button class="icon-btn" type="button" id="closeSet" aria-label="Close"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+
+<div class="field" id="acctField">
+<span class="fl">Account</span>
+<p class="sm" id="acctInfo"></p>
+<div class="row2" id="acctBtns"><button class="btn tonal" id="signOutBtn" type="button">Sign out</button><button class="btn danger" id="delAcct" type="button">Delete account</button></div>
+<div class="delbox" id="delBox" hidden>
+<p><b>Delete your account?</b> This permanently deletes your account and all your sleep entries. Export a CSV backup first if you want to keep them.</p>
+<div id="delAuth"></div>
+<p class="err" id="delErr" role="alert"></p>
+<div class="row2"><button class="btn tonal" id="delCancel" type="button">Keep account</button><button class="btn dangerfill" id="delGo" type="button">Delete account</button></div>
+</div>
+</div>
+
+<div class="field" id="remField" hidden>
+<span class="fl">Reminders</span>
+<div class="sw-row"><span><b>Wind-down</b><span class="sm">30 minutes before bedtime</span></span><button class="switch" id="swWind" type="button" role="switch" aria-checked="false" aria-label="Wind-down reminder"></button></div>
+<div class="sw-row"><span><b>Bedtime</b><span class="sm">With a Going to sleep button</span></span><button class="switch" id="swBed" type="button" role="switch" aria-checked="false" aria-label="Bedtime reminder"></button></div>
+<div class="sw-row"><span><b>Morning</b><span class="sm">An hour after wake-up, to log your sleep</span></span><button class="switch" id="swMorning" type="button" role="switch" aria-checked="false" aria-label="Morning reminder"></button></div>
+<p class="sm" id="remNote"></p>
+</div>
+
+<div class="field"><span class="fl">Sleep goal</span><p class="sm">8 hours a night</p></div>
+
+<div class="field"><span class="fl">Backup</span><p class="sm">Save all your entries as a CSV file, or add entries from one.</p>
+<div class="row2"><button class="btn tonal" id="exp" type="button">Export CSV</button><button class="btn tonal" id="imp" type="button">Import CSV</button></div>
+<input type="file" id="impfile" accept=".csv,text/csv,text/plain" hidden>
+<label for="csvout" id="csvlbl" hidden>CSV backup</label>
+<textarea id="csvout" readonly hidden></textarea></div>
+
+<div class="field"><span class="fl">Sync</span><p class="sm" id="storage"></p></div>
+
+<div class="field"><span class="fl">About</span>
+<p class="sm"><a id="lnkPrivacy" href="#">Privacy policy</a></p>
+<p class="sm"><a id="lnkDelete" href="#">How account deletion works</a></p>
+<p class="sm" id="ver"></p></div>
+</div></dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="tmsg"></span><button id="tundo" type="button" hidden>Undo</button></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
