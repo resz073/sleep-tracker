@@ -10,6 +10,8 @@ Every change to `main` builds the app. You can also start a build yourself: **Ac
 
 When it finishes, open the [Releases](https://github.com/resz073/sleep-tracker/releases) page on your phone, tap the newest release, and download the `.apk` file. Android will ask you to allow installs from your browser. Play Protect may say it doesn't recognise the app: tap **More details → Install anyway**.
 
+Since 30 September 2026, phones in Brazil, Indonesia, Singapore and Thailand only install apps from verified developers. If you're there, install the app from a Google Play test track instead (see [Publish on Google Play](#publish-on-google-play)).
+
 Until you finish the setup below, builds are **test builds** (`sleep-tracker-test.apk`). They work fully, but without accounts: entries stay on the phone.
 
 > If you move from a test build to a build signed with your upload key, uninstall the test build first (Android won't update an app signed with a different key). Export your entries before uninstalling: **Settings → Backup → Export CSV**.
@@ -30,11 +32,11 @@ A minute later these work:
 ### 2. Create the Firebase project
 
 1. Go to the [Firebase console](https://console.firebase.google.com) and create a project called **Sleep Tracker**. Google Analytics isn't needed.
-2. **Build → Authentication → Get started.** On **Sign-in method**, turn on **Email/Password**, then **Google** (pick your support email). Save each one.
-3. **Build → Firestore Database → Create database.** Choose the location closest to you (it can't be changed later) and **production mode**. Then open the **Rules** tab, replace everything with the contents of [`firestore.rules`](firestore.rules), and **Publish**.
+2. Open **Authentication** from the left menu and click **Get started**. On **Sign-in method**, turn on **Email/Password**, then **Google** (pick your support email). Save each one.
+3. Open **Firestore Database** and click **Create database**. Choose the location closest to you (it can't be changed later) and **production mode**. Then open the **Rules** tab, replace everything with the contents of [`firestore.rules`](firestore.rules), and **Publish**.
 4. **Project settings** (gear icon) → **Your apps → Add app → Android.**
    - Package name: `com.resz073.sleeptracker`
-   - SHA-1: the **upload key** SHA-1 from `sleep-tracker-signing.txt` (the signing-key notes you were given)
+   - SHA-1: the **upload key** SHA-1 from `sleep-tracker-signing.txt` (the signing-key notes you were given). The form may call this field "Debug signing certificate"; paste it there anyway.
    - Register, then **download `google-services.json`**. Skip the remaining steps.
    - Back on the Android app's card, **Add fingerprint** and also add the **test key** SHA-1: `7B:B3:FD:4A:2C:B3:C2:EF:25:47:5D:88:A1:D3:69:3C:3E:35:3B:4C`
 5. **Add app → Web** (`</>`), nickname **Sleep Tracker web**, register, and copy the `firebaseConfig` snippet it shows.
@@ -43,7 +45,7 @@ Turn on Google sign-in (step 2) before downloading `google-services.json`. If yo
 
 ### 3. Add the secrets to GitHub
 
-**Settings → Secrets and variables → Actions → New repository secret.** Add four:
+In this repository, **Settings → Secrets and variables → Actions → New repository secret.** Add these four:
 
 | Name | Value |
 | --- | --- |
