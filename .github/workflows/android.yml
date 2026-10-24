@@ -62,6 +62,7 @@ jobs:
         run: |
           chmod +x gradlew
           bash ../scripts/ci-run.sh "Gradle build" ./gradlew assembleRelease bundleRelease --no-daemon
+          bash ../scripts/permissions.sh app/build/outputs/logs/manifest-merger-release-report.txt
 
       - name: Sign
         env:

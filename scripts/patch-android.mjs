@@ -50,6 +50,10 @@ fs.writeFileSync(varsFile, vars);
 const manFile = path.join(APP, "src/main/AndroidManifest.xml");
 let man = fs.readFileSync(manFile, "utf8");
 if (!man.includes("android.permission.POST_NOTIFICATIONS")) man = man.replace(/<\/manifest>\s*$/, '    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>\n');
+// Reminders don't need to arrive to the second, so the app never holds the "Alarms & reminders" permission,
+// even if a library asks for it.
+if (!man.includes("xmlns:tools=")) man = man.replace("<manifest ", '<manifest xmlns:tools="http://schemas.android.com/tools" ');
+if (!man.includes("SCHEDULE_EXACT_ALARM")) man = man.replace(/<\/manifest>\s*$/, '    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />\n</manifest>\n');
 man = man.replace(/android:configChanges="([^"]*)"/, (s, v) => v.includes("density") ? s : `android:configChanges="${v}|density"`);
 fs.writeFileSync(manFile, man);
 

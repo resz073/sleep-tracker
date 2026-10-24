@@ -21,7 +21,7 @@ fi
 BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
 IN=android/app/build/outputs/apk/release/app-release-unsigned.apk
 "$BT/zipalign" -P 16 -f 4 "$IN" "$TMP/aligned.apk" 2>/dev/null || "$BT/zipalign" -p -f 4 "$IN" "$TMP/aligned.apk"
-"$BT/apksigner" sign --ks "$KS" --ks-pass env:SIGN_PASS --key-pass env:SIGN_PASS --ks-key-alias "$ALIAS" --out "dist/$NAME.apk" "$TMP/aligned.apk"
+"$BT/apksigner" sign --v4-signing-enabled false --ks "$KS" --ks-pass env:SIGN_PASS --key-pass env:SIGN_PASS --ks-key-alias "$ALIAS" --out "dist/$NAME.apk" "$TMP/aligned.apk"
 CERT="$("$BT/apksigner" verify --print-certs "dist/$NAME.apk" | grep -m1 "SHA-1 digest" | sed 's/.*: //')"
 
 cp android/app/build/outputs/bundle/release/app-release.aab "dist/$NAME.aab"
