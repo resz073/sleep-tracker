@@ -1,0 +1,12 @@
+# Generated during the build
+node_modules/
+www/
+android/
+dist/
+package-lock.json
+
+# Secrets: never commit these
+google-services.json
+*.jks
+*.keystore
+signing.txt
