@@ -34,12 +34,27 @@ export async function setupNotifications(onAction) {
   });
 }
 
+// On-time reminders need Android's "Alarms & reminders" permission (Android 12 and later).
+// Without it, Android can hold a reminder back by up to an hour to save battery.
+export async function exactAlarmsAllowed() {
+  if (!native) return true;
+  try { return (await LocalNotifications.checkExactNotificationSetting()).exact_alarm === "granted"; } catch (e) { return true; }
+}
+// Opens the system "Alarms & reminders" screen. Only called when the person taps the button for it.
+export async function askExactAlarms() {
+  if (!native) return true;
+  try { return (await LocalNotifications.changeExactNotificationSetting()).exact_alarm === "granted"; } catch (e) { return exactAlarmsAllowed(); }
+}
+
 // list: [{ id, kind, type, title, body, at: Date }]
 export async function scheduleReminders(list) {
   if (!native) return;
   try { await LocalNotifications.cancel({ notifications: REMINDER_IDS.map(id => ({ id })) }); } catch (e) { /* none pending */ }
   if (!list.length) return;
   if ((await notificationState()) !== "granted") return;
+  // Ask for exact timing only when it's already allowed: otherwise the plugin would open the
+  // "Alarms & reminders" screen on every schedule.
+  const exact = await exactAlarmsAllowed();
   await LocalNotifications.schedule({ notifications: list.map(n => ({
     id: n.id,
     title: n.title,
@@ -50,8 +65,8 @@ export async function scheduleReminders(list) {
     iconColor: "#4D52CF",
     actionTypeId: n.type || undefined,
     extra: { kind: n.kind },
-    // The app doesn't ask for the "Alarms & reminders" permission, so Android may deliver these a few minutes late.
-    autoCancel: true
+    autoCancel: true,
+    isExactNotification: exact
   })) });
 }
 

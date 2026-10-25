@@ -533,8 +533,8 @@ function startEdit(id) {
   $("bt").value = e.bed.slice(11); $("bd").value = e.bed.slice(0, 10); $("wt").value = e.wake.slice(11); $("wd").value = e.wake.slice(0, 10); $("q").value = String(e.q || 0);
   bdManual = true; calc(); renderHistory(); openSheet("entrySheet");
 }
-function toast(msg, fn) {
-  clearTimeout(toastT); $("tmsg").textContent = msg; undoFn = fn || null; $("tundo").hidden = !fn; $("toast").hidden = false;
+function toast(msg, fn, label) {
+  clearTimeout(toastT); $("tmsg").textContent = msg; undoFn = fn || null; $("tundo").textContent = label || "Undo"; $("tundo").hidden = !fn; $("toast").hidden = false;
   toastT = setTimeout(() => { $("toast").hidden = true; undoFn = null; }, fn ? 6000 : 3000);
 }
 function delEntry(id) {
@@ -658,9 +658,17 @@ async function renderReminderUI() {
   if (!platform.native) return;
   const p = remPrefs();
   [["swWind", "wind"], ["swBed", "bed"], ["swMorning", "morning"]].forEach(([id, k]) => $(id).setAttribute("aria-checked", String(p[k])));
-  const st = await platform.notificationState();
-  $("remNote").textContent = st === "denied" && (p.wind || p.bed || p.morning) ? "Notifications are blocked for Sleep Tracker. Allow them in Android Settings to get reminders." : !P ? "Reminders start once your bedtime is set." : "";
+  const st = await platform.notificationState(), any = p.wind || p.bed || p.morning;
+  $("remNote").textContent = st === "denied" && any ? "Notifications are blocked for Sleep Tracker. Allow them in Android Settings to get reminders." : !P ? "Reminders start once your bedtime is set." : "";
+  $("remExact").hidden = !any || st === "denied" || await platform.exactAlarmsAllowed();
 }
+// Opens Android's "Alarms & reminders" screen, only when the person asks for on-time reminders
+async function allowExact() {
+  const ok = await platform.askExactAlarms();
+  renderReminderUI(); queueReminders();
+  toast(ok ? "Reminders will arrive on time." : "Reminders stay on, but Android may send them a little late.");
+}
+$("remExactBtn").onclick = allowExact;
 function renderReminderCard() {
   const p = remPrefs();
   $("remCard").hidden = !(platform.native && ready && !p.asked && !p.wind && !p.bed && !p.morning);
@@ -669,7 +677,11 @@ function renderReminderCard() {
 $("remOn").onclick = async () => {
   const st = await platform.askNotifications();
   const p = remPrefs(); p.asked = true;
-  if (st === "granted") { p.wind = p.bed = p.morning = true; saveRem(p); toast("Reminders are on. Change them in Settings."); }
+  if (st === "granted") {
+    p.wind = p.bed = p.morning = true; saveRem(p);
+    if (await platform.exactAlarmsAllowed()) toast("Reminders are on. Change them in Settings.");
+    else toast("Reminders are on. Android may delay them to save battery.", allowExact, "Allow on time");
+  }
   else { saveRem(p); toast("Notifications are blocked. You can allow them later in Android Settings."); }
 };
 $("remLater").onclick = () => { const p = remPrefs(); p.asked = true; saveRem(p); };
@@ -818,7 +830,7 @@ function tick() {
 setInterval(tick, 30000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { tick(); push(); } });
 window.addEventListener("online", push);
-platform.onResume(() => { tick(); push(); queueReminders(); });
+platform.onResume(() => { tick(); push(); queueReminders(); renderReminderUI(); });
 platform.onBack(() => {
   if ($("entrySheet").open) { closeSheet("entrySheet"); return; }
   if ($("setSheet").open) { closeSheet("setSheet"); return; }

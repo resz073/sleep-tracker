@@ -218,7 +218,7 @@ button.prow.sel{background:var(--acc-soft);border-radius:14px;border-top-color:t
 .toast{position:fixed;left:0;right:0;margin-inline:auto;width:fit-content;bottom:calc(92px + var(--sab));z-index:30;background:var(--ink);color:var(--bg);border-radius:14px;padding:10px 10px 10px 16px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);max-width:calc(100% - 32px);font-weight:700}
 body.has-fab .toast{bottom:calc(164px + var(--sab))}
 body.signed-out .toast{bottom:calc(24px + var(--sab))}
-.toast button{border:0;background:none;color:var(--acc-soft);font-weight:800;padding:6px 8px}
+.toast button{border:0;background:none;color:var(--acc-soft);font-weight:800;padding:6px 8px;white-space:nowrap}
 
 /* bottom sheets */
 dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:640px;max-height:92vh;border-radius:28px 28px 0 0;background:var(--card);color:var(--ink);box-shadow:var(--shadow);overflow:hidden}
