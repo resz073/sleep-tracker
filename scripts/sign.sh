@@ -92,7 +92,7 @@ if [ -f google-services.json ] && ! grep -q "sleep-tracker-placeholder" google-s
   if grep -qi "$CERT" google-services.json; then
     echo "::notice title=Google sign-in::This key's SHA-1 is registered in your Firebase project."
   else
-    echo "::warning title=Google sign-in::This key's SHA-1 ($CERTC) isn't in google-services.json, so Google sign-in may not work. In Firebase: Project settings, your Android app, Add fingerprint. Then download google-services.json again and update the GOOGLE_SERVICES_JSON secret."
+    echo "::notice title=Google sign-in::Your google-services.json doesn't list this key's SHA-1 ($CERTC). That's fine if Google sign-in works in the app. If it shows an error, add this SHA-1 to your Android app in Firebase (Project settings, Add fingerprint)."
   fi
 fi
 ls -l dist
