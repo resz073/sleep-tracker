@@ -7,7 +7,7 @@ title="$1"; shift
 log="$(mktemp)"
 "$@" 2>&1 | tee "$log"
 code=${PIPESTATUS[0]}
-if [ "$code" -ne 0 ]; then
+if [ "$code" -ne 0 ] && ! grep -q '^::error' "$log"; then
   first="$(grep -m 15 -E '(^e: |error:|ERROR:|npm error|Error:|FAILED)' "$log" || true)"
   if grep -q "What went wrong" "$log"; then
     last="$(grep -A 25 "What went wrong" "$log" | head -n 40)"
