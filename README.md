@@ -51,8 +51,10 @@ In this repository, **Settings → Secrets and variables → Actions → New rep
 | --- | --- |
 | `FIREBASE_WEB_CONFIG` | The `firebaseConfig` snippet from step 2.5 (paste all of it) |
 | `GOOGLE_SERVICES_JSON` | Everything in `google-services.json` (open it in a text editor) |
-| `KEYSTORE_BASE64` | The long `KEYSTORE_BASE64` text from `sleep-tracker-signing.txt` |
+| `KEYSTORE_BASE64` | Everything in `KEYSTORE_BASE64.txt`: one line of about 3,550 characters (it's also in `sleep-tracker-signing.txt`) |
 | `KEYSTORE_PASSWORD` | The `KEYSTORE_PASSWORD` from `sleep-tracker-signing.txt` |
+
+If a secret is wrong, the build stops and its summary page says which one and how to fix it. To change a secret, open it and choose **Update secret**.
 
 Then run the build again (**Actions → Build Android app → Run workflow**). The new release has `sleep-tracker.apk` (for your phone) and `sleep-tracker.aab` (for Google Play), signed with your upload key, with accounts turned on.
 

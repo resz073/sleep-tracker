@@ -10,13 +10,10 @@ trap 'rm -f "$TMP/upload-key.jks" "$TMP/aligned.apk"' EXIT
 fail() { echo "::error title=$1::$2"; exit 1; }
 NOTES="sleep-tracker-signing.txt"
 
-# The key file as text. Copes with line breaks, or with the label or the whole notes file pasted in.
-keytext() {
-  local all
-  all="$(printf '%s' "$1" | tr -d ' \t\r\n')"
-  if printf '%s' "$all" | grep -Eq '^[A-Za-z0-9+/]+=*$'; then printf '%s' "$all"; return 0; fi
-  printf '%s\n' "$1" | tr -s ' \t\r' '\n' | grep -E '^[A-Za-z0-9+/]+=*$' | awk '{ print length($0) " " $0 }' | sort -rn | head -1 | cut -d' ' -f2 || true
-}
+# Text helpers. Byte-wise, so invisible characters from a phone's text view can be found and dropped.
+export LC_ALL=C
+longest_token() { printf '%s\n' "$1" | tr -s ' \t\r' '\n' | grep -E '^[A-Za-z0-9+/]+=*$' | awk '{ print length($0) " " $0 }' | sort -rn | head -1 | cut -d' ' -f2 || true; }
+pure() { printf '%s' "$1" | grep -Eq '^[A-Za-z0-9+/]+=*$' && printf '%s' "$1" || true; }
 
 if [ -n "${KEYSTORE_BASE64:-}" ]; then
   KT="$KEYSTORE_BASE64"; PW="${KEYSTORE_PASSWORD:-}"
@@ -26,25 +23,41 @@ if [ -n "${KEYSTORE_BASE64:-}" ]; then
   fi
   [ -n "$PW" ] || fail "KEYSTORE_PASSWORD" "This secret is missing. Add it: it's the password in $NOTES."
 
-  B64="$(keytext "$KT")"
-  [ "${#B64}" -ge 100 ] || fail "KEYSTORE_BASE64" "This secret doesn't contain the key text. Paste only the long line under 'KEYSTORE_BASE64:' in $NOTES."
-  if ! printf '%s' "$B64" | base64 -d > "$TMP/upload-key.jks" 2>/dev/null; then
-    fail "KEYSTORE_BASE64" "The key text looks cut off or changed (${#B64} characters). Copy the whole line under 'KEYSTORE_BASE64:' in $NOTES, about 3,500 characters, and paste it again."
-  fi
-  [ "${#B64}" -eq "$(printf '%s' "$KT" | tr -d ' \t\r\n' | wc -c)" ] || echo "::notice title=KEYSTORE_BASE64::The secret had extra text around the key. The build used just the key part."
+  # Ways to read the key text: as pasted with line breaks removed, the longest run of key text (label or
+  # whole notes file pasted in), the same with invisible characters dropped, and only the key characters.
+  CLEAN="$(printf '%s' "$KT" | tr -cd '\11\12\15\40-\176')"
+  KEYS=("$(pure "$(printf '%s' "$KT" | tr -d ' \t\r\n')")" "$(longest_token "$KT")" \
+        "$(pure "$(printf '%s' "$CLEAN" | tr -d ' \t\r\n')")" "$(longest_token "$CLEAN")" \
+        "$(printf '%s' "$KT" | tr -cd 'A-Za-z0-9+/=')")
+  # Ways to read the password: as pasted, trimmed, without spaces or line breaks, the last word, without invisible characters
+  PWS=("$PW" "$(printf '%s' "$PW" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')" \
+       "$(printf '%s' "$PW" | tr -d ' \t\r\n')" "$(printf '%s\n' "$PW" | tr -s ' \t\r' '\n' | grep -v '^$' | tail -1 || true)" \
+       "$(printf '%s' "$PW" | tr -cd 'A-Za-z0-9')")
 
-  # Find the password that opens the key, allowing for stray spaces or line breaks
-  P1="$(printf '%s' "$PW" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' || true)"
-  P2="$(printf '%s' "$PW" | tr -d ' \t\r\n' || true)"
-  P3="$(printf '%s\n' "$PW" | tr -s ' \t\r' '\n' | grep -v '^$' | tail -1 || true)"
-  SIGN_PASS=""; OUT=""
-  for CAND in "$PW" "$P1" "$P2" "$P3"; do
-    [ -n "$CAND" ] || continue
-    export CAND
-    if OUT="$(keytool -list -keystore "$TMP/upload-key.jks" -storepass:env CAND 2>&1)"; then SIGN_PASS="$CAND"; break; fi
-    printf '%s' "$OUT" | grep -qi "password was incorrect" || fail "KEYSTORE_BASE64" "This isn't a complete key file (${#B64} characters of key text). Copy the whole line under 'KEYSTORE_BASE64:' in $NOTES and paste it again."
+  SIGN_PASS=""; B64=""; OUT=""; PW_WRONG=0; TRIED=" "
+  for K in "${KEYS[@]}"; do
+    [ "${#K}" -ge 100 ] || continue
+    case "$TRIED" in *" ${#K}:${K:0:12}${K: -12} "*) continue;; esac; TRIED="$TRIED${#K}:${K:0:12}${K: -12} "
+    printf '%s' "$K" | base64 -d > "$TMP/upload-key.jks" 2>/dev/null || continue
+    for CAND in "${PWS[@]}"; do
+      [ -n "$CAND" ] || continue
+      export CAND
+      if OUT="$(keytool -list -keystore "$TMP/upload-key.jks" -storepass:env CAND 2>&1)"; then SIGN_PASS="$CAND"; B64="$K"; break 2; fi
+      printf '%s' "$OUT" | grep -qi "password was incorrect" && PW_WRONG=1
+    done
   done
-  [ -n "$SIGN_PASS" ] || fail "KEYSTORE_PASSWORD" "The password doesn't open the key. Paste only the password from $NOTES (the line under 'KEYSTORE_PASSWORD', 24 letters and numbers)."
+
+  if [ -z "$SIGN_PASS" ]; then
+    [ "$PW_WRONG" -eq 0 ] || fail "KEYSTORE_PASSWORD" "The password doesn't open the key. Paste only the password from $NOTES (the line under 'KEYSTORE_PASSWORD', 24 letters and numbers)."
+    N="$(printf '%s' "$KT" | wc -c | tr -d ' ')"; ODD="$(printf '%s' "$KT" | tr -d '\11\12\15\40-\176' | wc -c | tr -d ' ')"
+    T1="$(printf '%s' "$KT" | tr -d ' \t\r\n')"; HINT=""
+    if printf '%s' "$T1" | grep -Eq '^[A-Za-z0-9]{16,40}$'; then HINT=" It looks like the password, not the key text."
+    elif printf '%s' "$T1" | grep -Eqi '^([0-9a-f]{2}:){19,31}[0-9a-f]{2}$'; then HINT=" It looks like a fingerprint, not the key text."
+    elif [ "$ODD" -gt 0 ]; then HINT=" It also has unusual (non-keyboard) characters, which phone file previews sometimes add."
+    fi
+    fail "KEYSTORE_BASE64" "This secret ($N characters) isn't the complete key text.$HINT Replace it with everything in KEYSTORE_BASE64.txt, which is one line of about 3,550 characters."
+  fi
+  [ "$B64" = "$KT" ] || echo "::notice title=KEYSTORE_BASE64::The secret had extra text or characters around the key. The build used just the key."
   [ "$SIGN_PASS" = "$PW" ] || echo "::notice title=KEYSTORE_PASSWORD::The secret had extra spaces or text around the password. The build used just the password."
   export SIGN_PASS
 
