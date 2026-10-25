@@ -44,7 +44,7 @@ The screenshots show made-up sample data.
 ## Other fields
 
 - **Category:** Health & Fitness
-- **Contact email:** reshad.rt0@gmail.com
+- **Contact email:** reshad.rahman@yahoo.com
 - **Website:** https://resz073.github.io/sleep-tracker/
 - **Privacy policy:** https://resz073.github.io/sleep-tracker/privacy.html
 
