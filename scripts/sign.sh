@@ -55,7 +55,7 @@ if [ -n "${KEYSTORE_BASE64:-}" ]; then
     elif printf '%s' "$T1" | grep -Eqi '^([0-9a-f]{2}:){19,31}[0-9a-f]{2}$'; then HINT=" It looks like a fingerprint, not the key text."
     elif [ "$ODD" -gt 0 ]; then HINT=" It also has unusual (non-keyboard) characters, which phone file previews sometimes add."
     fi
-    fail "KEYSTORE_BASE64" "This secret ($N characters) isn't the complete key text.$HINT Replace it with everything in KEYSTORE_BASE64.txt, which is one line of about 3,550 characters."
+    fail "KEYSTORE_BASE64" "This secret ($N characters) isn't the complete key text.$HINT Replace it with everything in KEYSTORE_BASE64.txt, which is one line of about 3,500 characters."
   fi
   [ "$B64" = "$KT" ] || echo "::notice title=KEYSTORE_BASE64::The secret had extra text or characters around the key. The build used just the key."
   [ "$SIGN_PASS" = "$PW" ] || echo "::notice title=KEYSTORE_PASSWORD::The secret had extra spaces or text around the password. The build used just the password."
