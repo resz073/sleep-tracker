@@ -22,7 +22,7 @@ const blank = () => ({ entries: [], pending: { bed: null, t: 0 }, prefs: { weeke
 
 let S = blank(), M = null, P = null;
 let uid = null, account = null, unsub = null, live = false, ready = false, serverCanon = null, syncState = "local", writing = false, again = false;
-let fresh = false, edit = null, hWeek = null, undoFn = null, toastT = 0, bdManual = false, tab = "m", listOpen = false, lastDay = "", pick = -1, tN = 0, view = "today";
+let lastHalf = null, fresh = false, edit = null, hWeek = null, undoFn = null, toastT = 0, bdManual = false, tab = "m", listOpen = false, lastDay = "", pick = -1, tN = 0, view = "today";
 const sel = { m: null, w: null };
 const queuedActions = [];
 
@@ -177,7 +177,8 @@ function fitGoal() { const b = band(); if (!b) return false; const g = goalOn(to
    A day is complete when the night ending that morning and the night ending the next morning are both logged.
    Complete days count toward averages and deficit. A missed night (named by its wake-up date) leaves
    the day before and the day after incomplete; it is counted once, as a night not logged.
-   Today, and any day touched by a sleep still in progress, is open. */
+   Today, and any day touched by a sleep still in progress, is open. Until noon, last night can still be
+   logged, so it isn't counted as missing yet and yesterday stays open too. */
 function model() {
   const es = act(), t = today(), byDay = {}, nightW = new Map();
   es.forEach(e => {
@@ -190,9 +191,10 @@ function model() {
   const nights = [...nightW.values()].sort((a, b) => a.W < b.W ? -1 : 1); // each night: first bedtime, final wake-up, total minutes asleep
   const start = nights.length ? nights[0].W : null;
   const pend = S.pending.bed && ts(S.pending.bed) <= Date.now() + 300000 ? S.pending.bed : null, pDay = pend ? pend.slice(0, 10) : null;
-  const status = d => !start || d < start ? "before" : d > t ? "future" : (d === t || (pDay && d >= pDay)) ? "open" : (nightW.has(d) && nightW.has(addD(d, 1))) ? "done" : "missing";
+  const morning = new Date().getHours() < 12, waiting = morning && !nightW.has(t); // last night not logged yet, but it's still morning
+  const status = d => !start || d < start ? "before" : d > t ? "future" : (d === t || (pDay && d >= pDay) || (waiting && d === addD(t, -1))) ? "open" : (nightW.has(d) && nightW.has(addD(d, 1))) ? "done" : "missing";
   const inProg = pend ? nightOf({ bed: pend }) : null, MN = new Set();
-  if (start) for (let W = addD(start, 1); W <= t; W = addD(W, 1)) if (!nightW.has(W) && !(inProg && W >= inProg)) MN.add(W);
+  if (start) for (let W = addD(start, 1); W <= t; W = addD(W, 1)) if (!nightW.has(W) && !(inProg && W >= inProg) && !(waiting && W === t)) MN.add(W);
   return { es, t, byDay, nightW, nights, start, pend, status, MN };
 }
 function stats(days) {
@@ -292,7 +294,7 @@ function renderToday() {
   if (st.n) { $("debt").textContent = hm(st.bal); $("debt").className = cls(st.bal); $("debtlbl").textContent = st.bal > 0 ? "sleep debt" : "ahead of your goal"; }
   else { $("debt").textContent = "–"; $("debt").className = ""; $("debtlbl").textContent = M.start ? "No complete days yet" : "Log your first night to start"; }
   $("debtstats").innerHTML = st.n ? mstat(hm(st.tot / st.n), "average per day") + mstat(st.met + " of " + st.n, "days at goal") + (st.miss ? mstat(String(st.miss), nn(st.miss), "warn") : "") : "";
-  mini(d14);
+  mini(d14.concat([t]));
   renderGoalCard();
   renderReminderCard();
 }
@@ -303,8 +305,9 @@ function mini(days) {
   days.forEach((d, i) => {
     const cx = slot * i + slot / 2, st = M.status(d), v = M.byDay[d] || 0;
     if (st === "done") s += '<rect x="' + (cx - bw / 2) + '" y="' + y(v) + '" width="' + bw + '" height="' + Math.max(2, H - pb - y(v)) + '" rx="3" fill="' + (v >= goals[i] ? "var(--good)" : "var(--acc)") + '"><title>' + esc(dayFull(d)) + ': ' + hm(v) + '</title></rect>';
+    else if (st === "open" && v) s += '<rect x="' + (cx - bw / 2 + 1) + '" y="' + (y(v) + 1) + '" width="' + (bw - 2) + '" height="' + Math.max(2, H - pb - y(v) - 1) + '" rx="3" fill="none" stroke="var(--acc)" stroke-width="1.5" stroke-dasharray="3 2"><title>' + esc(d === M.t ? "Today" : dayFull(d)) + ' so far: ' + hm(v) + '</title></rect>';
     else if (st === "missing") s += '<rect x="' + (cx - 4) + '" y="' + (H - pb - 3) + '" width="8" height="3" rx="1.5" fill="var(--warn)"/>';
-    if (i === 0 || i === n - 1) s += '<text x="' + (i === 0 ? 0 : W) + '" y="' + (H - 2) + '" font-size="10" text-anchor="' + (i === 0 ? "start" : "end") + '" fill="var(--mute)">' + esc(dayShort(d)) + '</text>';
+    if (i === 0 || i === n - 1) s += '<text x="' + (i === 0 ? 0 : W) + '" y="' + (H - 2) + '" font-size="10" text-anchor="' + (i === 0 ? "start" : "end") + '" fill="var(--mute)">' + esc(d === M.t ? "Today" : dayShort(d)) + '</text>';
   });
   $("mini").innerHTML = s;
 }
@@ -333,7 +336,7 @@ function mono(Pt) { // monotone cubic: smooth, never overshoots the real values
 function draw(c, days) {
   const svg = $("tchart"), t = M.t, N = days.length, wk = c.wk, W = CW, H = c.H, pl = CL, pr = CR, pt = 18, pb = wk ? 32 : 22;
   svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("aria-label", c.aria);
-  const pts = days.map(d => ({ d, s: M.status(d), v: M.byDay[d] || 0 })), vals = pts.filter(p => p.s === "done").map(p => p.v);
+  const pts = days.map(d => ({ d, s: M.status(d), v: M.byDay[d] || 0 })), vals = pts.filter(p => p.s === "done" || (p.s === "open" && p.v)).map(p => p.v);
   const goals = days.map(goalOn), flat = goals.every(g => g === goals[0]);
   const lo = vals.length ? Math.min(240, Math.floor(Math.min(...vals) / 120) * 120) : 240, hi = Math.max(600, Math.ceil((Math.max(0, ...vals, ...goals) + 30) / 120) * 120);
   const X = i => pl + 8 + (W - pl - pr - 16) * i / (N - 1), Y = v => H - pb - (v - lo) / (hi - lo) * (H - pb - pt), gy = i => Y(goals[i]), base = H - pb;
@@ -359,6 +362,14 @@ function draw(c, days) {
   s += '<path d="' + step(pl, W - pr) + '" fill="none" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="' + (pl - 5) + '" y="' + (gy(0) + 3) + '" font-size="8.5" text-anchor="end" fill="var(--mute)">' + hrs(goals[0]) + '</text>';
   if (pick >= 0) s += '<line x1="' + X(pick) + '" x2="' + X(pick) + '" y1="' + pt + '" y2="' + base + '" stroke="var(--mute)" stroke-dasharray="2 3" stroke-opacity=".7"/>';
   runs.forEach(R => { if (R.length > 1) s += '<path d="' + mono(R) + '" fill="none" stroke="var(--acc)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'; });
+  // Days still in progress (today, or while a night isn't finished): sleep so far, hollow, joined by a dashed line
+  pts.forEach((p, i) => {
+    if (p.s !== "open" || !p.v) return;
+    const q = i > 0 ? pts[i - 1] : null, x = X(i), y = Y(p.v);
+    if (q && (q.s === "done" || (q.s === "open" && q.v))) s += '<line x1="' + X(i - 1) + '" y1="' + Y(q.v) + '" x2="' + x + '" y2="' + y + '" stroke="var(--acc)" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"/>';
+    s += '<circle cx="' + x + '" cy="' + y + '" r="' + ((wk ? 4 : 3) + (i === pick ? 1.5 : 0)) + '" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/>';
+    if (wk) { let ly = p.v >= goals[i] ? y - 9 : y + 16; if (ly > base - 3) ly = y - 9; if (ly < pt - 4) ly = y + 16; s += '<text x="' + x + '" y="' + ly + '" font-size="9" text-anchor="middle" fill="var(--mute)">' + (p.v / 60).toFixed(1) + '</text>'; }
+  });
   const ti = days.indexOf(t);
   pts.forEach((p, i) => {
     const x = X(i);
@@ -403,13 +414,17 @@ function renderTrends() {
     const d = days[pick], s = M.status(d), v = M.byDay[d] || 0; let x = '<b>' + esc(d === t ? "Today" : dayFull(d)) + '</b>: ';
     const g = goalOn(d);
     if (s === "done") x += hm(v) + ', <span class="' + cls(g - v) + '">' + (Math.abs(g - v) < 5 ? "right on your " + dshort(g) + " goal" : dshort(g - v) + (g - v > 0 ? " under" : " over") + " your " + dshort(g) + " goal") + '</span>';
-    else if (s === "open") x += v ? hm(v) + " so far" : "day not finished";
+    else if (s === "open") x += v ? hm(v) + " so far, still counting" : "day not finished";
     else if (s === "missing") { const W = M.MN.has(d) ? d : M.MN.has(addD(d, 1)) ? addD(d, 1) : null; x += '<span class="warn">incomplete</span>' + (W ? ', the night ' + esc(nightName(W)) + ' isn’t logged. <button class="btn text" style="min-height:0;padding:2px 4px" type="button" data-fill="' + W + '">Log it</button>' : ''); }
     else if (s === "future") x += "upcoming"; else x += "before you started tracking";
     $("tread").innerHTML = '<p class="day">' + x + '</p>';
-  } else $("tread").innerHTML = st.n || st.miss ? '<div class="mstats">' + mstat(st.n ? hm(st.tot / st.n) : "–", "average per day") + mstat(st.met + " of " + st.n, "days at goal") + (st.miss ? mstat(String(st.miss), nn(st.miss), "warn") : "") + '</div>' : '<p class="sm day">No complete days yet.</p>';
+  } else {
+    const live = days.includes(t) && M.status(t) === "open" && M.byDay[t] ? mstat(hm(M.byDay[t]), "today so far") : "";
+    $("tread").innerHTML = st.n || st.miss || live ? '<div class="mstats">' + mstat(st.n ? hm(st.tot / st.n) : "–", "average per day") + mstat(st.met + " of " + st.n, "days at goal") + live + (st.miss ? mstat(String(st.miss), nn(st.miss), "warn") : "") + '</div>' : '<p class="sm day">No complete days yet.</p>';
+  }
   const gs = days.map(goalOn), gk = gs.every(g => g === gs[0]) ? "Goal " + dshort(gs[0]) : "Goal (changed)";
-  $("tlegend").innerHTML = '<span><i class="lg-line"></i>Actual</span><span><i class="lg-goal"></i>' + gk + '</span><span><i class="lg-def"></i>Deficit</span><span><i class="lg-sur"></i>Surplus</span>' + (st.miss ? '<span><i class="lg-miss"></i>Night not logged</span>' : '');
+  const anyLive = days.some(d => M.status(d) === "open" && M.byDay[d]);
+  $("tlegend").innerHTML = '<span><i class="lg-line"></i>Actual</span><span><i class="lg-goal"></i>' + gk + '</span><span><i class="lg-def"></i>Deficit</span><span><i class="lg-sur"></i>Surplus</span>' + (anyLive ? '<span><i class="lg-live"></i>So far</span>' : '') + (st.miss ? '<span><i class="lg-miss"></i>Night not logged</span>' : '');
   draw(c, days);
   if (c.nav) {
     const per = [], first = c.first(M.start);
@@ -532,7 +547,7 @@ function renderHistory() {
       '</button><button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="Delete sleep from ' + esc(when(e.bed)) + '">✕</button></div>';
   }).join("");
 }
-function render() { M = model(); P = plan(); lastDay = M.t; renderToday(); renderTrends(); renderPatterns(); renderSchedule(); renderHistory(); renderGoalUI(); queueReminders(); }
+function render() { M = model(); P = plan(); lastDay = M.t; lastHalf = new Date().getHours() < 12; renderToday(); renderTrends(); renderPatterns(); renderSchedule(); renderHistory(); renderGoalUI(); queueReminders(); }
 
 /* ---------- navigation ---------- */
 function setView(v, keepScroll) {
@@ -913,6 +928,7 @@ function endSession() { stopSync(); ready = false; uid = null; account = null; S
 function tick() {
   if (!ready) return;
   if (today() !== lastDay) { pick = -1; if (fitGoal()) commit(); else render(); if (!$("entrySheet").open) resetForm(); setView(view, true); }
+  else if ((new Date().getHours() < 12) !== lastHalf) render();
   else { renderTonight(); if (view === "schedule") renderSchedule(); }
 }
 setInterval(tick, 30000);
