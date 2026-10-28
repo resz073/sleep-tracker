@@ -4,4 +4,4 @@ export const links = {
   deletion: "https://resz073.github.io/sleep-tracker/delete-account.html",
   support: "reshad.rahman@yahoo.com"
 };
-export const appVersion = "1.0.0";
+export const appVersion = "1.1.0";

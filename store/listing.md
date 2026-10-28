@@ -18,7 +18,7 @@ Log in two taps
 Tap "Going to sleep" when you lie down and "I'm awake" when you get up. You can also add or change any night by hand and rate how well you slept.
 
 See your sleep debt
-Your sleep is measured against an 8-hour goal. See last night at a glance, your sleep debt over the last 14 days, and your sleep by day, week and month. Sleep that crosses midnight counts toward the right days.
+Set a sleep goal that fits your age: the app shows the range sleep experts recommend for you, and you choose a goal within it. See last night at a glance, your sleep debt over the last 14 days, and your sleep by day, week and month. Sleep that crosses midnight counts toward the right days.
 
 A bedtime that fits your wake-up time
 Sleep Tracker works out a bedtime from your usual wake-up time, or one you choose, and moves you toward it 15 minutes at a time so the change is easy to keep.

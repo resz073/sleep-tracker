@@ -1,6 +1,6 @@
 # Sleep Tracker for Android
 
-Log your sleep in two taps, see your sleep debt against an 8-hour goal, and get a bedtime worked out from your usual wake-up time. Accounts and sync run on Firebase. Reminders are scheduled on the phone.
+Log your sleep in two taps, see your sleep debt against a goal that fits your age, and get a bedtime worked out from your usual wake-up time. Accounts and sync run on Firebase. Reminders are scheduled on the phone.
 
 The app is a web app wrapped for Android with [Capacitor](https://capacitorjs.com). GitHub builds it for you, so you don't need Android Studio.
 
@@ -71,10 +71,12 @@ In the Sleep Tracker you used before, open **Settings → Backup → Export CSV*
    - **App access:** sign-in is needed, so create an email account in the app for reviewers and enter its email and password here.
    - **Ads:** no ads.
    - **Content rating:** fill in the questionnaire.
-   - **Target audience:** 18 and over (add 13–17 if you want teens). Don't include under 13.
+   - **Target audience:** 13–15, 16–17 and 18 and over. Don't include under 13.
    - **Data safety:** data is encrypted in transit; users can ask for deletion; nothing is shared. Collected, for app functionality and account management:
      - Personal info → **Email address** (required)
      - Personal info → **Name** (optional: only with Google sign-in)
+     - Personal info → **User IDs** (required)
+     - Personal info → **Other info** (birth year, optional)
      - Health and fitness → **Health info** (sleep times and ratings, required)
    - **Delete account URL:** `https://resz073.github.io/sleep-tracker/delete-account.html`
    - **Health apps:** choose **Sleep Management**.

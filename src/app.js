@@ -3,13 +3,22 @@ import * as backend from "./backend.js";
 import * as platform from "./platform.js";
 import { links, appVersion } from "./app-config.js";
 
-const NEED = 480; // sleep goal: 8 hours
-const LS_TAB = "sleep-tracker-tab", LS_VIEW = "sleep-tracker-view", LS_REM = "sleep-tracker-reminders";
+const DEF_GOAL = 480; // the goal until a birth year is set: 8 hours
+// Sleep a night by age, from the National Sleep Foundation (2015): the recommended range, and the wider
+// range it says "may be appropriate". The goal can be set anywhere in the wider range, in 15-minute steps.
+const AGES = [
+  { lo: 13, hi: 17, name: "13–17", rec: [480, 600], ok: [420, 660], def: 540 },
+  { lo: 18, hi: 25, name: "18–25", rec: [420, 540], ok: [360, 660], def: 480 },
+  { lo: 26, hi: 64, name: "26–64", rec: [420, 540], ok: [360, 600], def: 480 },
+  { lo: 65, hi: 150, name: "65 and over", rec: [420, 480], ok: [300, 540], def: 450 }
+];
+const MIN_AGE = 13, MAX_AGE = 100, FIRST_DAY = "0000-01-01";
+const LS_TAB = "sleep-tracker-tab", LS_VIEW = "sleep-tracker-view", LS_REM = "sleep-tracker-reminders", LS_GOALCARD = "sleep-tracker-goal-card";
 const $ = id => document.getElementById(id);
 const RX = /^\d{4}-\d\d-\d\dT\d\d:\d\d$/, HM = /^([01]\d|2[0-3]):[0-5]\d$/;
 const WEEKENDS = { "fri-sat": [5, 6], "sat-sun": [6, 0], "fri": [5] }, LATS = [5, 10, 15, 20, 30, 45];
 const VNAMES = { today: "Today", trends: "Trends", schedule: "Schedule", history: "History" };
-const blank = () => ({ entries: [], pending: { bed: null, t: 0 }, prefs: { weekend: "fri-sat", wake: null, lat: 15, t: 0 } });
+const blank = () => ({ entries: [], pending: { bed: null, t: 0 }, prefs: { weekend: "fri-sat", wake: null, lat: 15, born: null, goals: [], t: 0 } });
 
 let S = blank(), M = null, P = null;
 let uid = null, account = null, unsub = null, live = false, ready = false, serverCanon = null, syncState = "local", writing = false, again = false;
@@ -80,8 +89,18 @@ function fromRaw(d) {
   const s = blank(); if (!d || typeof d !== "object") return s;
   if (Array.isArray(d.entries)) d.entries.forEach(x => { const e = normEntry(x); if (e) s.entries.push(e); });
   if (d.pending && typeof d.pending === "object") s.pending = { bed: okDT(d.pending.bed) ? d.pending.bed : null, t: +d.pending.t || 0 };
-  if (d.prefs && typeof d.prefs === "object") { const p = d.prefs, lat = +p.lat; s.prefs = { weekend: WEEKENDS[p.weekend] ? p.weekend : "fri-sat", wake: HM.test(p.wake || "") ? p.wake : null, lat: LATS.includes(lat) ? lat : 15, t: +p.t || 0 }; }
+  if (d.prefs && typeof d.prefs === "object") { const p = d.prefs, lat = +p.lat; s.prefs = { weekend: WEEKENDS[p.weekend] ? p.weekend : "fri-sat", wake: HM.test(p.wake || "") ? p.wake : null, lat: LATS.includes(lat) ? lat : 15, born: normBorn(p.born), goals: normGoals(p.goals), t: +p.t || 0 }; }
   return merge(blank(), s);
+}
+// Birth year, and the goal history: each change applies from the day it was made ("from"), so changing
+// the goal never rewrites past days. The first goal applies from the start ("0000-01-01").
+function normBorn(v) { const y = Math.round(+v), now = new Date().getFullYear(); return y >= now - 120 && y <= now - MIN_AGE ? y : null; }
+function normGoals(a) {
+  if (!Array.isArray(a)) return [];
+  const D = /^\d{4}-\d\d-\d\d$/;
+  return a.filter(g => g && D.test(g.from) && D.test(g.on) && +g.min >= 240 && +g.min <= 720)
+    .map(g => ({ from: g.from, min: Math.round(+g.min), on: g.on }))
+    .sort((x, y) => x.from < y.from ? -1 : x.from > y.from ? 1 : x.on < y.on ? -1 : x.on > y.on ? 1 : 0).slice(-200);
 }
 function win(a, b) { if (!a) return b; if (!b) return a; if (a.t !== b.t) return a.t > b.t ? a : b; return JSON.stringify(a) >= JSON.stringify(b) ? a : b; }
 function merge(a, b) {
@@ -91,7 +110,7 @@ function merge(a, b) {
 function canon(s) {
   return JSON.stringify({
     entries: s.entries.slice().sort((x, y) => x.id < y.id ? -1 : x.id > y.id ? 1 : 0).map(e => e.del ? { id: e.id, del: 1, t: e.t } : { id: e.id, bed: e.bed, wake: e.wake, q: e.q, t: e.t }),
-    pending: { bed: s.pending.bed, t: s.pending.t }, prefs: { weekend: s.prefs.weekend, wake: s.prefs.wake, lat: s.prefs.lat, t: s.prefs.t }
+    pending: { bed: s.pending.bed, t: s.pending.t }, prefs: { weekend: s.prefs.weekend, wake: s.prefs.wake, lat: s.prefs.lat, born: s.prefs.born, goals: s.prefs.goals.map(g => ({ from: g.from, min: g.min, on: g.on })), t: s.prefs.t }
   });
 }
 const lsKey = u => "sleep-tracker:data:" + (u || "local");
@@ -129,6 +148,31 @@ function act() {
   return [...by.values()].sort((a, b) => ts(a.wake) - ts(b.wake) || ts(a.bed) - ts(b.bed));
 }
 
+/* ---------- sleep goal ---------- */
+function goalOn(d) { let g = DEF_GOAL; for (const x of S.prefs.goals) { if (x.from <= d) g = x.min; else break; } return g; }
+const ageNow = () => S.prefs.born ? new Date().getFullYear() - S.prefs.born : null; // the age reached this year
+const band = () => { const a = ageNow(); return a == null ? null : AGES.find(b => a >= b.lo && a <= b.hi) || null; };
+const hrs = m => +(m / 60).toFixed(2) + "h";                           // 450 -> "7.5h"
+const glong = m => m % 60 === 0 ? m / 60 + " hours" : m % 60 === 30 ? (m - 30) / 60 + ".5 hours" : Math.floor(m / 60) + " hours " + (m % 60) + " minutes";
+const rangeText = r => r[0] / 60 + "–" + r[1] / 60 + " hours";
+// Changes the goal from today. A change made the same day as the last one replaces it, so trying a few
+// values only keeps the last. The very first goal also covers the days before it.
+function applyGoal(min) {
+  const b = band(); if (!b) return false;
+  min = Math.max(b.ok[0], Math.min(b.ok[1], Math.round(min / 15) * 15));
+  const t = today(), gs = S.prefs.goals.slice(), last = gs[gs.length - 1];
+  if (last && last.on === t) {
+    if (last.min === min) return false;
+    if (last.from !== FIRST_DAY && gs.length > 1 && gs[gs.length - 2].min === min) gs.pop(); // back to the earlier goal
+    else gs[gs.length - 1] = { ...last, min };
+  }
+  else { if (gs.length && goalOn(t) === min) return false; gs.push({ from: gs.length ? t : FIRST_DAY, min, on: t }); }
+  S.prefs = { ...S.prefs, goals: gs, t: Date.now() };
+  return true;
+}
+// Keeps the goal inside the range for the person's age, e.g. after a birthday moves them to a new range
+function fitGoal() { const b = band(); if (!b) return false; const g = goalOn(today()); return S.prefs.goals.length ? (g < b.ok[0] || g > b.ok[1]) && applyGoal(g) : applyGoal(b.def); }
+
 /* ---------- day accounting ----------
    A day is complete when the night ending that morning and the night ending the next morning are both logged.
    Complete days count toward averages and deficit. A missed night (named by its wake-up date) leaves
@@ -153,8 +197,9 @@ function model() {
 }
 function stats(days) {
   let tot = 0, n = 0, met = 0, miss = 0;
-  days.forEach(d => { const s = M.status(d); if (s === "done") { const v = M.byDay[d] || 0; tot += v; n++; if (v >= NEED) met++; } if (M.MN.has(d)) miss++; });
-  return { tot, n, met, miss, bal: n * NEED - tot };
+  let need = 0;
+  days.forEach(d => { const s = M.status(d); if (s === "done") { const v = M.byDay[d] || 0, g = goalOn(d); tot += v; n++; need += g; if (v >= g) met++; } if (M.MN.has(d)) miss++; });
+  return { tot, n, met, miss, bal: need - tot };
 }
 const nn = n => n > 1 ? "nights not logged" : "night not logged";
 function missingNights() { const lo = addD(M.t, -13); return [...M.MN].filter(W => W >= lo && W < M.t).sort(); }
@@ -165,20 +210,20 @@ function usual() {
 
 /* ---------- bedtime schedule ----------
    Wake-up is the anchor: the time you set, or your usual (median) wake-up over the last 14 nights.
-   Target bedtime = wake-up minus the 8 hour goal minus time to fall asleep.
+   Target bedtime = wake-up minus today's sleep goal minus time to fall asleep.
    Tonight's bedtime moves toward the target 15 minutes at a time, starting from your usual bedtime over the
    last 7 nights. As your usual bedtime shifts, the next step follows, so the plan adapts to what you actually do. */
 function plan() {
   const t = M.t, n14 = M.nights.filter(N => N.W > addD(t, -14) && N.W <= t), n7 = n14.filter(N => N.W > addD(t, -7));
   const autoWake = n14.length >= 3 ? r5(med(n14.map(N => tod(N.wake)))) : null, fixed = S.prefs.wake;
   const wake = fixed ? hmin(fixed) : autoWake; if (wake == null) return null;
-  const lat = S.prefs.lat, target = adj(mod(wake - NEED - lat));
+  const goal = goalOn(t), lat = S.prefs.lat, target = adj(mod(wake - goal - lat));
   const base = n7.length >= 3 ? n7 : n14.length >= 3 ? n14 : null, cur = base ? r5(med(base.map(N => adj(tod(N.bed))))) : null;
   let tonight = target, steps = 0, dir = 0;
   if (cur != null && Math.abs(cur - target) > 15) { dir = Math.sign(cur - target); tonight = cur - dir * 15; steps = Math.ceil((Math.abs(cur - target) - 15) / 15); }
   const sleepT = wake + 1440 - tonight - lat, cyc = Math.max(1, Math.round(sleepT / 90));
   const onT = n7.filter(N => Math.abs(adj(tod(N.bed)) - target) <= 30).length;
-  return { wake, autoWake, fixed: !!fixed, lat, target, tonight, cur, dir, steps, sleepT, cyc, tcyc: Math.max(1, Math.round(NEED / 90)), n7: n7.length, onT, n14 };
+  return { wake, autoWake, fixed: !!fixed, goal, lat, target, tonight, cur, dir, steps, sleepT, cyc, tcyc: Math.max(1, Math.round(goal / 90)), n7: n7.length, onT, n14 };
 }
 
 /* ---------- the tonight strip: 6 PM to 2 PM, planned night in cycles, actual sleep, now ---------- */
@@ -226,10 +271,10 @@ function renderToday() {
   renderTonight();
   const ln = M.nightW.get(t); let h = "";
   if (ln) {
-    const d = ln.mins, diff = NEED - d, C = 2 * Math.PI * 40, pc = Math.min(1, d / NEED);
-    h = '<div class="ln"><svg class="ring" viewBox="0 0 96 96" role="img" aria-label="' + hm(d) + ' of your 8 hour goal"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--card2)" stroke-width="10"/>' +
-      '<circle cx="48" cy="48" r="40" fill="none" stroke="' + (d >= NEED ? "var(--good)" : "var(--acc)") + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (C * pc).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 48 48)"/>' +
-      '<text x="48" y="50" text-anchor="middle" font-size="16" font-weight="800" fill="var(--ink)">' + hm(d) + '</text><text x="48" y="66" text-anchor="middle" font-size="11" fill="var(--mute)">of 8h</text></svg>' +
+    const G = goalOn(t), d = ln.mins, diff = G - d, C = 2 * Math.PI * 40, pc = Math.min(1, d / G);
+    h = '<div class="ln"><svg class="ring" viewBox="0 0 96 96" role="img" aria-label="' + hm(d) + ' of your ' + esc(glong(G)) + ' goal"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--card2)" stroke-width="10"/>' +
+      '<circle cx="48" cy="48" r="40" fill="none" stroke="' + (d >= G ? "var(--good)" : "var(--acc)") + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (C * pc).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 48 48)"/>' +
+      '<text x="48" y="50" text-anchor="middle" font-size="16" font-weight="800" fill="var(--ink)">' + hm(d) + '</text><text x="48" y="66" text-anchor="middle" font-size="11" fill="var(--mute)">of ' + dshort(G) + '</text></svg>' +
       '<div class="ln-main"><h2>Last night</h2><span class="t">' + fmt(tod(ln.bed)) + ' – ' + fmt(tod(ln.wake)) + '</span>' +
       '<span class="d ' + cls(diff) + '">' + (Math.abs(diff) < 5 ? "Right on your goal" : dshort(diff) + (diff > 0 ? " under your goal" : " over your goal")) + '</span>' +
       '<span class="sm">' + (ln.segs.length > 1 ? "In " + ln.segs.length + " parts, about " : "About ") + (d / 90).toFixed(1) + ' sleep cycles</span>' +
@@ -248,15 +293,16 @@ function renderToday() {
   else { $("debt").textContent = "–"; $("debt").className = ""; $("debtlbl").textContent = M.start ? "No complete days yet" : "Log your first night to start"; }
   $("debtstats").innerHTML = st.n ? mstat(hm(st.tot / st.n), "average per day") + mstat(st.met + " of " + st.n, "days at goal") + (st.miss ? mstat(String(st.miss), nn(st.miss), "warn") : "") : "";
   mini(d14);
+  renderGoalCard();
   renderReminderCard();
 }
 function mini(days) {
-  const W = 320, H = 64, pb = 16, pt = 4, n = days.length, slot = W / n, bw = Math.min(14, slot - 6), max = Math.max(600, ...days.map(d => M.byDay[d] || 0));
+  const W = 320, H = 64, pb = 16, pt = 4, n = days.length, slot = W / n, bw = Math.min(14, slot - 6), goals = days.map(goalOn), max = Math.max(600, ...goals, ...days.map(d => M.byDay[d] || 0));
   const y = v => H - pb - (Math.min(v, max) / max) * (H - pb - pt);
-  let s = '<line x1="0" x2="' + W + '" y1="' + y(NEED) + '" y2="' + y(NEED) + '" stroke="var(--good)" stroke-width="1.2" stroke-dasharray="4 3"/>';
+  let s = '<path d="' + goals.map((g, i) => (i ? "H" + (slot * i).toFixed(1) + "V" : "M0,") + y(g).toFixed(1)).join("") + "H" + W + '" fill="none" stroke="var(--good)" stroke-width="1.2" stroke-dasharray="4 3"/>';
   days.forEach((d, i) => {
     const cx = slot * i + slot / 2, st = M.status(d), v = M.byDay[d] || 0;
-    if (st === "done") s += '<rect x="' + (cx - bw / 2) + '" y="' + y(v) + '" width="' + bw + '" height="' + Math.max(2, H - pb - y(v)) + '" rx="3" fill="' + (v >= NEED ? "var(--good)" : "var(--acc)") + '"><title>' + esc(dayFull(d)) + ': ' + hm(v) + '</title></rect>';
+    if (st === "done") s += '<rect x="' + (cx - bw / 2) + '" y="' + y(v) + '" width="' + bw + '" height="' + Math.max(2, H - pb - y(v)) + '" rx="3" fill="' + (v >= goals[i] ? "var(--good)" : "var(--acc)") + '"><title>' + esc(dayFull(d)) + ': ' + hm(v) + '</title></rect>';
     else if (st === "missing") s += '<rect x="' + (cx - 4) + '" y="' + (H - pb - 3) + '" width="8" height="3" rx="1.5" fill="var(--warn)"/>';
     if (i === 0 || i === n - 1) s += '<text x="' + (i === 0 ? 0 : W) + '" y="' + (H - 2) + '" font-size="10" text-anchor="' + (i === 0 ? "start" : "end") + '" fill="var(--mute)">' + esc(dayShort(d)) + '</text>';
   });
@@ -269,9 +315,9 @@ const addM = (p, n) => { const d = new Date(+p.slice(0, 4), +p.slice(5, 7) - 1 +
 const weekName = p => dayShort(p) + " – " + dayShort(addD(p, 6));
 const monthDays = p => { const n = new Date(+p.slice(0, 4), +p.slice(5, 7), 0).getDate(); return seq(p + "-01", n); };
 const VIEWS = {
-  m: { nav: 1, title: monthName, step: addM, cur: t => t.slice(0, 7), first: s => s.slice(0, 7), days: monthDays, H: 184, wk: 0, all: "months", now: "This month", aria: "Sleep each day of the selected month against the 8 hour goal" },
-  w: { nav: 1, title: weekName, step: (p, n) => addD(p, 7 * n), cur: wkStart, first: wkStart, days: p => seq(p, 7), H: 200, wk: 1, all: "weeks", now: "This week", aria: "Sleep each day of the selected week against the 8 hour goal" },
-  r: { nav: 0, title: p => dayShort(p) + " – " + dayShort(addD(p, 2)), cur: t => addD(t, -2), days: p => seq(p, 3), H: 200, wk: 1, aria: "Sleep on each of the last 3 days against the 8 hour goal" }
+  m: { nav: 1, title: monthName, step: addM, cur: t => t.slice(0, 7), first: s => s.slice(0, 7), days: monthDays, H: 184, wk: 0, all: "months", now: "This month", aria: "Sleep each day of the selected month against your sleep goal" },
+  w: { nav: 1, title: weekName, step: (p, n) => addD(p, 7 * n), cur: wkStart, first: wkStart, days: p => seq(p, 7), H: 200, wk: 1, all: "weeks", now: "This week", aria: "Sleep each day of the selected week against your sleep goal" },
+  r: { nav: 0, title: p => dayShort(p) + " – " + dayShort(addD(p, 2)), cur: t => addD(t, -2), days: p => seq(p, 3), H: 200, wk: 1, aria: "Sleep on each of the last 3 days against your sleep goal" }
 };
 const CW = 320, CL = 30, CR = 10;
 function mono(Pt) { // monotone cubic: smooth, never overshoots the real values
@@ -288,21 +334,29 @@ function draw(c, days) {
   const svg = $("tchart"), t = M.t, N = days.length, wk = c.wk, W = CW, H = c.H, pl = CL, pr = CR, pt = 18, pb = wk ? 32 : 22;
   svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("aria-label", c.aria);
   const pts = days.map(d => ({ d, s: M.status(d), v: M.byDay[d] || 0 })), vals = pts.filter(p => p.s === "done").map(p => p.v);
-  const lo = vals.length ? Math.min(240, Math.floor(Math.min(...vals) / 120) * 120) : 240, hi = Math.max(600, Math.ceil((Math.max(0, ...vals) + 30) / 120) * 120);
-  const X = i => pl + 8 + (W - pl - pr - 16) * i / (N - 1), Y = v => H - pb - (v - lo) / (hi - lo) * (H - pb - pt), gy = Y(NEED), base = H - pb;
-  let s = '<defs><clipPath id="cd"><rect x="0" y="' + gy + '" width="' + W + '" height="' + (H - gy) + '"/></clipPath><clipPath id="cs"><rect x="0" y="0" width="' + W + '" height="' + gy + '"/></clipPath></defs>';
+  const goals = days.map(goalOn), flat = goals.every(g => g === goals[0]);
+  const lo = vals.length ? Math.min(240, Math.floor(Math.min(...vals) / 120) * 120) : 240, hi = Math.max(600, Math.ceil((Math.max(0, ...vals, ...goals) + 30) / 120) * 120);
+  const X = i => pl + 8 + (W - pl - pr - 16) * i / (N - 1), Y = v => H - pb - (v - lo) / (hi - lo) * (H - pb - pt), gy = i => Y(goals[i]), base = H - pb;
+  // The goal line steps where the goal changed, halfway between two days
+  const mid = i => (X(i) + X(i + 1)) / 2;
+  const step = (x0, x1) => { let d = "M" + x0 + "," + gy(0); for (let i = 1; i < N; i++) d += " H" + mid(i - 1) + " V" + gy(i); return d + " H" + x1; };
+  const gl = step(0, W);
+  let s = '<defs><clipPath id="cd"><path d="' + gl + ' V' + H + ' H0 Z"/></clipPath><clipPath id="cs"><path d="' + gl + ' V0 H0 Z"/></clipPath></defs>';
   for (let g = lo; g <= hi; g += 120) {
-    if (g === NEED) continue;
-    s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(g) + '" y2="' + Y(g) + '" stroke="' + (g === lo ? "var(--line)" : "var(--grid)") + '"/><text x="' + (pl - 5) + '" y="' + (Y(g) + 3) + '" font-size="8.5" text-anchor="end" fill="var(--mute)">' + (g / 60) + 'h</text>';
+    if (flat && g === goals[0]) continue;
+    s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(g) + '" y2="' + Y(g) + '" stroke="' + (g === lo ? "var(--line)" : "var(--grid)") + '"/>' +
+      (Math.abs(g - goals[0]) < 50 ? '' : '<text x="' + (pl - 5) + '" y="' + (Y(g) + 3) + '" font-size="8.5" text-anchor="end" fill="var(--mute)">' + (g / 60) + 'h</text>'); // keep clear of the goal label
   }
   const runs = []; let r = [];
-  pts.forEach((p, i) => { if (p.s === "done") r.push([X(i), Y(p.v)]); else { if (r.length) runs.push(r); r = []; } }); if (r.length) runs.push(r);
+  pts.forEach((p, i) => { if (p.s === "done") r.push([X(i), Y(p.v), i]); else { if (r.length) runs.push(r); r = []; } }); if (r.length) runs.push(r);
   runs.forEach(R => {
-    if (R.length === 1) { const q = R[0]; s += '<line x1="' + q[0] + '" x2="' + q[0] + '" y1="' + gy + '" y2="' + q[1] + '" stroke="' + (q[1] > gy ? "var(--bad)" : "var(--good)") + '" stroke-width="3" stroke-opacity=".35"/>'; return; }
-    const area = mono(R) + " L" + R[R.length - 1][0] + "," + gy + " L" + R[0][0] + "," + gy + " Z";
+    if (R.length === 1) { const q = R[0], g = gy(q[2]); s += '<line x1="' + q[0] + '" x2="' + q[0] + '" y1="' + g + '" y2="' + q[1] + '" stroke="' + (q[1] > g ? "var(--bad)" : "var(--good)") + '" stroke-width="3" stroke-opacity=".35"/>'; return; }
+    const a = R[0][2], b = R[R.length - 1][2]; let back = " L" + X(b) + "," + gy(b);
+    for (let k = b; k > a; k--) back += " H" + mid(k - 1) + " V" + gy(k - 1);
+    const area = mono(R) + back + " H" + X(a) + " Z";
     s += '<path d="' + area + '" fill="var(--bad-soft)" clip-path="url(#cd)"/><path d="' + area + '" fill="var(--good-soft)" clip-path="url(#cs)"/>';
   });
-  s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + gy + '" y2="' + gy + '" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="' + (pl - 5) + '" y="' + (gy + 3) + '" font-size="8.5" text-anchor="end" fill="var(--mute)">8h</text>';
+  s += '<path d="' + step(pl, W - pr) + '" fill="none" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="' + (pl - 5) + '" y="' + (gy(0) + 3) + '" font-size="8.5" text-anchor="end" fill="var(--mute)">' + hrs(goals[0]) + '</text>';
   if (pick >= 0) s += '<line x1="' + X(pick) + '" x2="' + X(pick) + '" y1="' + pt + '" y2="' + base + '" stroke="var(--mute)" stroke-dasharray="2 3" stroke-opacity=".7"/>';
   runs.forEach(R => { if (R.length > 1) s += '<path d="' + mono(R) + '" fill="none" stroke="var(--acc)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'; });
   const ti = days.indexOf(t);
@@ -311,7 +365,7 @@ function draw(c, days) {
     if (p.s === "done") {
       const y = Y(p.v), on = i === pick;
       s += '<circle cx="' + x + '" cy="' + y + '" r="' + ((wk ? 3.5 : 2.6) + (on ? 1.5 : 0)) + '" fill="var(--acc)" stroke="var(--card)" stroke-width="' + (on ? 2 : 0) + '"/>';
-      if (wk) { let ly = p.v >= NEED ? y - 8 : y + 15; if (ly > base - 3) ly = y - 8; if (ly < pt - 4) ly = y + 15; s += '<text x="' + x + '" y="' + ly + '" font-size="9" text-anchor="middle" fill="var(--ink)">' + (p.v / 60).toFixed(1) + '</text>'; }
+      if (wk) { let ly = p.v >= goals[i] ? y - 8 : y + 15; if (ly > base - 3) ly = y - 8; if (ly < pt - 4) ly = y + 15; s += '<text x="' + x + '" y="' + ly + '" font-size="9" text-anchor="middle" fill="var(--ink)">' + (p.v / 60).toFixed(1) + '</text>'; }
     }
     if (M.MN.has(p.d)) {
       const step = (W - pl - pr - 16) / (N - 1), nx = i > 0 ? (X(i - 1) + X(i)) / 2 : Math.max(pl + 3, X(0) - step / 2), w = wk ? 6 : 2;
@@ -347,13 +401,15 @@ function renderTrends() {
   $("tbal").innerHTML = st.n ? '<b class="' + cls(st.bal) + '">' + hm(st.bal) + '</b><span>' + (st.bal > 0 ? "sleep debt" : "ahead of goal") + '</span>' : "";
   if (pick >= 0) {
     const d = days[pick], s = M.status(d), v = M.byDay[d] || 0; let x = '<b>' + esc(d === t ? "Today" : dayFull(d)) + '</b>: ';
-    if (s === "done") x += hm(v) + ', <span class="' + cls(NEED - v) + '">' + (Math.abs(NEED - v) < 5 ? "right on your goal" : dshort(NEED - v) + (NEED - v > 0 ? " under your goal" : " over your goal")) + '</span>';
+    const g = goalOn(d);
+    if (s === "done") x += hm(v) + ', <span class="' + cls(g - v) + '">' + (Math.abs(g - v) < 5 ? "right on your " + dshort(g) + " goal" : dshort(g - v) + (g - v > 0 ? " under" : " over") + " your " + dshort(g) + " goal") + '</span>';
     else if (s === "open") x += v ? hm(v) + " so far" : "day not finished";
     else if (s === "missing") { const W = M.MN.has(d) ? d : M.MN.has(addD(d, 1)) ? addD(d, 1) : null; x += '<span class="warn">incomplete</span>' + (W ? ', the night ' + esc(nightName(W)) + ' isn’t logged. <button class="btn text" style="min-height:0;padding:2px 4px" type="button" data-fill="' + W + '">Log it</button>' : ''); }
     else if (s === "future") x += "upcoming"; else x += "before you started tracking";
     $("tread").innerHTML = '<p class="day">' + x + '</p>';
   } else $("tread").innerHTML = st.n || st.miss ? '<div class="mstats">' + mstat(st.n ? hm(st.tot / st.n) : "–", "average per day") + mstat(st.met + " of " + st.n, "days at goal") + (st.miss ? mstat(String(st.miss), nn(st.miss), "warn") : "") + '</div>' : '<p class="sm day">No complete days yet.</p>';
-  $("tlegend").innerHTML = '<span><i class="lg-line"></i>Actual</span><span><i class="lg-goal"></i>Goal 8h</span><span><i class="lg-def"></i>Deficit</span><span><i class="lg-sur"></i>Surplus</span>' + (st.miss ? '<span><i class="lg-miss"></i>Night not logged</span>' : '');
+  const gs = days.map(goalOn), gk = gs.every(g => g === gs[0]) ? "Goal " + dshort(gs[0]) : "Goal (changed)";
+  $("tlegend").innerHTML = '<span><i class="lg-line"></i>Actual</span><span><i class="lg-goal"></i>' + gk + '</span><span><i class="lg-def"></i>Deficit</span><span><i class="lg-sur"></i>Surplus</span>' + (st.miss ? '<span><i class="lg-miss"></i>Night not logged</span>' : '');
   draw(c, days);
   if (c.nav) {
     const per = [], first = c.first(M.start);
@@ -392,7 +448,7 @@ function renderPatterns() {
   const ub = mean(R.map(N => adj(tod(N.bed))));
   let h = '<p class="lead" style="margin-top:-6px">Average <b style="color:var(--ink)">★ ' + mean(R.map(N => N.q)).toFixed(1) + '</b> from ' + R.length + ' rated night' + (R.length > 1 ? "s" : "") + ' in the last 60</p>', any = false;
   [["Bedtime", N => adj(tod(N.bed)) < 1440, "Before 12 AM", "After 12 AM"],
-   ["Night length", N => N.mins >= NEED, "8h or more", "Under 8h"],
+   ["Night length", N => N.mins >= goalOn(N.W), "Met your goal", "Under your goal"],
    ["Bedtime compared with your usual " + fmt(ub), N => Math.abs(adj(tod(N.bed)) - ub) <= 30, "Within 30 min", "Off by more"]
   ].forEach(([lab, f, ya, na]) => {
     const Y = R.filter(f), Nn = R.filter(N => !f(N)); if (Y.length < 3 || Nn.length < 3) return;
@@ -429,10 +485,10 @@ function renderSchedule() {
     $("schSky").innerHTML = '<div class="lbl">Your bedtime</div><div class="big sm2">Not set yet</div><div class="meta">Log at least 3 nights, or set your wake-up time below. Your bedtime appears here.</div>';
     $("schPlan").hidden = true;
   } else {
-    $("schSky").innerHTML = '<div class="lbl">Your bedtime</div><div class="big">' + fmt(P.target) + '</div><div class="meta">Wake up at <b>' + fmt(P.wake) + '</b> after <b>8 hours</b> of sleep, about ' + P.tcyc + ' sleep cycles.</div>' + strip(true) +
+    $("schSky").innerHTML = '<div class="lbl">Your bedtime</div><div class="big">' + fmt(P.target) + '</div><div class="meta">Wake up at <b>' + fmt(P.wake) + '</b> after <b>' + glong(P.goal) + '</b> of sleep, about ' + P.tcyc + ' sleep cycles.</div>' + strip(true) +
       (P.steps ? '<div class="meta">Tonight, aim for <b>' + fmt(P.tonight) + '</b>. You’ll get to ' + fmt(P.target) + ' 15 minutes at a time.</div>' : '');
     let h = '<h2>' + (P.steps ? "Getting to your bedtime" : "Keep it steady") + '</h2>';
-    h += '<p class="lead" style="margin-top:-4px">Your target is <b style="color:var(--ink)">' + fmt(P.target) + '</b>: 8 hours of sleep plus ' + P.lat + ' minutes to fall asleep before your ' + fmt(P.wake) + ' wake-up.</p>';
+    h += '<p class="lead" style="margin-top:-4px">Your target is <b style="color:var(--ink)">' + fmt(P.target) + '</b>: ' + glong(P.goal) + ' of sleep, your goal, plus ' + P.lat + ' minutes to fall asleep before your ' + fmt(P.wake) + ' wake-up.</p>';
     if (P.steps) {
       const shown = Math.min(P.steps, 3); let li = '<li><span class="dot"></span><span>Tonight</span><b>' + fmt(P.tonight) + '</b></li>';
       for (let k = 1; k <= shown; k++) { const last = k === P.steps, tm = last ? P.target : P.tonight - P.dir * 15 * k; li += '<li><span class="dot ' + (last ? "end" : "hollow") + '"></span><span>' + (last ? "Target, from about " : "From about ") + esc(dayFull(addD(t, 4 * k))) + '</span><b>' + fmt(tm) + '</b></li>'; }
@@ -476,7 +532,7 @@ function renderHistory() {
       '</button><button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="Delete sleep from ' + esc(when(e.bed)) + '">✕</button></div>';
   }).join("");
 }
-function render() { M = model(); P = plan(); lastDay = M.t; renderToday(); renderTrends(); renderPatterns(); renderSchedule(); renderHistory(); queueReminders(); }
+function render() { M = model(); P = plan(); lastDay = M.t; renderToday(); renderTrends(); renderPatterns(); renderSchedule(); renderHistory(); renderGoalUI(); queueReminders(); }
 
 /* ---------- navigation ---------- */
 function setView(v, keepScroll) {
@@ -613,6 +669,37 @@ $("wkSet").onclick = () => { if (!S.prefs.wake) { const aw = P && P.autoWake != 
 $("wkTime").addEventListener("change", () => { const v = $("wkTime").value; if (HM.test(v) && v !== S.prefs.wake) { S.prefs = { ...S.prefs, wake: v, t: Date.now() }; commit(); toast("Wake-up set to " + fmt(hmin(v))); } });
 $("latSel").addEventListener("change", () => { const v = +$("latSel").value; if (LATS.includes(v) && v !== S.prefs.lat) { S.prefs = { ...S.prefs, lat: v, t: Date.now() }; commit(); } });
 
+/* ---------- sleep goal settings ---------- */
+(function () {
+  const y = new Date().getFullYear(); let o = '<option value="">Choose your birth year</option>';
+  for (let v = y - MIN_AGE; v >= y - MAX_AGE; v--) o += '<option value="' + v + '">' + v + '</option>';
+  $("bornSel").innerHTML = o;
+})();
+function renderGoalUI() {
+  const b = band(), g = goalOn(today());
+  if (document.activeElement !== $("bornSel")) $("bornSel").value = S.prefs.born ? String(S.prefs.born) : "";
+  $("goalVal").textContent = hm(g);
+  $("goalDown").disabled = !b || g <= b.ok[0]; $("goalUp").disabled = !b || g >= b.ok[1];
+  if (!b) { $("goalNote").textContent = "Add your birth year to set a goal that fits your age. Until then, your goal is 8 hours."; return; }
+  const out = g < b.rec[0] || g > b.rec[1];
+  $("goalNote").innerHTML = "Recommended for ages " + esc(b.name) + ": " + rangeText(b.rec) + "." +
+    (out ? ' <span class="warn">' + (g < b.rec[0] ? "Less" : "More") + " than recommended for your age.</span>" : "") +
+    (g <= b.ok[0] || g >= b.ok[1] ? " This is as far as the range goes." : "");
+}
+function goalCardOff() { try { return localStorage.getItem(LS_GOALCARD) === "1"; } catch (e) { return false; } }
+function renderGoalCard() { $("goalCard").hidden = !(ready && !S.prefs.born && !goalCardOff()); }
+$("bornSel").addEventListener("change", () => {
+  const v = normBorn($("bornSel").value); if (!v || v === S.prefs.born) return;
+  const first = !S.prefs.born;
+  S.prefs = { ...S.prefs, born: v, t: Date.now() }; fitGoal(); commit();
+  toast(first ? "Your goal is " + glong(goalOn(today())) + ". Adjust it below." : "Birth year updated");
+});
+function nudgeGoal(d) { if (applyGoal(goalOn(today()) + d)) commit(); }
+$("goalDown").onclick = () => nudgeGoal(-15);
+$("goalUp").onclick = () => nudgeGoal(15);
+$("goalSet").onclick = () => { status(); renderAccount(); renderReminderUI(); renderGoalUI(); openSheet("setSheet"); $("goalField").scrollIntoView({ block: "center" }); $("bornSel").focus(); };
+$("goalLater").onclick = () => { try { localStorage.setItem(LS_GOALCARD, "1"); } catch (e) { /* ignore */ } renderGoalCard(); };
+
 /* ---------- reminders (Android notifications) ----------
    Reminders are set per phone and re-planned whenever your data or schedule changes:
    wind-down 30 minutes before tonight's bedtime, bedtime, and a morning reminder an hour after wake-up
@@ -701,7 +788,7 @@ function renderAccount() {
   const google = account.providers.includes("google.com");
   $("acctInfo").textContent = "Signed in as " + (account.email || account.name || "your account") + (google ? " with Google" : "") + ".";
 }
-$("openSettings").onclick = () => { status(); renderAccount(); renderReminderUI(); openSheet("setSheet"); };
+$("openSettings").onclick = () => { status(); renderAccount(); renderReminderUI(); renderGoalUI(); openSheet("setSheet"); };
 $("closeSet").onclick = () => closeSheet("setSheet");
 $("signOutBtn").onclick = async () => {
   if (syncState === "pending" || syncState === "err" || writing) { toast("Connect to the internet first, so your latest entries reach your account."); return; }
@@ -815,6 +902,7 @@ function startSession(user) {
   account = user; uid = user ? user.uid : null;
   S = loadLocal(); serverCanon = null; writing = false; again = false; syncState = user ? "pending" : "local";
   hWeek = null; edit = null; pick = -1; ready = true;
+  if (fitGoal()) saveLocal();
   render(); resetForm(); showApp(); setView(startView(), true); status(); renderAccount(); renderReminderUI();
   if (user) resumeSync();
   while (queuedActions.length) { const [a, x] = queuedActions.shift(); onNotification(a, x); }
@@ -824,7 +912,7 @@ function endSession() { stopSync(); ready = false; uid = null; account = null; S
 /* ---------- keep "today" current ---------- */
 function tick() {
   if (!ready) return;
-  if (today() !== lastDay) { pick = -1; render(); if (!$("entrySheet").open) resetForm(); setView(view, true); }
+  if (today() !== lastDay) { pick = -1; if (fitGoal()) commit(); else render(); if (!$("entrySheet").open) resetForm(); setView(view, true); }
   else { renderTonight(); if (view === "schedule") renderSchedule(); }
 }
 setInterval(tick, 30000);
