@@ -4,6 +4,11 @@
 # Otherwise uses the public test key in ci/, which is fine for trying the app on a phone.
 # Common paste mistakes in the secrets are fixed here, and anything else is explained on the build's summary page.
 set -euo pipefail
+# What to sign. The defaults are the current (Capacitor) app; the native app's workflow sets its own.
+APK_IN="${APK_IN:-android/app/build/outputs/apk/release/app-release-unsigned.apk}"
+AAB_IN="${AAB_IN:-android/app/build/outputs/bundle/release/app-release.aab}"
+OUT_NAME="${OUT_NAME:-sleep-tracker}"
+GS_JSON="${GS_JSON:-google-services.json}"
 mkdir -p dist
 TMP="${RUNNER_TEMP:-$(mktemp -d)}"
 trap 'rm -f "$TMP/upload-key.jks" "$TMP/aligned.apk"' EXIT
@@ -67,29 +72,29 @@ if [ -n "${KEYSTORE_BASE64:-}" ]; then
     if [ "$(printf '%s\n' "$ALIASES" | grep -c .)" -eq 1 ]; then ALIAS="$ALIASES"
     else fail "KEY_ALIAS" "The key file has no key called '$ALIAS'. Delete the KEY_ALIAS secret, or set it to one of: $(printf '%s' "$ALIASES" | tr '\n' ' ')"; fi
   fi
-  KS="$TMP/upload-key.jks"; NAME=sleep-tracker; KIND="your upload key"
+  KS="$TMP/upload-key.jks"; NAME="$OUT_NAME"; KIND="your upload key"
 else
   KS="ci/test-key.p12"; export SIGN_PASS=android; ALIAS=test
-  NAME=sleep-tracker-test; KIND="the public test key"
+  NAME="$OUT_NAME-test"; KIND="the public test key"
   echo "::warning title=Test build::No KEYSTORE_BASE64 secret, so this build is signed with the public test key. Fine for your phone, not for Google Play."
 fi
 
 BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
-IN=android/app/build/outputs/apk/release/app-release-unsigned.apk
+IN="$APK_IN"
 "$BT/zipalign" -P 16 -f 4 "$IN" "$TMP/aligned.apk" 2>/dev/null || "$BT/zipalign" -p -f 4 "$IN" "$TMP/aligned.apk"
 "$BT/apksigner" sign --v4-signing-enabled false --ks "$KS" --ks-pass env:SIGN_PASS --key-pass env:SIGN_PASS --ks-key-alias "$ALIAS" --out "dist/$NAME.apk" "$TMP/aligned.apk"
 CERT="$("$BT/apksigner" verify --print-certs "dist/$NAME.apk" | grep -m1 "SHA-1 digest" | sed 's/.*: //' | tr 'A-F' 'a-f')"
 CERTC="$(printf '%s' "$CERT" | tr 'a-f' 'A-F' | sed 's/../&:/g; s/:$//')"
 
-cp android/app/build/outputs/bundle/release/app-release.aab "dist/$NAME.aab"
+cp "$AAB_IN" "dist/$NAME.aab"
 jarsigner -keystore "$KS" -storepass:env SIGN_PASS -keypass:env SIGN_PASS -sigalg SHA256withRSA -digestalg SHA-256 "dist/$NAME.aab" "$ALIAS" >/dev/null
 jarsigner -verify "dist/$NAME.aab" | grep -q "jar verified" || fail "Signing" "The AAB signature didn't verify."
 
 echo "::notice title=Signed::$NAME.apk ($(du -h "dist/$NAME.apk" | cut -f1)) and $NAME.aab, signed with $KIND (SHA-1 $CERTC), build tools $(basename "$BT")."
 
 # Google sign-in only works when this key's fingerprint is registered in Firebase
-if [ -f google-services.json ] && ! grep -q "sleep-tracker-placeholder" google-services.json; then
-  if grep -qi "$CERT" google-services.json; then
+if [ -f "$GS_JSON" ] && ! grep -q "sleep-tracker-placeholder" "$GS_JSON"; then
+  if grep -qi "$CERT" "$GS_JSON"; then
     echo "::notice title=Google sign-in::This key's SHA-1 is registered in your Firebase project."
   else
     echo "::notice title=Google sign-in::Your google-services.json doesn't list this key's SHA-1 ($CERTC). That's fine if Google sign-in works in the app. If it shows an error, add this SHA-1 to your Android app in Firebase (Project settings, Add fingerprint)."

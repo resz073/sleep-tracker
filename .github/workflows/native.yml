@@ -1,0 +1,83 @@
+name: Build native app (preview)
+
+# The new Kotlin app in native/, while it's being built. Each run publishes a pre-release named
+# "Sleep Tracker Next", which installs next to the current app instead of replacing it.
+on:
+  push:
+    branches: [main]
+    paths: ["native/**", ".github/workflows/native.yml", "scripts/sign.sh", "scripts/ci-run.sh"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: native-build
+  cancel-in-progress: false
+
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Check the Android SDK
+        run: |
+          if [ -z "${ANDROID_HOME:-}" ] || [ ! -d "$ANDROID_HOME/build-tools" ]; then echo "::error::No Android SDK on this runner."; exit 1; fi
+          echo "::notice title=Tools::$(java -version 2>&1 | head -1), build tools: $(ls "$ANDROID_HOME/build-tools" | tr '\n' ' ')platforms: $(ls "$ANDROID_HOME/platforms" | tr '\n' ' ')"
+
+      - name: Add Firebase settings
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: bash scripts/ci-run.sh "Firebase settings" node native/scripts/firebase-config.mjs
+
+      - name: Build
+        working-directory: native
+        run: |
+          export VERSION_CODE=$((1000 + GITHUB_RUN_NUMBER))
+          chmod +x gradlew
+          bash ../scripts/ci-run.sh "Gradle build" ./gradlew assembleRelease bundleRelease --no-daemon --warning-mode=summary
+          bash ../scripts/permissions.sh app/build/outputs/logs/manifest-merger-release-report.txt
+
+      - name: Sign
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          APK_IN: native/app/build/outputs/apk/release/app-release-unsigned.apk
+          AAB_IN: native/app/build/outputs/bundle/release/app-release.aab
+          OUT_NAME: sleep-tracker-next
+        run: |
+          printf '%s' "$GOOGLE_SERVICES_JSON" > "$RUNNER_TEMP/gs.json"
+          GS_JSON="$RUNNER_TEMP/gs.json" bash scripts/ci-run.sh "Signing" bash scripts/sign.sh
+          rm -f "$RUNNER_TEMP/gs.json"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: sleep-tracker-next-build-${{ github.run_number }}
+          path: dist/
+          retention-days: 30
+
+      # A pre-release, so the current app's newest build stays at the top of the Releases page as "Latest"
+      - name: Publish pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(grep -m1 'versionName' native/app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          TAG="next-v$VERSION-build.${{ github.run_number }}"
+          APK=$(ls dist/*.apk | head -1)
+          bash scripts/ci-run.sh "Release" gh release create "$TAG" dist/* --prerelease --target "$GITHUB_SHA" \
+            --title "Sleep Tracker Next $VERSION (preview, build ${{ github.run_number }})" \
+            --notes "Preview of the new native Android app. It installs next to Sleep Tracker as a separate app called Sleep Tracker Next, and shows your entries without changing your account. Not for Google Play yet."
+          echo "::notice title=Download::https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$APK")"

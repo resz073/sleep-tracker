@@ -105,6 +105,28 @@ Every upload to Play needs a higher version code. Each build uses its build numb
 | `docs/` | Website: home page, privacy policy, account deletion |
 | `store/` | Google Play listing text, icon, feature graphic and screenshots |
 | `ci/test-key.p12` | Public key for test builds |
+| `native/` | The native Kotlin app, in progress (see above) |
+
+## The native app (in progress)
+
+A Kotlin version of the app is being built in `native/`. GitHub builds it whenever something there changes (**Actions → Build native app (preview)**, or **Run workflow** to build it yourself) and publishes it as a **pre-release** called **Sleep Tracker Next**.
+
+It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. For now it signs in and shows your entries. It doesn't change anything in your account yet.
+
+To install it, open the [Releases](https://github.com/resz073/sleep-tracker/releases) page on your phone, find the newest **Sleep Tracker Next** pre-release, and download `sleep-tracker-next.apk`.
+
+### One-time setup: Google sign-in in the preview
+
+Google sign-in only works for apps registered in Firebase, and the preview is a separate app:
+
+1. In Firebase, open **Project settings → Your apps → Add app → Android**.
+   - Package name: `com.resz073.sleeptracker.next`
+   - SHA-1: your upload key's, from `sleep-tracker-signing.txt` (`55:7A:E9:C2:97:4C:FA:45:90:EA:02:46:7B:2B:60:9C:D1:18:13:1B`)
+   - Register, then skip the remaining steps. On the new app's card, **Add fingerprint** and add the test key SHA-1 too: `7B:B3:FD:4A:2C:B3:C2:EF:25:47:5D:88:A1:D3:69:3C:3E:35:3B:4C`
+2. Download `google-services.json` again. It now lists both apps. Replace the `GOOGLE_SERVICES_JSON` secret with its contents. The current app keeps working with the new file.
+3. **Actions → Build native app (preview) → Run workflow.**
+
+Until then, the preview still builds and email sign-in may work, but Google sign-in won't.
 
 ## Building on your own computer (optional)
 
