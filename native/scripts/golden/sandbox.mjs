@@ -10,6 +10,7 @@ function stub() {
   return new Proxy(function () {}, {
     get(_, k) {
       if (k in store) return store[k];
+      if (k === "addEventListener") return (type, fn) => { (store.__on ||= {})[type] = (store.__on[type] || []).concat(fn); };
       if (k === Symbol.toPrimitive) return hint => (hint === "number" ? 0 : "");
       if (k === Symbol.iterator) return function* () {};
       if (k === "then") return undefined; // not a promise
@@ -32,6 +33,10 @@ class __FakeDate extends __RealDate {
 }
 globalThis.Date = __FakeDate;
 globalThis.__setNow = v => { __now = v; };
+// Math.random from a fixed seed, so new entry ids (time + random letters) are the same on every run
+let __seed = 1;
+Math.random = () => { __seed = (__seed + 0x6D2B79F5) >>> 0; let t = __seed; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+globalThis.__seedRandom = v => { __seed = v >>> 0; };
 `;
 
 export function sandbox(appFile, extractFile) {
@@ -58,7 +63,9 @@ export function sandbox(appFile, extractFile) {
     },
     links: { privacy: "https://example.invalid/privacy", deletion: "https://example.invalid/delete" },
     appVersion: "0",
-    __els: els, __ls: ls
+    __els: els, __ls: ls,
+    // Runs the handlers the app attached to an element with addEventListener (e.g. a menu's "change")
+    __fire: (id, type) => { const e = els.get(id); ((e && e.__on && e.__on[type]) || []).forEach(f => f({ target: e })); }
   };
   vm.createContext(ctx);
   vm.runInContext(PRELUDE, ctx, { filename: "prelude.js" });

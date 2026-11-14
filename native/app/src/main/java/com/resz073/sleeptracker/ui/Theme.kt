@@ -21,6 +21,7 @@ data class AppColors(
     val bg: Color, val card: Color, val card2: Color, val ink: Color, val mute: Color, val line: Color,
     val acc: Color, val accSoft: Color, val onAcc: Color, val good: Color, val bad: Color, val warn: Color,
     val sky: Color, val skyInk: Color, val skyMute: Color, val skyAcc: Color, val skyLine: Color,
+    val skyDawn: Color = Color(0xFFFFB48A), val onSkyDawn: Color = Color(0xFF2A1406),
 )
 
 private val Light = AppColors(

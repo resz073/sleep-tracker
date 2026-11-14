@@ -2,6 +2,7 @@ package com.resz073.sleeptracker.engine
 
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.ZoneId
 
 /**
  * Checks the Kotlin sleep engine against the current app. The reference results in
@@ -9,34 +10,63 @@ import org.junit.Test
  * (native/scripts/golden/make.mjs), in several time zones, so any difference is a porting mistake.
  */
 class GoldenTest {
+    companion object {
+        /** Every reference case, read once */
+        val cases: List<Map<String, Any?>> by lazy {
+            resource("golden/index.txt").lines().filter { it.isNotBlank() }.flatMap { file ->
+                @Suppress("UNCHECKED_CAST")
+                ((Json.parse(resource("golden/$file")) as Map<*, *>)["cases"] as List<Map<String, Any?>>)
+            }
+        }
+
+        private fun resource(name: String): String =
+            (GoldenTest::class.java.classLoader!!.getResourceAsStream(name) ?: error("missing test resource $name")).use { it.readBytes().toString(Charsets.UTF_8) }
+
+        fun label(c: Map<String, Any?>) = "${c["name"]} (${c["zone"]}, ${c["now"]})"
+    }
+
     @Test
     fun sameResultsAsTheCurrentApp() {
         val problems = ArrayList<String>()
-        var cases = 0
-        for (file in resource("golden/index.txt").lines().filter { it.isNotBlank() }) {
-            val root = TestJson.parse(resource("golden/$file")) as Map<*, *>
-            for (raw in root["cases"] as List<*>) {
-                @Suppress("UNCHECKED_CAST") val c = raw as Map<String, Any?>
-                cases++
-                val label = "${c["name"]} (${c["zone"]}, ${c["now"]})"
-                val actual = try {
-                    Snapshot.of(c)
-                } catch (e: Throwable) {
-                    problems += "$label: crashed: $e at ${e.stackTrace.take(4).joinToString(" < ")}"
-                    continue
-                }
-                val found = ArrayList<String>()
-                compare("", c["expect"], actual, found)
-                found.take(6).forEach { problems += "$label: $it" }
-                if (found.size > 6) problems += "$label: and ${found.size - 6} more differences"
+        for (c in cases) {
+            val actual = try {
+                Snapshot.of(c)
+            } catch (e: Throwable) {
+                problems += "${label(c)}: crashed: $e at ${e.stackTrace.take(4).joinToString(" < ")}"
+                continue
             }
+            val found = ArrayList<String>()
+            compare("", c["expect"], actual, found)
+            found.take(6).forEach { problems += "${label(c)}: $it" }
+            if (found.size > 6) problems += "${label(c)}: and ${found.size - 6} more differences"
         }
-        assertTrue("$cases cases checked", cases >= 50)
+        assertTrue("${cases.size} cases checked", cases.size >= 70)
         assertTrue("${problems.size} differences from the current app:\n" + problems.take(80).joinToString("\n"), problems.isEmpty())
     }
 
-    private fun resource(name: String): String =
-        (javaClass.classLoader!!.getResourceAsStream(name) ?: error("missing test resource $name")).use { it.readBytes().toString(Charsets.UTF_8) }
+    /** What the native app writes to the account must be exactly what the current app writes, and read back unchanged */
+    @Test
+    fun writesWhatTheCurrentAppWrites() {
+        val problems = ArrayList<String>()
+        for (c in cases) {
+            val now = Now((c["nowMs"] as Number).toLong(), ZoneId.of(c["zone"] as String))
+            val doc = SleepDoc.read(c["doc"], now)
+            val written = doc.toFirestore()
+            if (Json.stringify(written) != doc.canon()) problems += "${label(c)}: written ${Json.stringify(written).take(200)} but the current app writes ${doc.canon().take(200)}"
+            if (SleepDoc.read(written, now).canon() != doc.canon()) problems += "${label(c)}: what's written doesn't read back the same"
+            if (SleepDoc.fromText(doc.canon(), now).canon() != doc.canon()) problems += "${label(c)}: the copy on the phone doesn't read back the same"
+            fun wholeNumbers(v: Any?, path: String) {
+                when (v) {
+                    is Map<*, *> -> v.forEach { (k, x) -> wholeNumbers(x, "$path.$k") }
+                    is List<*> -> v.forEachIndexed { i, x -> wholeNumbers(x, "$path[$i]") }
+                    is Double -> if (v == Math.rint(v)) problems += "${label(c)}: $path is written as a decimal ($v), the current app writes an integer"
+                    is Int -> problems += "${label(c)}: $path is an Int, expected Long"
+                }
+            }
+            wholeNumbers(written, "")
+        }
+        assertTrue(problems.take(40).joinToString("\n"), problems.isEmpty())
+    }
 
     private fun show(v: Any?): String = (if (v is String) "\"$v\"" else v.toString()).let { if (it.length > 160) it.take(160) + "…" else it }
 

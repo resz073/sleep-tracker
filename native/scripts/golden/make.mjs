@@ -27,7 +27,7 @@ async function child(zone) {
   const ms = s => new Date(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10), +s.slice(11, 13), +s.slice(14, 16)).getTime();
   const out = input.map(scn => {
     scn.nowMs = ms(scn.now);
-    (scn.goalOps || []).forEach(o => { o.nowMs = ms(o.at); });
+    (scn.goalOps || []).concat(scn.actions || []).forEach(o => { o.nowMs = ms(o.at); });
     try { return { ...scn, expect: box.run(scn) }; } catch (e) { e.message = scn.name + ": " + e.message; throw e; }
   });
   process.stdout.write(JSON.stringify(out));

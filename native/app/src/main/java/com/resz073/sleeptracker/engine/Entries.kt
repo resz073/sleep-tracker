@@ -53,14 +53,14 @@ object Entries {
     }
 
     /** "I'm awake": logs the sleep in progress up to this minute, unless it's too short or needs checking */
-    fun wakeUp(model: SleepModel, newId: String): WakeUp {
+    fun wakeUp(model: SleepModel, newId: () -> String): WakeUp {
         val bed = model.doc.pending.bed ?: return WakeUp.NotAsleep
         val zone = model.zone
         val wake = model.now.minute
         val d = Time.minutes(bed, wake, zone)
         if (d < 10) return WakeUp.TooShort
         if (!SleepDoc.valid(bed, wake, zone) || overlap(bed, wake, model.entries, null, zone) != null) return WakeUp.Check(bed, wake)
-        return WakeUp.Logged(Entry(newId, bed, wake, 0, model.now.ms.toDouble()), d)
+        return WakeUp.Logged(Entry(newId(), bed, wake, 0, model.now.ms.toDouble()), d)
     }
 
     /** The message the current app shows after "I'm awake" */

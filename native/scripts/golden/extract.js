@@ -15,6 +15,7 @@
 
   globalThis.__run = function (scn) {
     __setNow(scn.nowMs);
+    __seedRandom(20261114);
     __ls.clear();
     if (scn.reminders) __ls.set(LS_REM, JSON.stringify(scn.reminders));
     resetUi();
@@ -196,6 +197,52 @@
         return [res, S.prefs.born, S.prefs.goals.map(g => [g.from, g.min, g.on]), S.prefs.t, goalOn(today()), band() ? band().name : null];
       });
       __setNow(scn.nowMs);
+    }
+
+    /* The buttons and settings, run one after another: what each saves and says. New entry ids are recorded
+       so the Kotlin side can use the same ones. "$last" names the newest entry added by an earlier step. */
+    if (scn.actions) {
+      S = load(scn); resetUi();
+      let last = null;
+      R.actions = scn.actions.map(op => {
+        __setNow(op.nowMs); render();
+        const before = new Set(S.entries.map(e => e.id)), tm = __els.get("tmsg");
+        if (tm) tm.textContent = "";
+        const id = op.id === "$last" ? last : op.id;
+        switch (op.do) {
+          case "sleep": goSleep(); break;
+          case "cancel": cancelSleep(); break;
+          case "awake": wakeUp(); break;
+          case "rate": rate(op.q); break;
+          case "delete": delEntry(id); break;
+          case "undo": $("tundo").onclick(); break;
+          case "save":
+            $("bd").value = op.bd; $("bt").value = op.bt; $("wd").value = op.wd; $("wt").value = op.wt; $("q").value = String(op.q || 0);
+            fresh = false; edit = id || null; $("save").onclick(); edit = null; break;
+          case "weekend": $("wkend").value = op.v; __fire("wkend", "change"); break;
+          case "wakeAuto": $("wkAuto").onclick(); break;
+          case "wakeSet": $("wkSet").onclick(); break;
+          case "wakeTime": $("wkTime").value = op.v; __fire("wkTime", "change"); break;
+          case "lat": $("latSel").value = String(op.v); __fire("latSel", "change"); break;
+          case "goalDown": $("goalDown").onclick(); break;
+          case "goalUp": $("goalUp").onclick(); break;
+          case "born": $("bornSel").value = String(op.v); __fire("bornSel", "change"); break;
+          case "import": importCsv(op.csv); break;
+          default: throw new Error("unknown action " + op.do);
+        }
+        const ids = S.entries.filter(e => !before.has(e.id)).map(e => e.id);
+        if (ids.length) last = ids[ids.length - 1];
+        return [op.do, textOf("tmsg"), ids, canon(S)];
+      });
+      __setNow(scn.nowMs);
+    }
+
+    /* Two copies merged, as when this phone's copy meets the account's */
+    if (scn.merges) {
+      R.merges = scn.merges.map(([a, b]) => {
+        S = merge(fromRaw(a), fromRaw(b)); render();
+        return [canon(S), M.es.map(e => e.id)];
+      });
     }
     return R;
   };

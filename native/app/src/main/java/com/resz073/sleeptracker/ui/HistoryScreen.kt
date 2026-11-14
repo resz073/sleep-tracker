@@ -41,13 +41,6 @@ fun HistoryScreen(sleep: SleepState) {
         is SleepState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = c.acc)
         }
-        is SleepState.Failed -> Column(Modifier.padding(16.dp)) {
-            AppCard {
-                CardTitle("Couldn't load your entries")
-                Spacer(Modifier.height(6.dp))
-                Muted(sleep.message)
-            }
-        }
         is SleepState.Ready -> {
             val months = sleep.entries.groupBy { it.wake.toLocalDate().withDayOfMonth(1) }.toList()
             LazyColumn(

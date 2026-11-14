@@ -144,7 +144,7 @@ internal object Snapshot {
             }
             listOf(x[0], x[1], x[2], x[3], x[4], kind, detail)
         }
-        r["wake"] = Entries.wakeUpMessage(Entries.wakeUp(m, "test"))
+        r["wake"] = Entries.wakeUpMessage(Entries.wakeUp(m) { "test" })
 
         (c["csvIn"] as? String)?.let { csv ->
             var n = 0
@@ -165,6 +165,56 @@ internal object Snapshot {
                     else -> error("unknown goal op")
                 }
                 listOf(res, prefs.born, prefs.goals.map { listOf(it.from, it.min, it.on) }, prefs.t, Goals.goalOn(prefs.goals, at.today), Goals.band(prefs.born, at.year)?.name)
+            }
+        }
+        /* the buttons and settings, one after another */
+        (c["actions"] as? List<*>)?.let { ops ->
+            val expected = ((c["expect"] as Map<*, *>)["actions"] as? List<*>) ?: emptyList<Any?>()
+            var d0 = SleepDoc.read(c["doc"], now)
+            var last: String? = null
+            var deleted: Entry? = null
+            r["actions"] = ops.mapIndexed { i, raw ->
+                val o = raw as Map<*, *>
+                val at = Now((o["nowMs"] as Number).toLong(), zone)
+                val model = SleepModel(d0, at)
+                // the current app's ids for new entries, so both sides save the same thing
+                val ids = ArrayDeque((((expected.getOrNull(i) as? List<*>)?.getOrNull(2) as? List<*>) ?: emptyList<Any?>()).map { it as String })
+                val newId = { ids.removeFirstOrNull() ?: "unexpected-new-id" }
+                val id = if (o["id"] == "\$last") last else o["id"] as String?
+                fun str(k: String) = o[k] as String
+                val change: Change? = when (o["do"]) {
+                    "sleep" -> Edits.goToSleep(d0, at)
+                    "cancel" -> Edits.cancelSleep(d0, at)
+                    "awake" -> Edits.wakeUp(model, newId)?.let { Change(it.doc, it.message) }
+                    "rate" -> Edits.rate(model, (o["q"] as Number).toInt())
+                    "delete" -> Edits.delete(d0, id!!, at)?.let { deleted = it.removed; Change(it.doc, it.message) }
+                    "undo" -> deleted?.let { Edits.restore(d0, it, at) }
+                    "save" -> Edits.save(model, str("bd"), str("bt"), str("wd"), str("wt"), (o["q"] as Number?)?.toInt() ?: 0, id, newId)
+                    "weekend" -> Edits.setWeekend(d0, str("v"), at)
+                    "wakeAuto" -> Edits.setWakeAutomatic(d0, at)
+                    "wakeSet" -> Edits.setWakeFixed(model, at)
+                    "wakeTime" -> Edits.setWakeTime(d0, str("v"), at)
+                    "lat" -> Edits.setLatency(d0, (o["v"] as Number).toInt(), at)
+                    "goalDown" -> Edits.nudgeGoal(d0, -15, at)
+                    "goalUp" -> Edits.nudgeGoal(d0, 15, at)
+                    "born" -> Edits.setBorn(d0, o["v"], at)
+                    "import" -> Edits.import(model, str("csv"), newId)
+                    else -> error("unknown action ${o["do"]}")
+                }
+                val before = d0.items.map { it.id }.toSet()
+                if (change != null) d0 = change.doc
+                val added = d0.items.filter { it.id !in before }.map { it.id }
+                if (added.isNotEmpty()) last = added.last()
+                listOf(o["do"], change?.message ?: "", added, d0.canon())
+            }
+        }
+
+        /* two copies merged */
+        (c["merges"] as? List<*>)?.let { pairs ->
+            r["merges"] = pairs.map { p ->
+                p as List<*>
+                val merged = SleepDoc.merge(SleepDoc.read(p[0], now), SleepDoc.read(p[1], now))
+                listOf(merged.canon(), SleepModel(merged, now).entries.map { it.id })
             }
         }
         return r

@@ -111,7 +111,7 @@ Every upload to Play needs a higher version code. Each build uses its build numb
 
 A Kotlin version of the app is being built in `native/`. GitHub builds it whenever something there changes (**Actions → Build native app (preview)**, or **Run workflow** to build it yourself) and publishes it as a **pre-release** called **Sleep Tracker Next**.
 
-It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. For now it signs in and shows your entries. It doesn't change anything in your account yet.
+It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. For now it signs in, shows your entries, and has **Going to sleep** and **I'm awake** on Today. Those save to your account exactly as the current app's buttons do, so the two apps can be used side by side.
 
 To install it, open the [Releases](https://github.com/resz073/sleep-tracker/releases) page on your phone, find the newest **Sleep Tracker Next** pre-release, and download `sleep-tracker-next.apk`.
 
@@ -135,6 +135,17 @@ All of the app's sleep calculations are ported to Kotlin in `native/app/src/main
 It's tested against the current app itself. `native/scripts/golden/make.mjs` runs `src/app.js` on 70 test accounts in 6 time zones, including daylight-saving changes, and saves every result in `native/app/src/test/resources/golden/`. The Kotlin tests must match every value. Before each native build, GitHub runs those tests and checks that the saved results still match `src/app.js`. A change to the current app's calculations therefore fails the native build until the Kotlin engine matches again.
 
 After changing the calculations in `src/app.js`, refresh the saved results with `node native/scripts/golden/make.mjs`.
+
+### Sync and offline
+
+The preview keeps a copy of your data on the phone, so it opens without internet. It keeps that copy in step with your account the way the current app does (`engine/Sync.kt`):
+
+- Every change is saved on the phone first, so nothing is lost offline or if the app closes.
+- Whenever your account's copy arrives, it's merged in entry by entry. The newest change of each entry wins, so changes saved on either app are kept.
+- When the phone has something your account lacks, the merged copy is written back in the current app's exact format. The preview writes in a single step (a Firestore transaction) that re-reads the account first. If the current app saves at the same moment, both changes are kept.
+- Settings shows whether everything is synced. Signing out is refused while some changes are only on the phone, as in the current app.
+
+The tests check every button and setting against the current app (what each one saves, and its message), merges of two copies, and offline situations against a stand-in account: reconnecting, the other app saving at the same moment, restarts, a damaged copy on the phone, and no endless writes.
 
 ## Building on your own computer (optional)
 

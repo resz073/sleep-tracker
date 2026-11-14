@@ -22,6 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -30,11 +34,14 @@ import androidx.compose.ui.unit.dp
 import com.resz073.sleeptracker.BuildConfig
 import com.resz073.sleeptracker.R
 import com.resz073.sleeptracker.data.Session
+import com.resz073.sleeptracker.data.SleepState
+import com.resz073.sleeptracker.engine.SyncState
 
 @Composable
-fun SettingsScreen(session: Session.SignedIn, onBack: () -> Unit, onSignOut: () -> Unit) {
+fun SettingsScreen(session: Session.SignedIn, sleep: SleepState, onBack: () -> Unit, onSignOut: () -> Boolean) {
     val c = LocalAppColors.current
     val uri = LocalUriHandler.current
+    var blocked by remember { mutableStateOf(false) }
     Column(
         Modifier
             .fillMaxSize()
@@ -53,12 +60,25 @@ fun SettingsScreen(session: Session.SignedIn, onBack: () -> Unit, onSignOut: () 
             CardTitle("Account")
             Spacer(Modifier.height(6.dp))
             Muted("Signed in as ${session.email.ifEmpty { "your account" }} with ${if (session.google) "Google" else "email"}.")
+            Spacer(Modifier.height(6.dp))
+            // The current app's wording for how far your entries are synced
+            Muted(
+                when ((sleep as? SleepState.Ready)?.sync) {
+                    SyncState.SYNCED -> "Your entries are saved to your account and sync across your devices."
+                    SyncState.NOT_SYNCED -> "Not synced yet. Your entries are kept on this phone and will sync when you're back online."
+                    else -> "Syncing…"
+                }
+            )
             Spacer(Modifier.height(12.dp))
             Button(
-                onClick = onSignOut,
+                onClick = { blocked = !onSignOut() },
                 modifier = Modifier.fillMaxWidth().height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = c.accSoft, contentColor = c.ink),
             ) { Text("Sign out", style = MaterialTheme.typography.labelLarge) }
+            if (blocked && (sleep as? SleepState.Ready)?.canSignOut != true) {
+                Spacer(Modifier.height(8.dp))
+                Text("Connect to the internet first, so your latest entries reach your account.", style = MaterialTheme.typography.bodyMedium, color = c.warn)
+            }
         }
 
         AppCard {
@@ -67,8 +87,8 @@ fun SettingsScreen(session: Session.SignedIn, onBack: () -> Unit, onSignOut: () 
             Muted("Sleep Tracker Next ${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE})")
             Spacer(Modifier.height(6.dp))
             Muted(
-                "The new Android app, while it's being built. It shows your entries but doesn't change anything " +
-                    "in your account yet, so keep using the current app to log your sleep."
+                "The new Android app, while it's being built. Going to sleep and I'm awake save to your account " +
+                    "and sync with the current app; everything else is view-only for now."
             )
             if (!BuildConfig.FIREBASE_APP_REGISTERED) {
                 Spacer(Modifier.height(8.dp))

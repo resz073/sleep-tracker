@@ -256,6 +256,65 @@ export function scenarios() {
   add("csv import, wrong columns", "Asia/Dhaka", "2026-11-14T21:00", { entries: [], prefs: prefs() }, { csvIn: "date,start,end\n2026-11-10,22:00,06:00\n" });
   add("csv import, header only", "Asia/Dhaka", "2026-11-14T21:00", { entries: [], prefs: prefs() }, { csvIn: "bed_date,bed_time,wake_date,wake_time\n\n" });
 
+  /* the buttons and settings, one after another (what each saves is compared exactly) */
+  const ah = hist(40, "2026-11-14T21:00", { days: 20 });
+  const editId = ah[ah.length - 3].id, delId = ah[ah.length - 5].id;
+  const edited = { bed: at(ah[ah.length - 3].bed, 10), wake: at(ah[ah.length - 3].wake, -10) }; // inside its own times, so it can't overlap another
+  add("actions: a day of buttons and settings", "Asia/Dhaka", "2026-11-14T21:00", { entries: ah, prefs: prefs() }, {
+    actions: [
+      { at: "2026-11-14T22:58", do: "sleep" }, { at: "2026-11-14T23:30", do: "cancel" }, { at: "2026-11-14T23:35", do: "sleep" },
+      { at: "2026-11-14T23:40", do: "sleep" }, { at: "2026-11-15T07:05", do: "awake" }, { at: "2026-11-15T07:06", do: "rate", q: 4 },
+      { at: "2026-11-15T07:07", do: "rate", q: 2 }, { at: "2026-11-15T07:10", do: "awake" }, { at: "2026-11-15T07:11", do: "cancel" },
+      { at: "2026-11-15T13:00", do: "sleep" }, { at: "2026-11-15T13:04", do: "awake" }, { at: "2026-11-15T13:05", do: "sleep" },
+      { at: "2026-11-15T14:00", do: "awake" }, { at: "2026-11-15T14:01", do: "delete", id: "$last" }, { at: "2026-11-15T14:02", do: "undo" },
+      { at: "2026-11-15T14:03", do: "delete", id: delId }, { at: "2026-11-15T14:04", do: "delete", id: delId }, { at: "2026-11-15T14:05", do: "delete", id: "nope" },
+      { at: "2026-11-15T15:00", do: "save", bd: "2026-11-15", bt: "15:10", wd: "2026-11-15", wt: "15:40", q: 3 },
+      { at: "2026-11-15T16:30", do: "save", bd: "2026-11-15", bt: "15:10", wd: "2026-11-15", wt: "15:40", q: 3 },
+      { at: "2026-11-15T16:31", do: "save", id: editId, bd: edited.bed.slice(0, 10), bt: edited.bed.slice(11), wd: edited.wake.slice(0, 10), wt: edited.wake.slice(11), q: 5 },
+      { at: "2026-11-15T16:32", do: "save", bd: "2026-11-15", bt: "15:20", wd: "2026-11-15", wt: "15:30", q: 1 },
+      { at: "2026-11-15T16:33", do: "save", bd: "2026-11-15", bt: "16:00", wd: "2026-11-15", wt: "17:00", q: 0 },
+      { at: "2026-11-15T16:34", do: "save", bd: "2026-11-15", bt: "22:00", wd: "2026-11-15", wt: "21:00", q: 0 },
+      { at: "2026-11-15T16:35", do: "save", id: "$last", bd: "2026-11-15", bt: "15:00", wd: "2026-11-15", wt: "15:45", q: 2 },
+      { at: "2026-11-15T16:36", do: "save", id: editId, bd: "2026-11-15", bt: "15:10", wd: "2026-11-15", wt: "15:20", q: 2 },
+      { at: "2026-11-15T15:05", do: "weekend", v: "sat-sun" }, { at: "2026-11-15T15:06", do: "weekend", v: "sat-sun" }, { at: "2026-11-15T15:07", do: "weekend", v: "sun" },
+      { at: "2026-11-15T15:08", do: "wakeSet" }, { at: "2026-11-15T15:09", do: "wakeSet" }, { at: "2026-11-15T15:10", do: "wakeTime", v: "06:45" },
+      { at: "2026-11-15T15:11", do: "wakeTime", v: "06:45" }, { at: "2026-11-15T15:12", do: "wakeTime", v: "6:50" }, { at: "2026-11-15T15:13", do: "wakeAuto" },
+      { at: "2026-11-15T15:14", do: "wakeAuto" }, { at: "2026-11-15T15:15", do: "lat", v: 30 }, { at: "2026-11-15T15:16", do: "lat", v: 30 }, { at: "2026-11-15T15:17", do: "lat", v: 25 },
+      { at: "2026-11-15T15:18", do: "goalUp" }, { at: "2026-11-15T15:19", do: "born", v: 1990 }, { at: "2026-11-15T15:20", do: "goalDown" },
+      { at: "2026-11-15T15:21", do: "goalDown" }, { at: "2026-11-15T15:22", do: "goalUp" }, { at: "2026-11-15T15:23", do: "born", v: 2010 },
+      { at: "2026-11-15T15:24", do: "born", v: 2010 }, { at: "2026-11-16T09:00", do: "goalUp" },
+      { at: "2026-11-16T09:01", do: "import", csv: "bed_date,bed_time,wake_date,wake_time,minutes,quality\n2026-11-02,23:00,2026-11-03,06:00,,4\n2026-11-15,23:00,2026-11-16,06:30,,\n2026-11-02,23:30,2026-11-03,06:30,,\n" }
+    ]
+  });
+  const fixedWake = hist(41, "2026-11-14T21:00", { days: 20 });
+  add("actions: wake-up set from the plan", "Asia/Dhaka", "2026-11-14T21:00", { entries: fixedWake, prefs: prefs({ born: 1985 }) }, {
+    actions: [{ at: "2026-11-14T21:00", do: "wakeSet" }, { at: "2026-11-14T21:01", do: "wakeAuto" }, { at: "2026-11-14T21:02", do: "born", v: 1985 }, { at: "2026-11-14T21:03", do: "born", v: 1950 }]
+  });
+  add("actions: wake-up set without a plan", "Asia/Dhaka", "2026-11-14T21:00", { entries: [], prefs: prefs() }, { actions: [{ at: "2026-11-14T21:00", do: "wakeSet" }, { at: "2026-11-14T21:01", do: "rate", q: 3 }] });
+  add("actions: asleep for two days", "Asia/Dhaka", "2026-11-14T21:00", { entries: hist(42, "2026-11-12T21:00", { days: 10 }), pending: { bed: "2026-11-12T22:00", t: T0 + 3 }, prefs: prefs() }, {
+    actions: [{ at: "2026-11-14T21:00", do: "awake" }]
+  });
+  add("actions: waking into an overlap", "Asia/Dhaka", "2026-11-14T07:30", { entries: [E("ov1", "2026-11-14T05:00", "2026-11-14T06:30", 3, T0 + 2)], pending: { bed: "2026-11-13T23:00", t: T0 + 3 }, prefs: prefs() }, {
+    actions: [{ at: "2026-11-14T07:30", do: "awake" }, { at: "2026-11-14T07:31", do: "sleep" }, { at: "2026-11-14T07:40", do: "awake" }, { at: "2026-11-14T07:41", do: "rate", q: 5 }]
+  });
+
+  /* two copies of an account merged, as when this phone's copy meets the account's */
+  const mA = [E("m1", "2026-11-10T23:00", "2026-11-11T07:00", 3, 100), E("m2", "2026-11-11T23:00", "2026-11-12T07:00", 0, 100), E("m3", "2026-11-12T23:00", "2026-11-13T07:00", 4, 300)];
+  const mB = [E("m1", "2026-11-10T23:00", "2026-11-11T07:00", 3, 100), { id: "m2", del: 1, t: 200 }, E("m3", "2026-11-12T23:30", "2026-11-13T07:00", 4, 250), E("m4", "2026-11-13T23:00", "2026-11-14T06:00", 2, 120)];
+  add("merges of two copies", "Asia/Dhaka", "2026-11-14T21:00", null, {
+    merges: [
+      [{ entries: mA, pending: { bed: "2026-11-14T23:00", t: 300 }, prefs: prefs({ weekend: "sat-sun", t: 400 }) }, { entries: mB, pending: { bed: null, t: 250 }, prefs: prefs({ born: 1990, goals: [goal("0000-01-01", 450)], t: 410 }) }],
+      [{ entries: mB, pending: { bed: null, t: 250 }, prefs: prefs({ born: 1990, t: 410 }) }, { entries: mA, pending: { bed: "2026-11-14T23:00", t: 300 }, prefs: prefs({ weekend: "sat-sun", t: 400 }) }],
+      [{ entries: [{ id: "m2", del: 1, t: 200 }] }, { entries: [E("m2", "2026-11-11T23:00", "2026-11-12T07:15", 5, 260)] }],
+      [{ entries: mA, pending: { bed: "2026-11-14T22:00", t: 500 }, prefs: prefs({ t: 500 }) }, { entries: mA, pending: { bed: "2026-11-14T23:00", t: 500 }, prefs: prefs({ weekend: "fri", t: 500 }) }],
+      [{ entries: [E("x1", "2026-11-12T23:00", "2026-11-13T07:00", 4, 100), E("x2", "2026-11-12T23:00", "2026-11-13T07:00", 1, 100)] }, { entries: [E("x3", "2026-11-12T23:00", "2026-11-13T07:00", 2, 100)] }],
+      [{ entries: mA, prefs: prefs({ t: 5 }) }, null],
+      [null, { entries: mB, prefs: prefs({ t: 5 }) }],
+      [{ entries: [{ d: "2026-11-12", bed: "23:30", wake: "06:30", q: 2 }, E("ok", "2026-11-13T23:00", "2026-11-14T06:00", 0, 7)] }, { entries: [E("k2026-11-11T23:30|2026-11-12T06:30", "2026-11-11T23:30", "2026-11-12T06:30", 4, 9)] }],
+      [{}, {}]
+    ]
+  });
+
   /* daylight saving changes */
   add("new york, clocks back 1 Nov", "America/New_York", "2026-11-10T07:30", {
     entries: hist(29, "2026-11-10T07:30", { days: 30 }).filter(e => e.bed.slice(0, 10) < "2026-10-31" || e.bed.slice(0, 10) > "2026-11-01")
@@ -263,6 +322,10 @@ export function scenarios() {
         E("fb4", "2026-11-01T01:10", "2026-11-01T01:50", 0, T0 + 1)]),
     prefs: prefs({ born: 1980, weekend: "sat-sun" })
   }, { reminders: ALL_ON, checks: [["2026-11-01", "00:30", "2026-11-01", "01:30", null], ["2026-10-31", "23:00", "2026-11-01", "06:00", "fb1"]] });
+  add("new york, buttons across clocks back", "America/New_York", "2026-10-31T21:00", { entries: hist(43, "2026-10-31T21:00", { days: 10 }), prefs: prefs() }, {
+    actions: [{ at: "2026-10-31T23:30", do: "sleep" }, { at: "2026-11-01T07:00", do: "awake" }, { at: "2026-11-01T22:50", do: "sleep" }, { at: "2026-11-02T01:15", do: "awake" },
+      { at: "2026-11-01T01:30", do: "save", bd: "2026-11-01", bt: "01:10", wd: "2026-11-01", wt: "01:50", q: 2 }]
+  });
   add("new york, reminders across clocks back", "America/New_York", "2026-10-29T20:00", { entries: hist(30, "2026-10-29T20:00", { days: 20 }), prefs: prefs({ wake: "06:30", born: 1980 }) }, { reminders: ALL_ON });
   add("new york, clocks forward 8 Mar", "America/New_York", "2026-03-15T09:00", {
     entries: hist(31, "2026-03-15T09:00", { days: 25 }).filter(e => e.bed.slice(0, 10) !== "2026-03-07").concat([E("sf1", "2026-03-07T23:00", "2026-03-08T07:00", 5, T0 + 1), E("sf2", "2026-03-08T02:30", "2026-03-08T08:00", 0, T0 + 1), E("sf3", "2026-03-08T13:00", "2026-03-08T14:00", 0, T0 + 1)]),
@@ -277,6 +340,10 @@ export function scenarios() {
     entries: hist(34, "2026-09-10T08:00", { days: 30 }).filter(e => !["2026-09-05", "2026-09-06"].includes(e.bed.slice(0, 10))).concat([E("cl1", "2026-09-05T23:00", "2026-09-06T07:00", 3, T0 + 1), E("cl2", "2026-09-06T00:30", "2026-09-06T02:00", 0, T0 + 1), E("cl3", "2026-09-06T23:40", "2026-09-07T06:30", 0, T0 + 1)]),
     prefs: prefs({ born: 1995, weekend: "sat-sun" })
   }, { reminders: ALL_ON, checks: [["2026-09-05", "22:00", "2026-09-06", "00:15", null]] });
+  add("santiago, buttons across 6 Sep", "America/Santiago", "2026-09-05T21:00", { entries: hist(44, "2026-09-05T21:00", { days: 10 }), prefs: prefs() }, {
+    actions: [{ at: "2026-09-05T23:00", do: "sleep" }, { at: "2026-09-06T07:00", do: "awake" },
+      { at: "2026-09-06T08:00", do: "save", bd: "2026-09-05", bt: "23:30", wd: "2026-09-06", wt: "00:30", q: 1 }]
+  });
   add("santiago, reminders across 6 Sep", "America/Santiago", "2026-09-03T20:00", { entries: hist(35, "2026-09-03T20:00", { days: 20, bed: 1450, spread: 20 }), prefs: prefs({ born: 1995, wake: "07:30" }) }, { reminders: ALL_ON });
   add("santiago, 11 PM twice on 4 Apr", "America/Santiago", "2026-04-08T08:00", {
     entries: hist(36, "2026-04-08T08:00", { days: 30 }).filter(e => !["2026-04-04", "2026-04-05"].includes(e.bed.slice(0, 10))).concat([E("ca1", "2026-04-04T23:30", "2026-04-05T07:00", 4, T0 + 1), E("ca2", "2026-04-05T22:30", "2026-04-06T06:30", 0, T0 + 1)]),

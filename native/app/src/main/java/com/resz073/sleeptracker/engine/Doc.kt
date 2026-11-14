@@ -59,7 +59,36 @@ data class SleepDoc(val items: List<Item>, val pending: Pending, val prefs: Pref
         append("],\"pending\":").append(json(pending)).append(",\"prefs\":").append(json(prefs)).append('}')
     }
 
+    /** Nothing saved yet: no entries and nothing ever set (the account's document isn't created for this) */
+    val isEmpty: Boolean get() = items.isEmpty() && pending.t == 0.0 && prefs.t == 0.0
+
+    /**
+     * The document as the current app writes it to Firestore: the same fields and order as [canon], whole
+     * numbers as integers (as the JavaScript SDK stores them), nulls kept.
+     */
+    fun toFirestore(): Map<String, Any?> = linkedMapOf(
+        "entries" to items.sortedWith { x, y -> x.id.compareTo(y.id) }.map { e ->
+            when (e) {
+                is Entry -> linkedMapOf("id" to e.id, "bed" to Time.text(e.bed), "wake" to Time.text(e.wake), "q" to e.q.toLong(), "t" to number(e.t))
+                is Deleted -> linkedMapOf("id" to e.id, "del" to 1L, "t" to number(e.t))
+            }
+        },
+        "pending" to linkedMapOf("bed" to pending.bed?.let { Time.text(it) }, "t" to number(pending.t)),
+        "prefs" to linkedMapOf(
+            "weekend" to prefs.weekend, "wake" to prefs.wake, "lat" to prefs.lat.toLong(), "born" to prefs.born?.toLong(),
+            "goals" to prefs.goals.map { linkedMapOf("from" to it.from, "min" to it.min.toLong(), "on" to it.on) },
+            "t" to number(prefs.t)
+        )
+    )
+
     companion object {
+        /** A number as JSON.parse gives it to the JavaScript SDK: whole numbers are stored as integers */
+        private fun number(x: Double): Any = if (x == Math.rint(x) && Math.abs(x) <= 9007199254740991.0) x.toLong() else x
+
+        /** Reads the copy kept on this phone ([canon] text); a damaged copy reads as empty, so the account's copy replaces it */
+        fun fromText(text: String?, now: Now): SleepDoc =
+            if (text.isNullOrEmpty()) BLANK else try { read(Json.parse(text), now) } catch (e: RuntimeException) { BLANK }
+
         private val HHMM = Regex("""^\d\d:\d\d$""")
         private val HM = Regex("""^([01]\d|2[0-3]):[0-5]\d$""")
         private val DAY = Regex("""^\d{4}-\d\d-\d\d$""")
