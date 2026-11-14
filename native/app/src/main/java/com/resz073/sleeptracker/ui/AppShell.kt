@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -145,7 +146,13 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
     BackHandler(enabled = !settings && tab != Tab.Today) { vm.openView(Tab.Today.key) }
 
     if (settings) {
-        SettingsScreen(session = session, sleep = sleep, vm = vm, onBack = { settings = false })
+        // Settings has messages too (Imported, Reminders are on…): the same message bar, over it
+        Box(Modifier.fillMaxSize()) {
+            SettingsScreen(session = session, sleep = sleep, vm = vm, onBack = { settings = false })
+            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(8.dp)) { data ->
+                Snackbar(data, shape = RoundedCornerShape(14.dp), containerColor = c.ink, contentColor = c.bg, actionColor = c.accSoft)
+            }
+        }
     } else {
         Scaffold(
             containerColor = c.bg,
