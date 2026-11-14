@@ -26,7 +26,7 @@ for (const f of files) {
     if (fail) failed.push({ name: attr("classname").split(".").pop() + "." + attr("name"), message: unxml(fail[2]) });
   }
 }
-if (!failed.length) { console.log("::notice title=Engine tests::" + tests + " tests passed: the sleep engine gives the same results as the current app."); process.exit(0); }
+if (!failed.length) { console.log("::notice title=Engine tests::" + tests + (tests === 1 ? " test" : " tests") + " passed: the sleep engine gives the same results as the current app."); process.exit(0); }
 for (const t of failed.slice(0, 8)) {
   const msg = t.message.length > 6000 ? t.message.slice(0, 6000) + "\n…" : t.message;
   console.log("::error title=" + prop("Test failed: " + t.name) + "::" + data(msg));
