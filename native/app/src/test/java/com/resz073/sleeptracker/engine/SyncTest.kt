@@ -325,6 +325,42 @@ class SyncTest {
     }
 
     @Test
+    fun failedAttemptsDontStopLaterOnes() {
+        account.data = doc(night1)
+        val s = sync().also { it.start() }
+        account.online = false
+        at("2026-11-14T23:00")
+        s.edit { Edits.goToSleep(it, now()).doc }
+        repeat(4) { account.deliver() } // the cached copy again and again while offline: each try fails
+        assertEquals(SyncState.NOT_SYNCED, s.state)
+        account.goOnline()
+        assertEquals(1, account.writes)
+        assertEquals(SyncState.SYNCED, s.state)
+    }
+
+    @Test
+    fun anAccountDeletedElsewhereIsNotUploadedAgain() {
+        account.data = doc(night1)
+        val s = sync().also { it.start() }
+        at("2026-11-14T23:00")
+        s.edit { Edits.goToSleep(it, now()).doc }
+        assertEquals(1, account.writes)
+        account.otherAppSaves(null) // Delete account in the current app removes the document
+        assertNull(account.data)
+        assertEquals(1, account.writes)
+        assertTrue(s.canSignOut)
+        s.retry()
+        at("2026-11-14T23:01")
+        s.edit { Edits.cancelSleep(it, now()).doc }
+        assertNull(account.data)
+        // if the document comes back (the deletion didn't finish), syncing carries on
+        account.otherAppSaves(doc(night1, night2))
+        assertEquals(listOf("n1", "n2"), ids(account.data))
+        assertEquals(2, account.writes)
+        assertEquals(SyncState.SYNCED, s.state)
+    }
+
+    @Test
     fun firstStartOfflineWithNothingCached() {
         account.data = doc(night1)
         account.online = false

@@ -64,6 +64,7 @@ class Sync(private val remote: Remote, private val local: LocalCopy, private val
     private var seen = false              // the account's copy has been seen (from the server or the phone's cache)
     private var writing = false
     private var rounds = 0                // writes in a row with no new change here: a guard against copies that never agree
+    private var gone = false              // the account's document was deleted (the account deleted elsewhere): don't recreate it
     private var listening: Listening? = null
     private var running = false
 
@@ -76,8 +77,8 @@ class Sync(private val remote: Remote, private val local: LocalCopy, private val
         else -> SyncState.NOT_SYNCED
     }
 
-    /** Signing out deletes this phone's copy, so only allow it when nothing would be lost */
-    val canSignOut: Boolean get() = synced || doc.isEmpty
+    /** Signing out deletes this phone's copy, so only allow it when nothing would be lost (or the account's data was deleted) */
+    val canSignOut: Boolean get() = synced || doc.isEmpty || gone
 
     /** Loads this phone's copy and starts following the account's */
     fun start() {
@@ -145,6 +146,9 @@ class Sync(private val remote: Remote, private val local: LocalCopy, private val
         val server = data?.let { SleepDoc.read(it, clock()) }
         val copy = server?.canon()
         if (!seen || copy != account) rounds = 0 // something new from elsewhere, not the echo of our own write
+        // The document disappearing from the server means the account was deleted (the current app's Delete
+        // account): this phone mustn't upload the data again. It comes back if the document does.
+        if (!fromCache) gone = seen && account != null && data == null || (gone && data == null)
         account = copy
         seen = true
         if (!fromCache) error = null
@@ -154,10 +158,9 @@ class Sync(private val remote: Remote, private val local: LocalCopy, private val
     }
 
     private fun push() {
-        if (!running || !seen || synced || writing) return // a change made during a write is sent when it finishes
+        if (!running || !seen || synced || writing || gone) return // a change made during a write is sent when it finishes
         if (rounds >= 3) return
         writing = true
-        rounds++
         val ours = doc
         val now = clock()
         remote.update({ current ->
@@ -173,6 +176,7 @@ class Sync(private val remote: Remote, private val local: LocalCopy, private val
             if (!running) return@update // stopped (or signed out, with this phone's copy deleted): leave it
             result.onSuccess { stored ->
                 error = null
+                rounds++ // only writes that went through count toward the guard
                 val server = stored?.let { SleepDoc.read(it, clock()) }
                 account = server?.canon()
                 if (server != null) set(SleepDoc.merge(doc, server))
