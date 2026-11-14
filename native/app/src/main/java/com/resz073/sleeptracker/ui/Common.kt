@@ -81,13 +81,13 @@ fun CardTitle(text: String, modifier: Modifier = Modifier) {
     Text(text, style = font(17f, FontWeight.ExtraBold), color = LocalAppColors.current.ink, modifier = modifier.padding(bottom = 10.dp))
 }
 
-/** Small grey text (.sm) */
-@Composable
 private val GLUE = Regex("""(\d) (AM|PM|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|nights?)\b""")
 
 /** Keeps "6:15 AM", "13 Nov" and "19 nights" on one line when text wraps */
 fun glued(text: String): String = text.replace(GLUE, "$1\u00A0$2")
 
+/** Small grey text (.sm) */
+@Composable
 fun Muted(text: String, modifier: Modifier = Modifier, size: Float = 13f) {
     Text(text, modifier = modifier, style = font(size), color = LocalAppColors.current.mute)
 }
