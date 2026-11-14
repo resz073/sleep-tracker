@@ -91,3 +91,77 @@ jobs:
             --title "Sleep Tracker Next $VERSION (preview, build ${{ github.run_number }})" \
             --notes "Preview of the new native Android app. It installs next to Sleep Tracker as a separate app called Sleep Tracker Next, and uses the same account, so entries saved in either app show in both. Not for Google Play yet."
           echo "::notice title=Download::https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$APK")"
+
+  # The signed app on Android emulators, used the way a person would (native/scripts/emulator/drive.py):
+  # a throwaway account, a month of sleep from a CSV file, every screen, reminders, Health Connect, the tile,
+  # shortcuts, then the account is deleted. Screenshots go to the emulator-api-N branches.
+  emulator:
+    needs: native
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api: 34
+            full: "1"
+          - api: 28
+            full: "0"
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Get the app from the build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "$GITHUB_RUN_ID" --name "sleep-tracker-next-build-$GITHUB_RUN_NUMBER" --dir dist && ls -la dist
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Use the app on Android (API ${{ matrix.api }})
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          FULL: ${{ matrix.full }}
+          API: ${{ matrix.api }}
+          ACCOUNTS: ${{ runner.temp }}/test-accounts.txt
+        with:
+          api-level: ${{ matrix.api }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
+          script: python3 native/scripts/emulator/drive.py dist/sleep-tracker-next.apk
+
+      - name: Remove any test account left behind
+        if: always()
+        env:
+          ACCOUNTS: ${{ runner.temp }}/test-accounts.txt
+          FIREBASE_WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: python3 native/scripts/emulator/cleanup.py
+
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: emulator-api-${{ matrix.api }}-build-${{ github.run_number }}
+          path: emulator-results/
+          retention-days: 14
+
+      # Screenshots and screen text (not the full log) on a branch, so they can be looked at without downloading
+      - name: Keep the screenshots on a branch
+        if: always()
+        run: |
+          [ -d emulator-results ] || exit 0
+          mkdir -p "$RUNNER_TEMP/shots" && cp emulator-results/*.png emulator-results/*.md emulator-results/*.csv emulator-results/crash-log.txt emulator-results/0*.txt emulator-results/1*.txt "$RUNNER_TEMP/shots/" 2>/dev/null || true
+          cd "$RUNNER_TEMP/shots"
+          git init -q -b results
+          git add -A
+          git -c user.name="github-actions" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "Emulator test, API ${{ matrix.api }}, build ${{ github.run_number }}"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" results:emulator-api-${{ matrix.api }}
