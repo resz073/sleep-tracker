@@ -111,7 +111,7 @@ Every upload to Play needs a higher version code. Each build uses its build numb
 
 A Kotlin version of the app is being built in `native/`. GitHub builds it whenever something there changes (**Actions → Build native app (preview)**, or **Run workflow** to build it yourself) and publishes it as a **pre-release** called **Sleep Tracker Next**.
 
-It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. It has the current app's four screens (Today, Trends, Schedule and History), adding and editing entries, and the settings for the goal, birth year, wake-up time, time to fall asleep and weekend days. Everything saves to your account exactly as the current app does, so the two apps can be used side by side. It also has the current app's reminders, CSV backup and account deletion.
+It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. It has the current app's four screens (Today, Trends, Schedule and History), adding and editing entries, and the settings for the goal, birth year, wake-up time, time to fall asleep and weekend days. Everything saves to your account exactly as the current app does, so the two apps can be used side by side. It also has the current app's reminders, CSV backup and account deletion, and a few things only an Android app can do: a home screen widget, shortcuts and a Quick Settings tile, and saving your sleep to Health Connect.
 
 To install it, open the [Releases](https://github.com/resz073/sleep-tracker/releases) page on your phone, find the newest **Sleep Tracker Next** pre-release, and download `sleep-tracker-next.apk`.
 
@@ -149,6 +149,19 @@ These work as in the current app:
 - **Reminders** (Settings, or the card on Today): wind-down 30 minutes before tonight's bedtime, bedtime with a **Going to sleep** button, and a morning reminder with **Log it** while last night isn't logged. They're planned for the next 7 days and planned again whenever your data or schedule changes. The preview also plans them again when one arrives, after the phone restarts, and when the clock or time zone changes, so they keep coming without opening the app. On Android 14 and later, on-time reminders need **Alarms & reminders** permission. Settings offers it, and without it Android may send them up to an hour late.
 - **Backup**: **Export CSV** shares a file in the current app's format; **Import CSV** adds entries from a file exported by either app, skipping ones already logged.
 - **Delete account**: after you confirm with your password (or Google), your sleep data and your account are deleted, along with this phone's copy and its reminders.
+
+### Widget, shortcuts, tile and Health Connect
+
+These are new in the native app:
+
+- **Home screen widget** (Bedtime): tonight's bedtime (or the sleep in progress), the last 14 days, and a **Going to sleep** / **I'm awake** button. It updates whenever your data changes.
+- **Shortcuts**: long-press the app icon for **Going to sleep** (or **I'm awake** while asleep) and **Add entry**.
+- **Quick Settings tile**: add **Going to sleep** to Quick Settings. While you're asleep it changes to **I'm awake**.
+- **Health Connect** (Settings, Android 9 and later): your entries are saved there as sleep sessions, so other health apps you allow can see them. Saved sessions are updated when you edit an entry and removed when you delete one. The app only writes to Health Connect; it reads nothing. Deleting your account removes what the app saved there too.
+
+The widget's button, the shortcuts and the tile open the app to start or end the sleep, like a reminder's buttons do. That way the change saves and syncs as usual.
+
+Before publishing on Google Play with Health Connect, fill in the **Health apps** declaration in Play Console (**Policy → App content**). Declare that the app writes sleep data. The privacy policy already has a Health Connect section (`docs/privacy.html#health-connect`). Google reviews Health Connect access before the app can go live.
 
 ### Sync and offline
 

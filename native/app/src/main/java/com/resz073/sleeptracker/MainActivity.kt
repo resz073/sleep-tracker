@@ -50,11 +50,11 @@ class MainActivity : ComponentActivity() {
         reminderTapped(intent)
     }
 
-    /** Opened from a reminder or one of its buttons: do what the current app does, then clear the notification */
+    /** Opened from a reminder, the widget, a shortcut or the tile: do what was tapped, and clear the reminder */
     private fun reminderTapped(intent: Intent?) {
         val action = intent?.getStringExtra(Alarms.EXTRA_ACTION) ?: return
         intent.removeExtra(Alarms.EXTRA_ACTION)
-        NotificationManagerCompat.from(this).cancel(intent.getIntExtra(Alarms.EXTRA_ID, 0))
+        if (intent.hasExtra(Alarms.EXTRA_ID)) NotificationManagerCompat.from(this).cancel(intent.getIntExtra(Alarms.EXTRA_ID, 0))
         vm.onNotification(action, intent.getStringExtra(Alarms.EXTRA_KIND))
     }
 

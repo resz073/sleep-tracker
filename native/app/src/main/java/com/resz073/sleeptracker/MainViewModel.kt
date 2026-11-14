@@ -14,6 +14,7 @@ import com.resz073.sleeptracker.data.Account
 import com.resz073.sleeptracker.data.AccountStore
 import com.resz073.sleeptracker.data.Backend
 import com.resz073.sleeptracker.data.Backup
+import com.resz073.sleeptracker.data.Health
 import com.resz073.sleeptracker.data.Session
 import com.resz073.sleeptracker.data.SleepState
 import com.resz073.sleeptracker.engine.Change
@@ -30,6 +31,7 @@ import com.resz073.sleeptracker.engine.WakeUp
 import com.resz073.sleeptracker.remind.Alarms
 import com.resz073.sleeptracker.remind.ReminderPrefs
 import com.resz073.sleeptracker.show.EntryForm
+import com.resz073.sleeptracker.widget.Extras
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -58,6 +60,10 @@ sealed interface UiEvent {
     data object NotificationSettings : UiEvent
     /** The share sheet for a CSV export; [text] is shown instead if it can't open */
     class Share(val intent: Intent, val text: String) : UiEvent
+    /** Ask Health Connect for permission to save sleep */
+    data object AskHealth : UiEvent
+    /** Another app's screen (Health Connect, Google Play) */
+    class Open(val intent: Intent) : UiEvent
 }
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -110,6 +116,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     private val uiEvents = MutableSharedFlow<UiEvent>(extraBufferCapacity = 8)
     val events: SharedFlow<UiEvent> = uiEvents
+
+    /** Health Connect: whether it's on this phone, and whether saving to it is on */
+    var healthStatus by mutableStateOf(Health.status(app))
+        private set
+    var healthOn by mutableStateOf(Health.isOn(app))
+        private set
 
     /** Deleting the account: in progress, or why it didn't go through */
     var deleting by mutableStateOf(false)
@@ -372,6 +384,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun refreshPermissions() {
         notificationsAllowed = Alarms.notificationsAllowed(getApplication())
         exactAllowed = Alarms.exactAllowed(getApplication())
+        healthStatus = Health.status(getApplication())
     }
 
     /** Plans the reminders again shortly (changes come in bursts); nothing is scheduled again if they're the same */
@@ -383,14 +396,38 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             val model = s?.let { SleepModel(it.doc, Now.system()) }
             val force = !scheduledOnce
             scheduledOnce = true
-            withContext(Dispatchers.IO) { Alarms.update(getApplication(), model, force) }
+            val app = getApplication<Application>()
+            withContext(Dispatchers.IO) {
+                Alarms.update(app, model, force)
+                Extras.update(app, model, force)
+            }
+            if (healthOn && model != null) saveToHealth(model)
         }
     }
 
+    private suspend fun saveToHealth(model: SleepModel) {
+        val app = getApplication<Application>()
+        try {
+            withContext(Dispatchers.IO) { Health.sync(app, model) }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: SecurityException) {
+            Health.setOn(app, false)
+            healthOn = false
+            toast = Toast("Health Connect access was turned off, so your sleep isn't being saved there now.")
+        } catch (e: Exception) {
+            // Health Connect is busy or not reachable: tried again after the next change
+        }
+    }
+
+    /** Signed out: no reminders, and the widget, shortcuts and tile go back to asking to sign in */
     private fun clearReminders() {
         reminderJob?.cancel()
         val app = getApplication<Application>()
-        viewModelScope.launch(Dispatchers.IO) { Alarms.update(app, null, force = true) }
+        viewModelScope.launch(Dispatchers.IO) {
+            Alarms.update(app, null, force = true)
+            Extras.update(app, null, force = true)
+        }
     }
 
     /** A reminder, or one of its buttons, was tapped: what the current app does, once the account's data is open */
@@ -403,11 +440,59 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         pendingNotification = null
         openView("today")
         val m = SleepModel(s.doc, Now.system())
-        if (action == "sleep") {
-            if (m.doc.pending.bed == null) goToSleep()
-        } else if (action == "log" || kind == "morning") {
-            if (!m.nightByWake.containsKey(m.today) && m.pending == null) prefill(m.today)
+        when {
+            action == "sleep" -> if (m.doc.pending.bed == null) goToSleep()
+            action == "awake" -> if (m.doc.pending.bed != null) wakeUp()
+            action == "add" -> openAdd()
+            action == "log" || kind == "morning" -> if (!m.nightByWake.containsKey(m.today) && m.pending == null) prefill(m.today)
         }
+    }
+
+    /* ---------- Health Connect ---------- */
+
+    /** The Health Connect switch in Settings: on asks Health Connect for permission first (unless it's already given) */
+    fun setHealth(on: Boolean) {
+        val app = getApplication<Application>()
+        if (!on) {
+            Health.setOn(app, false)
+            healthOn = false
+            toast = Toast("Saving to Health Connect is off. Sleep already saved stays there.")
+            return
+        }
+        when (Health.status(app)) {
+            Health.Status.AVAILABLE -> viewModelScope.launch {
+                val allowed = try { Health.allowed(app) } catch (e: Exception) { false }
+                if (allowed) healthAnswered(true) else uiEvents.tryEmit(UiEvent.AskHealth)
+            }
+            Health.Status.NEEDS_INSTALL -> getHealth()
+            Health.Status.UNAVAILABLE -> toast = Toast("Health Connect isn't available on this phone.")
+        }
+    }
+
+    /** Health Connect's answer: when allowed, every entry is saved there now, and changes from then on */
+    fun healthAnswered(granted: Boolean) {
+        val app = getApplication<Application>()
+        if (!granted) {
+            toast = Toast("Health Connect access wasn't allowed, so nothing was saved there.")
+            return
+        }
+        Health.setOn(app, true)
+        healthOn = true
+        toast = Toast("Your sleep is being saved to Health Connect.")
+        val s = store ?: return
+        viewModelScope.launch { saveToHealth(SleepModel(s.doc, Now.system())) }
+    }
+
+    fun openHealth() {
+        try {
+            uiEvents.tryEmit(UiEvent.Open(Health.manageIntent(getApplication())))
+        } catch (e: Exception) {
+            toast = Toast("Health Connect couldn't be opened.")
+        }
+    }
+
+    fun getHealth() {
+        uiEvents.tryEmit(UiEvent.Open(Health.installIntent(getApplication())))
     }
 
     /* ---------- backup ---------- */
@@ -509,6 +594,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         fitted = false
         sleepState.value = SleepState.Loading
         clearReminders()
+        Health.forget(getApplication())
+        healthOn = false
         viewModelScope.launch { account.signOut(getApplication()) }
         return true
     }
@@ -535,6 +622,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 stopped = true
                 account.deleteAccount(app)
                 s?.forget()
+                try {
+                    Health.removeAll(app)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Health.forget(app) // what was saved stays in Health Connect, where it can be deleted
+                }
+                healthOn = false
                 if (store === s) {
                     store = null
                     sleepState.value = SleepState.Loading

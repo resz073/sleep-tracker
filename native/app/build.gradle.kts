@@ -82,6 +82,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    // Health Connect, when turned on in Settings
+    implementation(libs.androidx.health.connect)
+
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // The sleep engine is checked against the current app (src/test, reference results from native/scripts/golden)

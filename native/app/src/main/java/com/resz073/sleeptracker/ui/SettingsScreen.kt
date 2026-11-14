@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.resz073.sleeptracker.BuildConfig
 import com.resz073.sleeptracker.MainViewModel
 import com.resz073.sleeptracker.R
+import com.resz073.sleeptracker.data.Health
 import com.resz073.sleeptracker.data.Session
 import com.resz073.sleeptracker.data.SleepState
 import com.resz073.sleeptracker.engine.Planner
@@ -112,6 +113,8 @@ fun SettingsScreen(session: Session.SignedIn, sleep: SleepState, vm: MainViewMod
                 PillButton("Import CSV", { importFile.launch(arrayOf("*/*")) }, Modifier.weight(1f), Btn.TONAL)
             }
         }
+
+        AppCard { HealthField(vm) }
 
         AppCard {
             FieldLabel("Sync")
@@ -224,6 +227,42 @@ private fun ReminderField(vm: MainViewModel, hasPlan: Boolean) {
     if (r.any && vm.notificationsAllowed && !vm.exactAllowed) {
         Muted("Android can hold reminders back by up to an hour to save battery.", Modifier.padding(top = 8.dp))
         PillButton("Allow on-time reminders", vm::askExact, Modifier.fillMaxWidth().padding(top = 8.dp), Btn.TONAL)
+    }
+}
+
+/** Saving sleep to Health Connect (an extra of the native app) */
+@Composable
+private fun HealthField(vm: MainViewModel) {
+    val c = LocalAppColors.current
+    FieldLabel("Health Connect")
+    when (vm.healthStatus) {
+        Health.Status.UNAVAILABLE -> Muted("Health Connect isn't available on this phone.", Modifier.padding(top = 8.dp))
+        Health.Status.NEEDS_INSTALL -> {
+            Muted("Save your sleep to Health Connect, so other health apps you allow can see it. Install or update Health Connect first.", Modifier.padding(top = 8.dp))
+            PillButton("Get Health Connect", vm::getHealth, Modifier.fillMaxWidth().padding(top = 8.dp), Btn.TONAL)
+        }
+        Health.Status.AVAILABLE -> {
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("Save sleep to Health Connect", style = font(15f, FontWeight.Bold), color = c.ink)
+                    Muted("So other health apps you allow can see it")
+                }
+                Spacer(Modifier.width(12.dp))
+                Switch(
+                    checked = vm.healthOn,
+                    onCheckedChange = { vm.setHealth(it) },
+                    modifier = Modifier.semantics { contentDescription = "Save sleep to Health Connect" },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = c.onAcc, checkedTrackColor = c.acc, checkedBorderColor = c.acc,
+                        uncheckedThumbColor = c.mute, uncheckedTrackColor = c.card2, uncheckedBorderColor = c.mute,
+                    ),
+                )
+            }
+            if (vm.healthOn) {
+                Muted("New, changed and deleted entries are saved there. Nothing is read from Health Connect.", Modifier.padding(top = 4.dp))
+                PillButton("Open Health Connect", vm::openHealth, kind = Btn.TEXT)
+            }
+        }
     }
 }
 

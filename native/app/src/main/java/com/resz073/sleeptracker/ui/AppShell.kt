@@ -60,6 +60,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.health.connect.client.PermissionController
+import com.resz073.sleeptracker.data.Health
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.resz073.sleeptracker.MainViewModel
 import com.resz073.sleeptracker.UiEvent
@@ -94,6 +96,12 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
         askThen?.invoke(granted)
         askThen = null
     }
+    // Health Connect's permission screen (Android 9 and later, where Health Connect works)
+    val askHealth = if (Build.VERSION.SDK_INT >= 28) {
+        rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
+            vm.healthAnswered(granted.containsAll(Health.permissions()))
+        }
+    } else null
     var csvText by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(Unit) {
         vm.events.collect { e ->
@@ -117,6 +125,18 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
                         ctx.startActivity(e.intent)
                     } catch (x: ActivityNotFoundException) {
                         csvText = e.text
+                    }
+                UiEvent.AskHealth ->
+                    try {
+                        askHealth?.launch(Health.permissions()) ?: vm.healthAnswered(false)
+                    } catch (x: ActivityNotFoundException) {
+                        vm.healthAnswered(false)
+                    }
+                is UiEvent.Open ->
+                    try {
+                        ctx.startActivity(e.intent)
+                    } catch (x: ActivityNotFoundException) {
+                        // no app for it on this phone
                     }
             }
         }

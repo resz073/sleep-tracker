@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The sky card is darker in the app's dark theme -->
+    <color name="widget_sky">#0A0E2B</color>
+    <color name="widget_on_button">#0A0E2B</color>
+</resources>

@@ -14,16 +14,12 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.resz073.sleeptracker.MainActivity
 import com.resz073.sleeptracker.R
-import com.resz073.sleeptracker.data.Backend
-import com.resz073.sleeptracker.data.FileCopy
-import com.resz073.sleeptracker.engine.Now
+import com.resz073.sleeptracker.data.Offline
 import com.resz073.sleeptracker.engine.Planner
 import com.resz073.sleeptracker.engine.Reminder
 import com.resz073.sleeptracker.engine.Reminders
-import com.resz073.sleeptracker.engine.SleepDoc
 import com.resz073.sleeptracker.engine.SleepModel
 
 /**
@@ -78,13 +74,7 @@ object Alarms {
 
     /** [update] from this phone's copy of the signed-in account (for the receivers, when the app isn't open) */
     fun updateFromCopy(context: Context, force: Boolean) {
-        if (!Backend.ready) return
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val model = uid?.let { u ->
-            val now = Now.system()
-            SleepModel(SleepDoc.fromText(FileCopy(context, u).read(), now), now)
-        }
-        update(context, model, force)
+        update(context, Offline.model(context), force)
     }
 
     @SuppressLint("ScheduleExactAlarm")
