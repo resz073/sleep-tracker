@@ -35,17 +35,49 @@ def sh(cmd, timeout=90):
     return run(["adb", "shell", cmd], timeout).stdout
 
 
+DUMP_ERROR = [""]  # why the screen couldn't be read, the last time it couldn't
+
+
 def dump():
-    for _ in range(6):
-        out = run(["adb", "shell", "uiautomator dump /sdcard/ui.xml"], 40).stdout
+    for _ in range(3):
+        try:
+            r = run(["adb", "shell", "uiautomator dump /sdcard/ui.xml"], 40)
+        except subprocess.TimeoutExpired:
+            DUMP_ERROR[0] = "uiautomator dump took over 40 seconds"
+            try:
+                sh("pkill -f uiautomator", 20)
+            except subprocess.TimeoutExpired:
+                pass
+            continue
+        out = (r.stdout + r.stderr).strip()
         if "dumped" in out:
             xml = run(["adb", "exec-out", "cat /sdcard/ui.xml"], 30).stdout
             try:
                 return ET.fromstring(xml)
             except ET.ParseError:
-                pass
+                DUMP_ERROR[0] = "the dump wasn't readable"
+        else:
+            DUMP_ERROR[0] = " ".join(out.split())[-300:] or "uiautomator printed nothing"
         time.sleep(1)
     return None
+
+
+DIAGNOSED = [0]
+
+
+def diagnose(why):
+    """When the screen can't be read: the accessibility events of 4 seconds and the focused window, to see what keeps it busy"""
+    if DIAGNOSED[0] >= 3:
+        return
+    DIAGNOSED[0] += 1
+    try:
+        events = run(["adb", "shell", "timeout 4 uiautomator events"], 30).stdout
+    except subprocess.TimeoutExpired:
+        events = "(uiautomator events didn't stop)"
+    window = sh("dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'")
+    with open(os.path.join(OUT, "diag-%d.txt" % DIAGNOSED[0]), "w") as f:
+        text = why + "\n" + DUMP_ERROR[0] + "\n\n" + window + "\n" + "\n".join(l[:400] for l in events.splitlines()[:150]) + "\n"
+        f.write(text.replace(PASSWORD, "<password>"))  # results are published
 
 
 def nodes(root):
@@ -89,17 +121,27 @@ def system_dialogs(root):
     return False
 
 
-def wait(text=None, desc=None, contains=False, timeout=25, lowest=False, nocase=False):
+def wait(text=None, desc=None, contains=False, timeout=25, lowest=False, nocase=False, quiet=False):
     end = time.time() + timeout
+    read = False
     while time.time() < end:
         root = dump()
+        if root is None:
+            continue
+        read = True
         if system_dialogs(root):
             continue
         h = find(text, desc, contains, lowest, root=root, nocase=nocase)
         if h:
             return h
         time.sleep(1)
-    raise Fail("didn't see " + repr(text if text is not None else desc))
+    if quiet:
+        return None
+    what = repr(text if text is not None else desc)
+    if not read:
+        diagnose("looking for " + what)
+        raise Fail("couldn't read the screen while looking for %s: %s" % (what, DUMP_ERROR[0][:160]))
+    raise Fail("didn't see " + what)
 
 
 def tap(text=None, desc=None, contains=False, timeout=25, lowest=False, nocase=False):
@@ -108,9 +150,9 @@ def tap(text=None, desc=None, contains=False, timeout=25, lowest=False, nocase=F
     time.sleep(1.2)
 
 
-def fields():
+def fields(root=None):
     """Text fields on screen, top to bottom (found by kind: a password field hides its label from this tree)"""
-    root = dump()
+    root = root if root is not None else dump()
     if root is None:
         return []
     out = [((b[0] + b[2]) // 2, (b[1] + b[3]) // 2) for n, b in nodes(root) if n.get("class") == "android.widget.EditText"]
@@ -149,7 +191,7 @@ def shot(name):
     if root is not None:
         texts = [n.get("text") or n.get("content-desc") for n, _ in nodes(root) if (n.get("text") or n.get("content-desc"))]
         with open(os.path.join(OUT, name + ".txt"), "w") as f:
-            f.write("\n".join(texts) + "\n")
+            f.write(("\n".join(texts) + "\n").replace(PASSWORD, "<password>"))
 
 
 def crashed():
@@ -178,6 +220,19 @@ def step(name, critical=False):
         go.__name__ = name
         return go
     return wrap
+
+
+ROOTED = [False]
+NIGHTS = [0]  # nights imported from the CSV file
+
+
+def ensure_root():
+    """adb as root (the emulator allows it): to send the app's own reminder and to read what it noted"""
+    if not ROOTED[0]:
+        run(["adb", "root"], 60)
+        run(["adb", "wait-for-device"], 120)
+        time.sleep(3)
+        ROOTED[0] = True
 
 
 def back_to_app_main():
@@ -241,18 +296,24 @@ def s_open():
 @step("Create an account", critical=True)
 def s_signup():
     tap("Create an account")
-    tap("Email")
+    wait("I have an account")
+    # Where the fields and the button are, read before a field has focus: older Androids can't read the
+    # screen while a text field's cursor blinks
+    root = dump()
+    f, button = fields(root), find("Create account", root=root)
+    if len(f) < 2 or button is None:
+        raise Fail("didn't find the email and password fields and the Create account button")
+    sh("input tap %d %d" % f[0])
+    time.sleep(0.8)
     type_text(EMAIL)
-    f = fields()
-    if len(f) >= 2:
-        sh("input tap %d %d" % f[1])
-    else:  # move on to the password field as a keyboard would
-        sh("input keyevent KEYCODE_TAB")
+    sh("input tap %d %d" % f[1])
     time.sleep(0.8)
     type_text(PASSWORD)
-    hide_keyboard()
-    tap("Create account")
-    wait("History", timeout=60)
+    sh("input keyevent KEYCODE_ENTER")  # Done on the keyboard creates the account
+    if not wait("History", timeout=30, quiet=True):
+        hide_keyboard()
+        sh("input tap %d %d" % button)
+        wait("History", timeout=60)
     time.sleep(3)
     shot("02-today-new-account")
 
@@ -291,8 +352,9 @@ def s_import():
         time.sleep(2)
     shot("04a-file-picker")
     tap("sleep-ci.csv", timeout=20)
-    wait("Imported", contains=True, timeout=20)
+    wait("Imported %d" % n, contains=True, timeout=20)
     shot("04b-imported")
+    NIGHTS[0] = n
     return "%d nights in the file" % n
 
 
@@ -342,7 +404,7 @@ def s_history():
     wait("Edit sleep")
     shot("08b-edit-entry")
     tap("Cancel")
-    tap("Add entry")
+    tap(desc="Add entry")
     wait("Add sleep")
     shot("08c-add-entry")
     tap("Cancel")
@@ -375,8 +437,21 @@ def s_health():
             time.sleep(2)
     if present("Allow"):
         tap("Allow", lowest=True)
-    wait("Your sleep is being saved to Health Connect.", timeout=20)
+    wait("Nothing is read from Health Connect", contains=True, timeout=30)
     shot("10b-health-on")
+    # What the app has saved there, from its own notes (each entry's id and version)
+    ensure_root()
+    n = 0
+    for _ in range(20):
+        prefs = sh("cat /data/data/%s/shared_prefs/health.xml" % PKG)
+        m = re.search(r'<set name="saved">(.*?)</set>', prefs, re.S)
+        n = len(re.findall(r"<string>", m.group(1))) if m else 0
+        if n >= NIGHTS[0] > 0:
+            break
+        time.sleep(2)
+    if n < NIGHTS[0]:
+        raise Fail("%d of %d entries were saved to Health Connect" % (n, NIGHTS[0]))
+    return "%d entries saved" % n
 
 
 @step("Export CSV opens the share sheet")
@@ -435,9 +510,7 @@ def s_tile():
 
 @step("A bedtime reminder, and its Going to sleep button")
 def s_notification():
-    run(["adb", "root"], 60)
-    run(["adb", "wait-for-device"], 120)
-    time.sleep(3)
+    ensure_root()
     sh("am broadcast -n %s/com.resz073.sleeptracker.remind.ReminderReceiver -a com.resz073.sleeptracker.REMIND "
        "--ei reminder-id 110 --es reminder-title 'Time for bed' --es reminder-body 'Tap Going to sleep when you lie down.' "
        "--es reminder-kind bed --es reminder-type BEDTIME" % PKG)
@@ -458,14 +531,19 @@ def s_delete():
     tap(desc="Settings")
     tap("Delete account")
     time.sleep(1)
-    f = fields()
+    # Read before the password field has focus (see Create an account)
+    root = dump()
+    f, button = fields(root), find("Delete account", root=root, lowest=True)
     if f:
         sh("input tap %d %d" % f[-1])
         time.sleep(0.8)
         type_text(PASSWORD)
         hide_keyboard()
     shot("15a-delete-confirm")
-    tap("Delete account", lowest=True)
+    if button:
+        sh("input tap %d %d" % button)
+    else:
+        tap("Delete account", lowest=True)
     wait("Your account and sleep data were deleted.", timeout=60)
     shot("15b-deleted")
 

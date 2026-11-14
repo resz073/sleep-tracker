@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -38,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -58,6 +60,7 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
     var create by rememberSaveable { mutableStateOf(false) }
     var show by rememberSaveable { mutableStateOf(false) }
     val uri = LocalUriHandler.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
     Box(Modifier.fillMaxSize()) {
         Column(
@@ -121,6 +124,8 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
                         singleLine = true,
                         visualTransformation = if (show) VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                        // Done on the keyboard signs in, like the button
+                        keyboardActions = KeyboardActions(onDone = { keyboard?.hide(); if (!vm.busy) vm.submit(email, password, create) }),
                         trailingIcon = {
                             TextButton(onClick = { show = !show }) { Text(if (show) "Hide" else "Show") }
                         },

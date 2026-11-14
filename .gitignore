@@ -25,3 +25,4 @@ native/app/google-services.json
 native/app/firebase.properties
 .idea/
 *.iml
+__pycache__/

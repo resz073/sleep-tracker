@@ -186,7 +186,7 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
                 if (tab == Tab.History && sleep is SleepState.Ready) {
                     ExtendedFloatingActionButton(
                         text = { Text("Add entry", style = font(15f, FontWeight.ExtraBold)) },
-                        icon = { Icon(painterResource(R.drawable.ic_add), contentDescription = null) },
+                        icon = { Icon(painterResource(R.drawable.ic_add), contentDescription = "Add entry") }, // the button's name for screen readers: Material leaves the text out
                         onClick = vm::openAdd,
                         shape = RoundedCornerShape(18.dp),
                         containerColor = c.acc,

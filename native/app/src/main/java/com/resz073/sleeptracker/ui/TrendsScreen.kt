@@ -220,8 +220,8 @@ private fun Cells(cells: List<Cell>) {
             ) {
                 Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {
                     Text(cell.label, style = font(13f, FontWeight.Bold), color = c.mute)
-                    Text(cell.big, style = font(18f, FontWeight.ExtraBold), color = c.ink)
-                    Text(cell.sub, style = font(13f), color = c.mute, textAlign = TextAlign.Start)
+                    Text(glued(cell.big), style = font(18f, FontWeight.ExtraBold), color = c.ink)
+                    Text(glued(cell.sub), style = font(13f), color = c.mute, textAlign = TextAlign.Start)
                 }
             }
         }

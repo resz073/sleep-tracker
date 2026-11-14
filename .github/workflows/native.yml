@@ -159,7 +159,7 @@ jobs:
         if: always()
         run: |
           [ -d emulator-results ] || exit 0
-          mkdir -p "$RUNNER_TEMP/shots" && cp emulator-results/*.png emulator-results/*.md emulator-results/*.csv emulator-results/crash-log.txt emulator-results/0*.txt emulator-results/1*.txt "$RUNNER_TEMP/shots/" 2>/dev/null || true
+          mkdir -p "$RUNNER_TEMP/shots" && cp emulator-results/*.png emulator-results/*.md emulator-results/*.csv emulator-results/crash-log.txt emulator-results/0*.txt emulator-results/1*.txt emulator-results/FAILED-*.txt emulator-results/diag-*.txt "$RUNNER_TEMP/shots/" 2>/dev/null || true
           cd "$RUNNER_TEMP/shots"
           git init -q -b results
           git add -A

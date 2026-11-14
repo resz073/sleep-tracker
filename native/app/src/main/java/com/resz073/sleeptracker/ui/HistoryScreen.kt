@@ -95,11 +95,11 @@ private fun HistoryRowView(r: HistoryRow, editing: Boolean, onEdit: () -> Unit, 
                     if (rating != null) Text(rating, style = font(15f, FontWeight.ExtraBold), color = c.acc) else Muted("Not rated")
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Muted(r.time, Modifier.weight(1f))
+                    Muted(glued(r.time), Modifier.weight(1f))
                     Spacer(Modifier.width(10.dp))
                     Muted(r.cycles)
                 }
-                r.countsAs?.let { Muted(it) }
+                r.countsAs?.let { Muted(glued(it)) }
             }
         }
         Surface(onClick = onDelete, shape = RoundedCornerShape(12.dp), color = Color.Transparent, contentColor = c.mute, modifier = Modifier.semantics { contentDescription = "Delete sleep from " + r.time }) {
