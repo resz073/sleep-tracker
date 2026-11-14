@@ -400,10 +400,12 @@ def s_history():
     nav("History")
     time.sleep(1)
     shot("08a-history")
-    tap(desc="Edit sleep from", contains=True)
-    wait("Edit sleep")
-    shot("08b-edit-entry")
-    tap("Cancel")
+    # The short run has no entries to edit
+    if FULL or present(desc="Edit sleep from", contains=True):
+        tap(desc="Edit sleep from", contains=True)
+        wait("Edit sleep")
+        shot("08b-edit-entry")
+        tap("Cancel")
     tap(desc="Add entry")
     wait("Add sleep")
     shot("08c-add-entry")
