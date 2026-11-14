@@ -18,13 +18,13 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        // A separate app id while the native app is being built, so it installs next to the current app.
-        // It switches to com.resz073.sleeptracker when the native app replaces it.
-        applicationId = "com.resz073.sleeptracker.next"
+        // The app on Google Play. The native app replaces the earlier web app (version 1.x) with the same
+        // package and a higher version code, so it installs as an update.
+        applicationId = "com.resz073.sleeptracker"
         minSdk = 24
         targetSdk = 36
         versionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
-        versionName = "0.1.0"
+        versionName = "2.0.0"
 
         buildConfigField("String", "FIREBASE_API_KEY", fb("api_key"))
         buildConfigField("String", "FIREBASE_APP_ID", fb("app_id"))

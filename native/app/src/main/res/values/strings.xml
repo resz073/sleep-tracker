@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sleep Tracker Next</string>
+    <string name="app_name">Sleep Tracker</string>
     <string name="widget_name">Bedtime</string>
     <string name="widget_description">Tonight\'s bedtime, your sleep debt, and a Going to sleep button</string>
     <string name="tile_name">Going to sleep</string>

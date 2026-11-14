@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12 and later: backups and phone-to-phone transfers leave out the notes of what was saved to
+     Health Connect, which are about this phone's Health Connect -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="health.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="health.xml" />
+    </device-transfer>
+</data-extraction-rules>

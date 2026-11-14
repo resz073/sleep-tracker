@@ -50,7 +50,7 @@ object Backend {
         is GetCredentialCancellationException -> null
         is NoCredentialException -> "No Google account is available on this phone. Add one in Android Settings, or use email."
         is GetCredentialException -> "Google sign-in didn't work." +
-            (if (!BuildConfig.FIREBASE_APP_REGISTERED) " This preview isn't registered in Firebase yet, so only email sign-in works." else " Try again, or use email.")
+            (if (!BuildConfig.FIREBASE_APP_REGISTERED) " Google sign-in isn't set up in this build, so use email." else " Try again, or use email.")
         is FirebaseAuthWeakPasswordException -> "Use a password with at least 6 characters."
         is FirebaseAuthUserCollisionException -> "There's already an account with that email. Sign in instead."
         is FirebaseAuthRecentLoginRequiredException -> "Confirm it's you, then try again."

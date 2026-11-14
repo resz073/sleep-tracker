@@ -1,11 +1,12 @@
-name: Build native app (preview)
+name: Build Android app
 
-# The new Kotlin app in native/, while it's being built. Each run publishes a pre-release named
-# "Sleep Tracker Next", which installs next to the current app instead of replacing it.
+# The app (native/, Kotlin). Runs on every push that changes it, and from the Actions tab with "Run workflow".
+# Each run tests it, publishes a release with the APK (to install on a phone) and the AAB (to upload to
+# Google Play), then uses the APK on Android emulators.
 on:
   push:
     branches: [main]
-    # src/app.js too: the native sleep engine is tested against the current app's own results
+    # src/app.js too: the sleep engine is tested against the earlier web app's own results
     paths: ["native/**", ".github/workflows/native.yml", "scripts/sign.sh", "scripts/ci-run.sh", "src/app.js"]
   workflow_dispatch:
 
@@ -42,7 +43,7 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: bash scripts/ci-run.sh "Firebase settings" node native/scripts/firebase-config.mjs
 
-      # The reference results must come from the current src/app.js, so the engine is tested against today's app
+      # The reference results must come from src/app.js (the earlier web app), so the engine is tested against it
       - name: Check the reference results
         run: bash scripts/ci-run.sh "Reference results" node native/scripts/golden/make.mjs --check
 
@@ -67,7 +68,7 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
           APK_IN: native/app/build/outputs/apk/release/app-release-unsigned.apk
           AAB_IN: native/app/build/outputs/bundle/release/app-release.aab
-          OUT_NAME: sleep-tracker-next
+          OUT_NAME: sleep-tracker
         run: |
           printf '%s' "$GOOGLE_SERVICES_JSON" > "$RUNNER_TEMP/gs.json"
           GS_JSON="$RUNNER_TEMP/gs.json" bash scripts/ci-run.sh "Signing" bash scripts/sign.sh
@@ -75,21 +76,24 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         with:
-          name: sleep-tracker-next-build-${{ github.run_number }}
+          name: sleep-tracker-build-${{ github.run_number }}
           path: dist/
           retention-days: 30
 
-      # A pre-release, so the current app's newest build stays at the top of the Releases page as "Latest"
-      - name: Publish pre-release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION=$(grep -m1 'versionName' native/app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
-          TAG="next-v$VERSION-build.${{ github.run_number }}"
+          TAG="v$VERSION-build.${{ github.run_number }}"
           APK=$(ls dist/*.apk | head -1)
-          bash scripts/ci-run.sh "Release" gh release create "$TAG" dist/* --prerelease --target "$GITHUB_SHA" \
-            --title "Sleep Tracker Next $VERSION (preview, build ${{ github.run_number }})" \
-            --notes "Preview of the new native Android app. It installs next to Sleep Tracker as a separate app called Sleep Tracker Next, and uses the same account, so entries saved in either app show in both. Not for Google Play yet."
+          if ls dist/*.aab >/dev/null 2>&1; then
+            NOTES="Install $(basename "$APK") on your phone, or upload $(ls dist/*.aab | head -1 | xargs basename) to Google Play. It updates the earlier version of Sleep Tracker: sign in again afterwards, and your entries come back from your account."
+          else
+            NOTES="Install $(basename "$APK") on your phone. A test build, signed with the public test key: not for Google Play."
+          fi
+          bash scripts/ci-run.sh "Release" gh release create "$TAG" dist/* --target "$GITHUB_SHA" \
+            --title "Sleep Tracker $VERSION (build ${{ github.run_number }})" --notes "$NOTES"
           echo "::notice title=Download::https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$APK")"
 
   # The signed app on Android emulators, used the way a person would (native/scripts/emulator/drive.py):
@@ -116,7 +120,7 @@ jobs:
       - name: Get the app from the build
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh run download "$GITHUB_RUN_ID" --name "sleep-tracker-next-build-$GITHUB_RUN_NUMBER" --dir dist && ls -la dist
+        run: gh run download "$GITHUB_RUN_ID" --name "sleep-tracker-build-$GITHUB_RUN_NUMBER" --dir dist && ls -la dist
 
       - name: Enable KVM
         run: |
@@ -137,7 +141,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
-          script: python3 native/scripts/emulator/drive.py dist/sleep-tracker-next.apk
+          script: python3 native/scripts/emulator/drive.py "$(ls dist/*.apk | head -1)" com.resz073.sleeptracker
 
       - name: Remove any test account left behind
         if: always()

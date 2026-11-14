@@ -58,10 +58,13 @@ object Health {
         prefs(context).edit().clear().apply()
     }
 
-    /** Saves new and changed entries and removes deleted ones; returns how many were saved. Throws SecurityException if access was taken away. */
-    suspend fun sync(context: Context, model: SleepModel): Int {
+    /**
+     * Saves new and changed entries (or [everything]) and removes deleted ones; returns how many were saved.
+     * Throws SecurityException if access was taken away.
+     */
+    suspend fun sync(context: Context, model: SleepModel, everything: Boolean = false): Int {
         val p = prefs(context)
-        val plan = HealthPlan.of(model.entries, HealthPlan.read(p.getStringSet("saved", null) ?: emptySet()))
+        val plan = HealthPlan.of(model.entries, HealthPlan.read(p.getStringSet("saved", null) ?: emptySet()), everything)
         if (plan.save.isEmpty() && plan.remove.isEmpty()) return 0
         val client = HealthConnectClient.getOrCreate(context)
         val saved = HashMap(plan.saved)

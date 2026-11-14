@@ -37,6 +37,10 @@ class ExtrasTest {
         // nothing changed: nothing to send
         val same = HealthPlan.of(listOf(b2, c), next.saved)
         assertTrue(same.save.isEmpty() && same.remove.isEmpty())
+        // saving turned on again: every entry is sent again
+        val again = HealthPlan.of(listOf(b2, c), next.saved, everything = true)
+        assertEquals(listOf(b2, c), again.save)
+        assertEquals(emptyList<String>(), again.remove)
         // stored and read back, ids with "|" in them included
         val odd = mapOf("x|y" to 5L, "z" to 1767225600123L)
         assertEquals(odd, HealthPlan.read(HealthPlan.write(odd)))

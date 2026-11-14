@@ -26,6 +26,12 @@ Sleep Tracker works out a bedtime from your usual wake-up time, or one you choos
 Reminders when you want them
 Optional reminders to wind down, go to bed, and log your sleep in the morning. They're scheduled on your phone.
 
+Right from your home screen
+A widget shows tonight's bedtime and your last 14 days, with a Going to sleep button. Start and end a sleep from Quick Settings or the app icon's shortcuts too.
+
+Works with Health Connect
+Optionally save your sleep to Health Connect, so other health apps you allow can see it.
+
 Your data stays yours
 Sign in with email or Google and your entries sync across your devices. Export everything as a CSV file whenever you like, and delete your account and all your data from the app at any time. No ads and no analytics.
 
@@ -51,3 +57,7 @@ The screenshots show made-up sample data.
 ## Release notes for the first release
 
 First release: log your sleep, track your sleep debt, and get a bedtime schedule with optional reminders.
+
+## Release notes for version 2 (500 characters max)
+
+Sleep Tracker is now a native Android app: faster, with a home screen widget, a Quick Settings tile, shortcuts, and the option to save your sleep to Health Connect. After updating, sign in again. Your entries are in your account.

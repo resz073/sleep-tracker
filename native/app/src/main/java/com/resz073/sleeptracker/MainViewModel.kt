@@ -405,10 +405,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private suspend fun saveToHealth(model: SleepModel) {
+    private suspend fun saveToHealth(model: SleepModel, everything: Boolean = false) {
         val app = getApplication<Application>()
         try {
-            withContext(Dispatchers.IO) { Health.sync(app, model) }
+            withContext(Dispatchers.IO) { Health.sync(app, model, everything) }
         } catch (e: CancellationException) {
             throw e
         } catch (e: SecurityException) {
@@ -480,7 +480,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         healthOn = true
         toast = Toast("Your sleep is being saved to Health Connect.")
         val s = store ?: return
-        viewModelScope.launch { saveToHealth(SleepModel(s.doc, Now.system())) }
+        // Every entry, not only changes: Health Connect may have lost what was saved before
+        viewModelScope.launch { saveToHealth(SleepModel(s.doc, Now.system()), everything = true) }
     }
 
     fun openHealth() {

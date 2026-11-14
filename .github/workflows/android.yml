@@ -1,11 +1,8 @@
-name: Build Android app
+name: Build web app (earlier version)
 
-# Runs on every push to main, and from the Actions tab with "Run workflow".
-# Each run publishes a release with the APK (to install on a phone) and the AAB (to upload to Google Play).
+# The earlier app (version 1.x): the web app in src/ wrapped with Capacitor. The native app in native/
+# replaced it on Android (native.yml), so this only runs from the Actions tab with "Run workflow".
 on:
-  push:
-    branches: [main]
-    paths-ignore: ["docs/**", "store/**", "**.md", "native/**", ".github/workflows/native.yml"]
   workflow_dispatch:
 
 permissions:

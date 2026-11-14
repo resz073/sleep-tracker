@@ -5,7 +5,7 @@ throwaway account, imports a month of sleep from a CSV file, visits every screen
 turns on reminders and Health Connect, uses the tile, a reminder's button and the shortcuts, then deletes
 the account. Screenshots, the screen text and the log go to emulator-results/.
 
-    python3 native/scripts/emulator/drive.py dist/sleep-tracker-next.apk [package]
+    python3 native/scripts/emulator/drive.py dist/sleep-tracker.apk [package]
 
 FULL=0 (an older Android version) only signs up, looks at each screen, and deletes the account.
 Fails if the app crashes, or if a check doesn't pass.
@@ -14,7 +14,7 @@ import datetime, os, random, re, subprocess, sys, time
 import xml.etree.ElementTree as ET
 
 APK = sys.argv[1]
-PKG = sys.argv[2] if len(sys.argv) > 2 else "com.resz073.sleeptracker.next"
+PKG = sys.argv[2] if len(sys.argv) > 2 else "com.resz073.sleeptracker"
 ACT = PKG + "/com.resz073.sleeptracker.MainActivity"
 OUT = "emulator-results"
 FULL = os.environ.get("FULL", "1") == "1"

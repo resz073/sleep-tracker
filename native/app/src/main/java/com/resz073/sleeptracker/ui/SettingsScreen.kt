@@ -132,10 +132,10 @@ fun SettingsScreen(session: Session.SignedIn, sleep: SleepState, vm: MainViewMod
             FieldLabel("About")
             PillButton("Privacy policy", { uri.openUri(PRIVACY_URL) }, kind = Btn.TEXT)
             PillButton("How account deletion works", { uri.openUri(DELETION_URL) }, kind = Btn.TEXT)
-            Muted("Sleep Tracker Next ${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE}). The new Android app, while it's being built; it uses the same account as the current app.")
+            Muted("Version ${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE})")
             if (!BuildConfig.FIREBASE_APP_REGISTERED) {
                 Spacer(Modifier.height(8.dp))
-                Text("Google sign-in needs this preview registered in Firebase. The setup guide on GitHub explains how.", style = font(14f), color = c.warn)
+                Text("Google sign-in isn't set up in this build. The setup guide on GitHub explains how.", style = font(14f), color = c.warn)
             }
             Muted("Font: Nunito, under the SIL Open Font License.", Modifier.padding(top = 6.dp))
         }

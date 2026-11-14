@@ -40,12 +40,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.resz073.sleeptracker.MainViewModel
 import com.resz073.sleeptracker.R
@@ -59,7 +64,6 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
     var password by rememberSaveable { mutableStateOf("") }
     var create by rememberSaveable { mutableStateOf(false) }
     var show by rememberSaveable { mutableStateOf(false) }
-    val uri = LocalUriHandler.current
     val keyboard = LocalSoftwareKeyboardController.current
 
     Box(Modifier.fillMaxSize()) {
@@ -161,11 +165,18 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
                 }
             }
 
-            Muted(
-                "This is a preview of the new Android app. It shows your entries but doesn't change anything in your account yet.",
-                Modifier.padding(horizontal = 6.dp),
+            // As in the earlier app: continuing means agreeing to the privacy policy, which is linked
+            Text(
+                buildAnnotatedString {
+                    append("By continuing you agree to the ")
+                    withLink(LinkAnnotation.Url(PRIVACY_URL, TextLinkStyles(SpanStyle(color = c.acc, fontWeight = FontWeight.Bold)))) {
+                        append("Privacy Policy")
+                    }
+                    append(".")
+                },
+                style = font(13f), color = c.mute,
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
             )
-            TextButton(onClick = { uri.openUri(PRIVACY_URL) }) { Text("Privacy policy") }
         }
     }
 }

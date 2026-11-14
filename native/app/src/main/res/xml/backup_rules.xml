@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and older: Auto Backup leaves out the notes of what was saved to Health Connect, which are
+     about this phone's Health Connect, not another phone's -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="health.xml" />
+</full-backup-content>
