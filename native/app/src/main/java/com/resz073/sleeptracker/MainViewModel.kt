@@ -3,6 +3,8 @@ package com.resz073.sleeptracker
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,28 +13,52 @@ import androidx.lifecycle.viewModelScope
 import com.resz073.sleeptracker.data.Account
 import com.resz073.sleeptracker.data.AccountStore
 import com.resz073.sleeptracker.data.Backend
+import com.resz073.sleeptracker.data.Backup
 import com.resz073.sleeptracker.data.Session
 import com.resz073.sleeptracker.data.SleepState
 import com.resz073.sleeptracker.engine.Change
+import com.resz073.sleeptracker.engine.Csv
 import com.resz073.sleeptracker.engine.Edits
 import com.resz073.sleeptracker.engine.Entries
 import com.resz073.sleeptracker.engine.Goals
 import com.resz073.sleeptracker.engine.Now
+import com.resz073.sleeptracker.engine.ReminderKind
 import com.resz073.sleeptracker.engine.SleepModel
 import com.resz073.sleeptracker.engine.SyncState
+import com.resz073.sleeptracker.engine.Time
 import com.resz073.sleeptracker.engine.WakeUp
+import com.resz073.sleeptracker.remind.Alarms
+import com.resz073.sleeptracker.remind.ReminderPrefs
 import com.resz073.sleeptracker.show.EntryForm
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 /** A short message after a button, maybe with an action (Undo); each is shown once, repeats included */
 class Toast(val text: String, val action: String? = null, val onAction: (() -> Unit)? = null)
+
+/** Things only the screen can do: ask for a permission, open one of Android's settings pages, share a file */
+sealed interface UiEvent {
+    /** Ask to show notifications (Android 13 and later), then [then] with whether they're allowed */
+    class AskNotifications(val then: (Boolean) -> Unit) : UiEvent
+    /** Android's "Alarms & reminders" page, for on-time reminders */
+    data object ExactAlarms : UiEvent
+    /** This app's notification settings */
+    data object NotificationSettings : UiEvent
+    /** The share sheet for a CSV export; [text] is shown instead if it can't open */
+    class Share(val intent: Intent, val text: String) : UiEvent
+}
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val account = Account()
@@ -68,6 +94,29 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     var trendsTab by mutableStateOf(ui.getInt("trends-tab", 0))
         private set
 
+    /** Reminders, set on this phone (as in the current app), and what Android allows */
+    var reminders by mutableStateOf(ReminderPrefs.read(app))
+        private set
+    var notificationsAllowed by mutableStateOf(Alarms.notificationsAllowed(app))
+        private set
+    var exactAllowed by mutableStateOf(Alarms.exactAllowed(app))
+        private set
+    private var awaitingExact = false
+    private var reminderJob: Job? = null
+    private var scheduledOnce = false
+
+    /** A reminder tapped before the account's data was open: done once it is */
+    private var pendingNotification: Pair<String, String?>? = null
+
+    private val uiEvents = MutableSharedFlow<UiEvent>(extraBufferCapacity = 8)
+    val events: SharedFlow<UiEvent> = uiEvents
+
+    /** Deleting the account: in progress, or why it didn't go through */
+    var deleting by mutableStateOf(false)
+        private set
+    var deleteError by mutableStateOf<String?>(null)
+        private set
+
     var busy by mutableStateOf(false)
         private set
     var error by mutableStateOf<String?>(null)
@@ -86,7 +135,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     // After every property above: the first session can arrive straight away, on this thread
     init {
-        viewModelScope.launch { session.collect { s -> open((s as? Session.SignedIn)?.uid) } }
+        viewModelScope.launch {
+            session.collect { s ->
+                open((s as? Session.SignedIn)?.uid)
+                if (s is Session.SignedOut) clearReminders() // signed out, here or elsewhere: no reminders for an account that isn't here
+            }
+        }
     }
 
     private fun open(uid: String?) {
@@ -101,6 +155,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         var created: AccountStore? = null
         created = AccountStore(getApplication(), uid) { state ->
             sleepState.value = state
+            queueReminders()
+            if (pendingNotification != null) viewModelScope.launch {
+                val p = pendingNotification
+                if (p != null && store === created) onNotification(p.first, p.second)
+            }
             // Once the account's copy is in, keep the goal inside the range for the person's age, as the current app does at start
             if (!fitted && state.sync == SyncState.SYNCED) {
                 fitted = true
@@ -244,6 +303,149 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         ui.edit().putInt("trends-tab", i).apply()
     }
 
+    /* ---------- reminders ---------- */
+
+    /** A reminder switch in Settings. Turning one on asks to show notifications first, as the current app does */
+    fun setReminder(kind: ReminderKind, on: Boolean) {
+        if (!on) {
+            saveReminders(reminders.with(kind, false).copy(asked = true))
+            return
+        }
+        askNotifications { granted ->
+            if (granted) {
+                saveReminders(reminders.with(kind, true).copy(asked = true))
+            } else {
+                toast = Toast("Notifications are blocked for Sleep Tracker. Allow them in Android Settings.", "Settings") { uiEvents.tryEmit(UiEvent.NotificationSettings) }
+            }
+        }
+    }
+
+    /** "Turn on" on the Get reminders card: all three, once notifications are allowed */
+    fun turnOnReminders() {
+        askNotifications { granted ->
+            if (granted) {
+                saveReminders(ReminderPrefs(wind = true, bed = true, morning = true, asked = true))
+                toast = if (exactAllowed) Toast("Reminders are on. Change them in Settings.")
+                else Toast("Reminders are on. Android may delay them to save battery.", "Allow on time") { askExact() }
+            } else {
+                saveReminders(reminders.copy(asked = true))
+                toast = Toast("Notifications are blocked. You can allow them later in Android Settings.")
+            }
+        }
+    }
+
+    /** "Not now" on the Get reminders card */
+    fun remindersLater() {
+        saveReminders(reminders.copy(asked = true))
+    }
+
+    /** "Allow on-time reminders": Android's Alarms & reminders page, only when asked for. The answer is checked back in the app. */
+    fun askExact() {
+        awaitingExact = true
+        uiEvents.tryEmit(UiEvent.ExactAlarms)
+    }
+
+    /** The Alarms & reminders page couldn't open on this phone */
+    fun exactUnavailable() {
+        awaitingExact = false
+        toast = Toast("Reminders stay on, but Android may send them a little late.")
+    }
+
+    private fun askNotifications(then: (Boolean) -> Unit) {
+        if (Alarms.notificationsAllowed(getApplication())) {
+            notificationsAllowed = true
+            then(true)
+            return
+        }
+        uiEvents.tryEmit(UiEvent.AskNotifications { granted ->
+            refreshPermissions()
+            then(granted && notificationsAllowed)
+        })
+    }
+
+    private fun saveReminders(r: ReminderPrefs) {
+        reminders = r
+        ReminderPrefs.write(getApplication(), r)
+        queueReminders()
+    }
+
+    fun refreshPermissions() {
+        notificationsAllowed = Alarms.notificationsAllowed(getApplication())
+        exactAllowed = Alarms.exactAllowed(getApplication())
+    }
+
+    /** Plans the reminders again shortly (changes come in bursts); nothing is scheduled again if they're the same */
+    private fun queueReminders() {
+        reminderJob?.cancel()
+        reminderJob = viewModelScope.launch {
+            delay(1200)
+            val s = store
+            val model = s?.let { SleepModel(it.doc, Now.system()) }
+            val force = !scheduledOnce
+            scheduledOnce = true
+            withContext(Dispatchers.IO) { Alarms.update(getApplication(), model, force) }
+        }
+    }
+
+    private fun clearReminders() {
+        reminderJob?.cancel()
+        val app = getApplication<Application>()
+        viewModelScope.launch(Dispatchers.IO) { Alarms.update(app, null, force = true) }
+    }
+
+    /** A reminder, or one of its buttons, was tapped: what the current app does, once the account's data is open */
+    fun onNotification(action: String, kind: String?) {
+        val s = store
+        if (s == null || sleepState.value !is SleepState.Ready) {
+            pendingNotification = action to kind
+            return
+        }
+        pendingNotification = null
+        openView("today")
+        val m = SleepModel(s.doc, Now.system())
+        if (action == "sleep") {
+            if (m.doc.pending.bed == null) goToSleep()
+        } else if (action == "log" || kind == "morning") {
+            if (!m.nightByWake.containsKey(m.today) && m.pending == null) prefill(m.today)
+        }
+    }
+
+    /* ---------- backup ---------- */
+
+    /** Export CSV: every entry, shared as a file ("Save or send your sleep log"), as the current app does */
+    fun exportCsv() {
+        val s = store ?: return
+        val m = SleepModel(s.doc, Now.system())
+        if (m.entries.isEmpty()) {
+            toast = Toast("Nothing to export yet")
+            return
+        }
+        val data = Csv.export(m)
+        val name = "sleep-log-" + Time.day(m.today) + ".csv"
+        val app = getApplication<Application>()
+        viewModelScope.launch {
+            val uri = withContext(Dispatchers.IO) { Backup.write(app, name, data) }
+            if (uri != null) {
+                uiEvents.tryEmit(UiEvent.Share(Backup.shareIntent(uri), data))
+            } else {
+                toast = Toast("Couldn't save the file. Try again.")
+            }
+        }
+    }
+
+    /** Import CSV: adds the entries from a file exported by either app, skipping ones already logged */
+    fun importCsv(uri: Uri) {
+        val app = getApplication<Application>()
+        viewModelScope.launch {
+            val text = withContext(Dispatchers.IO) { Backup.read(app, uri) }
+            if (text == null) {
+                toast = Toast("Couldn't read that file")
+            } else {
+                change { m, now -> Edits.import(m, text) { Edits.newId(now) } }
+            }
+        }
+    }
+
     /* ---------- time ---------- */
 
     /** Every 30 seconds and when back in the app: a new day fits the goal again, then everything is worked out for now */
@@ -255,11 +457,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             fitGoal()
         }
         sleepState.value = s.snapshot()
+        queueReminders()
     }
 
-    /** Back in the app: reconnect if needed, send anything not yet in the account, and refresh for the time */
+    /** Back in the app: reconnect if needed, send anything not yet in the account, check what Android allows, and refresh for the time */
     fun resume() {
         store?.retry()
+        refreshPermissions()
+        if (awaitingExact) {
+            awaitingExact = false
+            toast = Toast(if (exactAllowed) "Reminders will arrive on time." else "Reminders stay on, but Android may send them a little late.")
+        }
         refresh()
     }
 
@@ -300,8 +508,50 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         form = null
         fitted = false
         sleepState.value = SleepState.Loading
+        clearReminders()
         viewModelScope.launch { account.signOut(getApplication()) }
         return true
+    }
+
+    fun clearDeleteError() {
+        deleteError = null
+    }
+
+    /**
+     * Deletes the account and all its sleep data, as the current app does: confirmed with the password (or
+     * with Google), then the data and the account are deleted, and this phone's copy and reminders with them.
+     */
+    fun deleteAccount(password: String?, activity: Activity) {
+        if (deleting) return
+        deleting = true
+        deleteError = null
+        val s = store
+        val app = getApplication<Application>()
+        viewModelScope.launch {
+            var stopped = false
+            try {
+                account.reauth(password, activity)
+                s?.close() // nothing more is written to the account
+                stopped = true
+                account.deleteAccount(app)
+                s?.forget()
+                if (store === s) {
+                    store = null
+                    sleepState.value = SleepState.Loading
+                }
+                form = null
+                fitted = false
+                clearReminders()
+                notice = "Your account and sleep data were deleted."
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                deleteError = Backend.message(e) ?: "Deletion was cancelled."
+                if (stopped && store === s) s?.restart()
+            } finally {
+                deleting = false
+            }
+        }
     }
 
     override fun onCleared() {

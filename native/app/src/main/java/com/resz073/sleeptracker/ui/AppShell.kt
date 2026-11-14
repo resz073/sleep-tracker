@@ -1,6 +1,18 @@
 package com.resz073.sleeptracker.ui
 
+import android.Manifest
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +21,13 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,11 +53,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.resz073.sleeptracker.MainViewModel
+import com.resz073.sleeptracker.UiEvent
 import com.resz073.sleeptracker.R
 import com.resz073.sleeptracker.data.Session
 import com.resz073.sleeptracker.data.SleepState
@@ -63,6 +85,42 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
     val tab = Tab.entries.firstOrNull { it.key == vm.view } ?: Tab.Today
     var settings by rememberSaveable { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
+
+    // What only the screen can do for the view model: permissions, Android's settings pages, sharing a file
+    val ctx = LocalContext.current
+    var askThen by remember { mutableStateOf<((Boolean) -> Unit)?>(null) }
+    val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        askThen?.invoke(granted)
+        askThen = null
+    }
+    var csvText by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(Unit) {
+        vm.events.collect { e ->
+            when (e) {
+                is UiEvent.AskNotifications ->
+                    if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        askThen = e.then
+                        askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else e.then(false) // allowed but turned off in Android Settings: only the person can turn them back on there
+                UiEvent.ExactAlarms ->
+                    if (Build.VERSION.SDK_INT >= 31) {
+                        try {
+                            ctx.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + ctx.packageName)))
+                        } catch (x: ActivityNotFoundException) {
+                            vm.exactUnavailable()
+                        }
+                    } else vm.exactUnavailable()
+                UiEvent.NotificationSettings -> openNotificationSettings(ctx)
+                is UiEvent.Share ->
+                    try {
+                        ctx.startActivity(e.intent)
+                    } catch (x: ActivityNotFoundException) {
+                        csvText = e.text
+                    }
+            }
+        }
+    }
+    csvText?.let { text -> CsvDialog(text, ctx) { csvText = null } }
 
     // Every 30 seconds, like the current app: the bedtime countdown and the strip move on, a new day starts
     LaunchedEffect(Unit) {
@@ -144,6 +202,42 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
     val form = vm.form
     val ready = sleep as? SleepState.Ready
     if (form != null && ready != null) EntrySheet(form, ready.model, vm)
+}
+
+private fun openNotificationSettings(ctx: Context) {
+    val i = if (Build.VERSION.SDK_INT >= 26) Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+    else Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + ctx.packageName))
+    try {
+        ctx.startActivity(i)
+    } catch (x: ActivityNotFoundException) {
+        // no settings page for it on this phone
+    }
+}
+
+/** When no app can take the CSV file: the text itself, to copy (as the current app shows it) */
+@Composable
+private fun CsvDialog(text: String, ctx: Context, onClose: () -> Unit) {
+    val c = LocalAppColors.current
+    AlertDialog(
+        onDismissRequest = onClose,
+        containerColor = c.card,
+        title = { Text("CSV backup", style = font(19f, FontWeight.ExtraBold), color = c.ink) },
+        text = {
+            Column {
+                Muted("Copy the text below and keep it somewhere safe.", Modifier.padding(bottom = 8.dp))
+                SelectionContainer(Modifier.heightIn(max = 280.dp).verticalScroll(rememberScrollState())) {
+                    Text(text, style = font(12f).copy(fontFamily = FontFamily.Monospace), color = c.ink)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Sleep log", text))
+                onClose()
+            }) { Text("Copy", style = font(15f, FontWeight.ExtraBold), color = c.acc) }
+        },
+        dismissButton = { TextButton(onClick = onClose) { Text("Close", style = font(15f, FontWeight.ExtraBold), color = c.acc) } },
+    )
 }
 
 @Composable

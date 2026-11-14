@@ -111,7 +111,7 @@ Every upload to Play needs a higher version code. Each build uses its build numb
 
 A Kotlin version of the app is being built in `native/`. GitHub builds it whenever something there changes (**Actions → Build native app (preview)**, or **Run workflow** to build it yourself) and publishes it as a **pre-release** called **Sleep Tracker Next**.
 
-It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. It has the current app's four screens (Today, Trends, Schedule and History), adding and editing entries, and the settings for the goal, birth year, wake-up time, time to fall asleep and weekend days. Everything saves to your account exactly as the current app does, so the two apps can be used side by side. Reminders, CSV backup and account deletion come next.
+It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. It has the current app's four screens (Today, Trends, Schedule and History), adding and editing entries, and the settings for the goal, birth year, wake-up time, time to fall asleep and weekend days. Everything saves to your account exactly as the current app does, so the two apps can be used side by side. It also has the current app's reminders, CSV backup and account deletion.
 
 To install it, open the [Releases](https://github.com/resz073/sleep-tracker/releases) page on your phone, find the newest **Sleep Tracker Next** pre-release, and download `sleep-tracker-next.apk`.
 
@@ -141,6 +141,14 @@ After changing the calculations in `src/app.js`, refresh the saved results with 
 Each screen shows what the current app shows. `native/app/src/main/java/com/resz073/sleeptracker/show/` works out every screen's text and charts from the sleep engine, and the Compose screens in `ui/` lay them out in the current app's style, light or dark.
 
 The same tests cover the screens. For every test account, the saved results include each screen's text as the current app shows it (which parts are bold or coloured), and for 19 of them every chart, shape by shape: the bedtime strip, last night's ring, the 14-day bars, the Trends chart for each month, week and day picked, and the 14-night diary. The Kotlin side must produce the same.
+
+### Reminders, backup and account deletion
+
+These work as in the current app:
+
+- **Reminders** (Settings, or the card on Today): wind-down 30 minutes before tonight's bedtime, bedtime with a **Going to sleep** button, and a morning reminder with **Log it** while last night isn't logged. They're planned for the next 7 days and planned again whenever your data or schedule changes. The preview also plans them again when one arrives, after the phone restarts, and when the clock or time zone changes, so they keep coming without opening the app. On Android 14 and later, on-time reminders need **Alarms & reminders** permission. Settings offers it, and without it Android may send them up to an hour late.
+- **Backup**: **Export CSV** shares a file in the current app's format; **Import CSV** adds entries from a file exported by either app, skipping ones already logged.
+- **Delete account**: after you confirm with your password (or Google), your sleep data and your account are deleted, along with this phone's copy and its reminders.
 
 ### Sync and offline
 

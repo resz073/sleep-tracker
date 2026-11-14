@@ -52,6 +52,9 @@ class AccountStore(context: Context, val uid: String, private val onUpdate: (Sle
 
     fun close() = sync.stop()
 
+    /** Starts again after [close] (when deleting the account didn't go through) */
+    fun restart() = sync.start()
+
     /** Signing out: stops and deletes this phone's copy */
     fun forget() = sync.forget()
 }

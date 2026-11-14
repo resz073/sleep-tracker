@@ -54,6 +54,18 @@ fun TodayScreen(state: SleepState.Ready, vm: MainViewModel, onSetWake: () -> Uni
                 }
             }
         }
+        // The current app's card offering reminders, until it's answered
+        if (!vm.reminders.asked && !vm.reminders.any) {
+            AppCard {
+                CardTitle("Get reminders")
+                Muted("A nudge 30 minutes before bedtime, another at bedtime, and a morning reminder to log your sleep.")
+                Spacer(Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    PillButton("Turn on", vm::turnOnReminders, Modifier.weight(1f))
+                    PillButton("Not now", vm::remindersLater, Modifier.weight(1f), Btn.TONAL)
+                }
+            }
+        }
         TodayShow.lastNight(m)?.let { LastNightCard(it, vm) }
         val missing = TodayShow.missing(m)
         if (missing.isNotEmpty()) MissingCard(missing.map { it.second }) { i -> vm.prefill(missing[i].first) }

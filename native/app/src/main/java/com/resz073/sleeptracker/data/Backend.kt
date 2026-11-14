@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -52,8 +53,12 @@ object Backend {
             (if (!BuildConfig.FIREBASE_APP_REGISTERED) " This preview isn't registered in Firebase yet, so only email sign-in works." else " Try again, or use email.")
         is FirebaseAuthWeakPasswordException -> "Use a password with at least 6 characters."
         is FirebaseAuthUserCollisionException -> "There's already an account with that email. Sign in instead."
-        is FirebaseAuthInvalidUserException ->
-            if (e.errorCode == "ERROR_USER_DISABLED") "This account has been turned off." else "That email or password isn't right."
+        is FirebaseAuthRecentLoginRequiredException -> "Confirm it's you, then try again."
+        is FirebaseAuthInvalidUserException -> when (e.errorCode) {
+            "ERROR_USER_DISABLED" -> "This account has been turned off."
+            "ERROR_USER_MISMATCH" -> "That's a different account. Use the one you're signed in with."
+            else -> "That email or password isn't right."
+        }
         is FirebaseAuthInvalidCredentialsException ->
             if (e.errorCode == "ERROR_INVALID_EMAIL") "That email address doesn't look right." else "That email or password isn't right."
         is FirebaseNetworkException -> "Can't reach the server. Check your connection and try again."
