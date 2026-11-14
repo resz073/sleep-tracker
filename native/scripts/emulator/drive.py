@@ -75,10 +75,27 @@ def find(text=None, desc=None, contains=False, lowest=False, root=None, nocase=F
     return max(hits, key=lambda h: h[1]) if lowest else hits[0]
 
 
+def system_dialogs(root):
+    """Slow emulators show "X isn't responding" for other apps (the launcher): wait it out. Returns True if one was there."""
+    if root is None:
+        return False
+    for n, _ in nodes(root):
+        if "isn't responding" in n.get("text", ""):
+            h = find("Wait", root=root)
+            if h:
+                sh("input tap %d %d" % h)
+                time.sleep(2)
+                return True
+    return False
+
+
 def wait(text=None, desc=None, contains=False, timeout=25, lowest=False, nocase=False):
     end = time.time() + timeout
     while time.time() < end:
-        h = find(text, desc, contains, lowest, nocase=nocase)
+        root = dump()
+        if system_dialogs(root):
+            continue
+        h = find(text, desc, contains, lowest, root=root, nocase=nocase)
         if h:
             return h
         time.sleep(1)
@@ -89,6 +106,15 @@ def tap(text=None, desc=None, contains=False, timeout=25, lowest=False, nocase=F
     x, y = wait(text, desc, contains, timeout, lowest, nocase)
     sh("input tap %d %d" % (x, y))
     time.sleep(1.2)
+
+
+def fields():
+    """Text fields on screen, top to bottom (found by kind: a password field hides its label from this tree)"""
+    root = dump()
+    if root is None:
+        return []
+    out = [((b[0] + b[2]) // 2, (b[1] + b[3]) // 2) for n, b in nodes(root) if n.get("class") == "android.widget.EditText"]
+    return sorted(out, key=lambda h: h[1])
 
 
 def present(text=None, desc=None, contains=False):
@@ -199,6 +225,10 @@ def csv_for_device():
 
 @step("Install and open", critical=True)
 def s_open():
+    # Let the emulator finish starting (its launcher is slow at first), and clear any dialog it shows
+    sh("input keyevent KEYCODE_HOME")
+    time.sleep(20)
+    system_dialogs(dump())
     run(["adb", "logcat", "-c", "-b", "all"])
     out = run(["adb", "install", "-r", APK], 240)
     if "Success" not in out.stdout:
@@ -213,7 +243,12 @@ def s_signup():
     tap("Create an account")
     tap("Email")
     type_text(EMAIL)
-    tap("Password")
+    f = fields()
+    if len(f) >= 2:
+        sh("input tap %d %d" % f[1])
+    else:  # move on to the password field as a keyboard would
+        sh("input keyevent KEYCODE_TAB")
+    time.sleep(0.8)
     type_text(PASSWORD)
     hide_keyboard()
     tap("Create account")
@@ -422,8 +457,11 @@ def s_delete():
     back_to_app_main()
     tap(desc="Settings")
     tap("Delete account")
-    if present("Enter your password to confirm"):
-        tap("Enter your password to confirm")
+    time.sleep(1)
+    f = fields()
+    if f:
+        sh("input tap %d %d" % f[-1])
+        time.sleep(0.8)
         type_text(PASSWORD)
         hide_keyboard()
     shot("15a-delete-confirm")
