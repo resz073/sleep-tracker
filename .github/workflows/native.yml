@@ -89,5 +89,5 @@ jobs:
           APK=$(ls dist/*.apk | head -1)
           bash scripts/ci-run.sh "Release" gh release create "$TAG" dist/* --prerelease --target "$GITHUB_SHA" \
             --title "Sleep Tracker Next $VERSION (preview, build ${{ github.run_number }})" \
-            --notes "Preview of the new native Android app. It installs next to Sleep Tracker as a separate app called Sleep Tracker Next, and shows your entries without changing your account. Not for Google Play yet."
+            --notes "Preview of the new native Android app. It installs next to Sleep Tracker as a separate app called Sleep Tracker Next, and uses the same account, so entries saved in either app show in both. Not for Google Play yet."
           echo "::notice title=Download::https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$APK")"

@@ -22,6 +22,8 @@ data class AppColors(
     val acc: Color, val accSoft: Color, val onAcc: Color, val good: Color, val bad: Color, val warn: Color,
     val sky: Color, val skyInk: Color, val skyMute: Color, val skyAcc: Color, val skyLine: Color,
     val skyDawn: Color = Color(0xFFFFB48A), val onSkyDawn: Color = Color(0xFF2A1406),
+    /** Chart grid lines, and the shading for sleep over (good) and under (bad) the goal */
+    val grid: Color, val goodSoft: Color, val badSoft: Color, val warnSoft: Color, val onBad: Color,
 )
 
 private val Light = AppColors(
@@ -30,6 +32,8 @@ private val Light = AppColors(
     onAcc = Color(0xFFFFFFFF), good = Color(0xFF137A56), bad = Color(0xFFC03A45), warn = Color(0xFF8F5F00),
     sky = Color(0xFF141C48), skyInk = Color(0xFFEEF0FF), skyMute = Color(0xFFAAB0E0), skyAcc = Color(0xFFA3ABFF),
     skyLine = Color(0xFF2C3679),
+    grid = Color(0xFFECEBF5), goodSoft = Color(0xFF137A56).copy(alpha = 0.14f), badSoft = Color(0xFFC03A45).copy(alpha = 0.13f),
+    warnSoft = Color(0xFFB47D00).copy(alpha = 0.15f), onBad = Color(0xFFFFFFFF),
 )
 
 private val Dark = AppColors(
@@ -38,6 +42,8 @@ private val Dark = AppColors(
     onAcc = Color(0xFF10163A), good = Color(0xFF45D6A6), bad = Color(0xFFFF8A8A), warn = Color(0xFFEFCB68),
     sky = Color(0xFF0A0E2B), skyInk = Color(0xFFEEF0FF), skyMute = Color(0xFFAAB0E0), skyAcc = Color(0xFFA3ABFF),
     skyLine = Color(0xFF232B6A),
+    grid = Color(0xFF222B62), goodSoft = Color(0xFF45D6A6).copy(alpha = 0.16f), badSoft = Color(0xFFFF8A8A).copy(alpha = 0.18f),
+    warnSoft = Color(0xFFEFCB68).copy(alpha = 0.16f), onBad = Color(0xFF2A0A0D),
 )
 
 val LocalAppColors = staticCompositionLocalOf { Light }

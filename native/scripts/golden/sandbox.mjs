@@ -11,13 +11,22 @@ function stub() {
     get(_, k) {
       if (k in store) return store[k];
       if (k === "addEventListener") return (type, fn) => { (store.__on ||= {})[type] = (store.__on[type] || []).concat(fn); };
+      // attributes are kept too (a chart's viewBox, a button's aria-pressed)
+      if (k === "setAttribute") return (a, v) => { (store.__attrs ||= Object.create(null))[a] = String(v); };
+      if (k === "getAttribute") return a => (store.__attrs && a in store.__attrs ? store.__attrs[a] : null);
+      if (k === "removeAttribute") return a => { if (store.__attrs) delete store.__attrs[a]; };
       if (k === Symbol.toPrimitive) return hint => (hint === "number" ? 0 : "");
       if (k === Symbol.iterator) return function* () {};
       if (k === "then") return undefined; // not a promise
       if (k === "length") return 0;
       return stub();
     },
-    set(_, k, v) { store[k] = v; return true; },
+    set(_, k, v) {
+      // text and markup replace each other, as on a real element
+      if (k === "textContent") delete store.innerHTML;
+      if (k === "innerHTML") delete store.textContent;
+      store[k] = v; return true;
+    },
     apply() { return stub(); },
     construct() { return stub(); }
   });

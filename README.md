@@ -111,7 +111,7 @@ Every upload to Play needs a higher version code. Each build uses its build numb
 
 A Kotlin version of the app is being built in `native/`. GitHub builds it whenever something there changes (**Actions → Build native app (preview)**, or **Run workflow** to build it yourself) and publishes it as a **pre-release** called **Sleep Tracker Next**.
 
-It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. For now it signs in, shows your entries, and has **Going to sleep** and **I'm awake** on Today. Those save to your account exactly as the current app's buttons do, so the two apps can be used side by side.
+It installs **next to** the current app, as a separate app (package `com.resz073.sleeptracker.next`), so trying it doesn't replace anything. It has the current app's four screens (Today, Trends, Schedule and History), adding and editing entries, and the settings for the goal, birth year, wake-up time, time to fall asleep and weekend days. Everything saves to your account exactly as the current app does, so the two apps can be used side by side. Reminders, CSV backup and account deletion come next.
 
 To install it, open the [Releases](https://github.com/resz073/sleep-tracker/releases) page on your phone, find the newest **Sleep Tracker Next** pre-release, and download `sleep-tracker-next.apk`.
 
@@ -130,11 +130,17 @@ Until then, the preview still builds and email sign-in may work, but Google sign
 
 ### The sleep engine
 
-All of the app's sleep calculations are ported to Kotlin in `native/app/src/main/java/com/resz073/sleeptracker/engine/`. That covers how sleep splits across midnight, nights and naps, complete and incomplete days, nights not logged, sleep debt and averages, the goal by age, the bedtime plan and its steps, patterns, trends periods, history weeks, reminder times, CSV import and export, and the add-entry checks. It has no screens of its own yet. The preview reads your entries through it.
+All of the app's sleep calculations are ported to Kotlin in `native/app/src/main/java/com/resz073/sleeptracker/engine/`. That covers how sleep splits across midnight, nights and naps, complete and incomplete days, nights not logged, sleep debt and averages, the goal by age, the bedtime plan and its steps, patterns, trends periods, history weeks, reminder times, CSV import and export, and the add-entry checks. The screens are drawn from it.
 
-It's tested against the current app itself. `native/scripts/golden/make.mjs` runs `src/app.js` on 70 test accounts in 6 time zones, including daylight-saving changes, and saves every result in `native/app/src/test/resources/golden/`. The Kotlin tests must match every value. Before each native build, GitHub runs those tests and checks that the saved results still match `src/app.js`. A change to the current app's calculations therefore fails the native build until the Kotlin engine matches again.
+It's tested against the current app itself. `native/scripts/golden/make.mjs` runs `src/app.js` on 78 test accounts in 6 time zones, including daylight-saving changes, and saves every result in `native/app/src/test/resources/golden/`. The Kotlin tests must match every value. Before each native build, GitHub runs those tests and checks that the saved results still match `src/app.js`. A change to the current app's calculations therefore fails the native build until the Kotlin engine matches again.
 
 After changing the calculations in `src/app.js`, refresh the saved results with `node native/scripts/golden/make.mjs`.
+
+### Screens
+
+Each screen shows what the current app shows. `native/app/src/main/java/com/resz073/sleeptracker/show/` works out every screen's text and charts from the sleep engine, and the Compose screens in `ui/` lay them out in the current app's style, light or dark.
+
+The same tests cover the screens. For every test account, the saved results include each screen's text as the current app shows it (which parts are bold or coloured), and for 19 of them every chart, shape by shape: the bedtime strip, last night's ring, the 14-day bars, the Trends chart for each month, week and day picked, and the 14-night diary. The Kotlin side must produce the same.
 
 ### Sync and offline
 

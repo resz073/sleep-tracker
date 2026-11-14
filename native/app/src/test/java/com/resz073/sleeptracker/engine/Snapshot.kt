@@ -1,5 +1,13 @@
 package com.resz073.sleeptracker.engine
 
+import com.resz073.sleeptracker.show.Drawing
+import com.resz073.sleeptracker.show.EntryForm
+import com.resz073.sleeptracker.show.HistoryShow
+import com.resz073.sleeptracker.show.ScheduleShow
+import com.resz073.sleeptracker.show.SettingsShow
+import com.resz073.sleeptracker.show.TodayShow
+import com.resz073.sleeptracker.show.TrendsShow
+import com.resz073.sleeptracker.show.TrendsView
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -122,6 +130,9 @@ internal object Snapshot {
             })
         }
 
+        /* what each screen shows */
+        r["screens"] = screens(m, plan, c["charts"] == true)
+
         /* reminders, export */
         r["reminders"] = (c["reminders"] as? Map<*, *>)?.let { s ->
             Reminders.plan(m, plan, ReminderSwitches(s["wind"] == true, s["bed"] == true, s["morning"] == true))
@@ -132,6 +143,7 @@ internal object Snapshot {
         /* the add-entry form */
         val sg = Entries.suggest(m)
         r["suggest"] = listOf(sg.bedDate, sg.bedTime, sg.wakeDate, sg.wakeTime, sg.fresh)
+        r["suggestMsg"] = EntryForm.add(sg).message(m).marked()
         val checks = ((c["checks"] as? List<*>) ?: emptyList<Any?>()).map { it as List<*> } + listOf(listOf(sg.bedDate, sg.bedTime, sg.wakeDate, sg.wakeTime, null))
         r["checks"] = checks.map { x ->
             val ch = Entries.check(x[0] as String, x[1] as String, x[2] as String, x[3] as String, x[4] as String?, m)
@@ -142,7 +154,7 @@ internal object Snapshot {
                 is EntryCheck.Overlaps -> "overlap" to Words.moment(ch.other.bed)
                 is EntryCheck.Fine -> "ok" to ch.minutes
             }
-            listOf(x[0], x[1], x[2], x[3], x[4], kind, detail)
+            listOf(x[0], x[1], x[2], x[3], x[4], kind, detail, EntryForm(x[0] as String, x[1] as String, x[2] as String, x[3] as String, 0, x[4] as String?, false, false).message(m).marked())
         }
         r["wake"] = Entries.wakeUpMessage(Entries.wakeUp(m) { "test" })
 
@@ -218,6 +230,84 @@ internal object Snapshot {
             }
         }
         return r
+    }
+
+    private fun drawing(d: Drawing?): Any? = d?.let {
+        mapOf("viewBox" to it.viewBox, "label" to it.label, "clips" to it.clips, "shapes" to it.shapes.map { s -> listOf(s.tag, s.attrs, s.text, s.title) })
+    }
+
+    private fun name(kind: PeriodKind, p: LocalDate) = if (kind == PeriodKind.MONTH) day(p).substring(0, 7) else day(p)
+
+    /** Each screen as extract.js records it: text with its emphasis marked, and (in [charts] cases) every chart's shapes */
+    private fun screens(m: SleepModel, plan: Plan?, charts: Boolean): Map<String, Any?> {
+        val t = m.today
+        val out = LinkedHashMap<String, Any?>()
+        out["header"] = TodayShow.header(m)
+        val tn = TodayShow.tonight(m, plan)
+        out["tonight"] = tn.marked()
+        if (charts) out["strip"] = drawing(tn.strip)
+        out["goalCard"] = TodayShow.goalCard(m, false)
+        val ln = TodayShow.lastNight(m)
+        out["lastnight"] = ln?.marked()
+        if (charts) out["ring"] = drawing(ln?.ring)
+        out["missing"] = TodayShow.missing(m).map { listOf(day(it.first), it.second) }
+        val debt = TodayShow.debt(m)
+        out["debt"] = listOf(debt.value, debt.className, debt.label, debt.statsMarked())
+        if (charts) out["mini"] = drawing(debt.mini)
+
+        val trends = LinkedHashMap<String, Any?>()
+        for ((k, kind) in listOf("m" to PeriodKind.MONTH, "w" to PeriodKind.WEEK, "r" to PeriodKind.LAST_3_DAYS)) {
+            val nav = kind != PeriodKind.LAST_3_DAYS
+            val tr = LinkedHashMap<String, Any?>()
+            tr["empty"] = m.start == null
+            val start = m.start
+            if (start != null) {
+                fun viewMap(v: TrendsView) = linkedMapOf<String, Any?>("title" to v.title, "bal" to v.balance.marked(), "read" to v.readout.marked(),
+                    "legend" to v.legend.map { listOf(it.mark.key, it.text) }, "nav" to (if (nav) listOf(!v.canGoBack, !v.canGoForward) else null), "all" to v.allLabel)
+                fun rows(v: TrendsView) = v.rows.map { listOf(name(kind, it.period), it.selected, it.marked()) }
+                val v = TrendsShow.view(m, kind, null, -1, false)!!
+                tr.putAll(viewMap(v))
+                if (charts) tr["chart"] = drawing(v.chart)
+                val open = TrendsShow.view(m, kind, null, -1, true)!!
+                tr["list"] = if (nav) rows(open) else null
+                tr["allOpen"] = if (nav) open.allLabel else null
+                tr["picks"] = (0 until v.days).map { i ->
+                    val pv = TrendsShow.view(m, kind, null, i, false)!!
+                    val x = linkedMapOf<String, Any?>("read" to pv.readout.marked())
+                    if (charts && kind == PeriodKind.WEEK) x["chart"] = drawing(pv.chart)
+                    x
+                }
+                if (nav) {
+                    val first = Periods.first(kind, start)
+                    tr["first"] = if (first != Periods.current(kind, t)) TrendsShow.view(m, kind, first, -1, true)!!.let { fv -> viewMap(fv) + mapOf("list" to rows(fv)) } else null
+                }
+            }
+            trends[k] = tr
+        }
+        out["trends"] = trends
+        out["timing"] = TrendsShow.timing(m).marked()
+        out["weekend"] = TrendsShow.weekend(m).marked()
+        val q = TrendsShow.quality(m)
+        out["quality"] = q.marked()
+        out["qualityBest"] = q.best
+
+        val sky = ScheduleShow.sky(m, plan)
+        val pc = ScheduleShow.plan(m, plan)
+        val dc = ScheduleShow.diary(m, plan)
+        val wk = ScheduleShow.wake(m)
+        val sch = linkedMapOf<String, Any?>("sky" to sky.marked(), "plan" to pc?.marked(), "dots" to pc?.steps?.map { it.dot.key }, "diary" to dc?.marked(),
+            "fixed" to wk.fixed, "time" to wk.time, "note" to wk.note, "lat" to wk.latency.toString())
+        if (charts) { sch["strip"] = drawing(sky.strip); sch["chart"] = drawing(dc?.chart) }
+        out["schedule"] = sch
+
+        val weeks = History.weeks(m)
+        out["history"] = (if (weeks.isEmpty()) listOf<LocalDate?>(null) else weeks.take(3).map { it.start }).map { w ->
+            val hv = HistoryShow.view(m, w)
+            listOf(w?.let(::day), hv.marked(), !hv.empty && !hv.canGoBack, !hv.empty && !hv.canGoForward)
+        }
+        val g = SettingsShow.goal(m)
+        out["goal"] = listOf(g.value, g.note.marked(), !g.canDown, !g.canUp, g.born?.toString() ?: "")
+        return out
     }
 
     private fun formats(f: Map<*, *>, zone: ZoneId): Map<String, Any?> {

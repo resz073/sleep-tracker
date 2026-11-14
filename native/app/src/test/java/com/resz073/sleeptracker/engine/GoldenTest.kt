@@ -70,8 +70,20 @@ class GoldenTest {
 
     private fun show(v: Any?): String = (if (v is String) "\"$v\"" else v.toString()).let { if (it.length > 160) it.take(160) + "…" else it }
 
+    /** Chart attributes (and clip paths) are compared number by number, allowing for rounding in the last digits */
+    private val LOOSE = Regex("""\.(shapes\[\d+]\[1]\.[^.\[]+|clips\.[^.\[]+)$""")
+    private val NUM = Regex("""-?\d+(?:\.\d+)?(?:e[-+]?\d+)?""")
+
+    private fun sameNumbers(e: String, a: String): Boolean {
+        if (NUM.replace(e, "#") != NUM.replace(a, "#")) return false
+        val x = NUM.findAll(e).map { it.value.toDouble() }.toList()
+        val y = NUM.findAll(a).map { it.value.toDouble() }.toList()
+        return x.size == y.size && x.indices.all { Math.abs(x[it] - y[it]) <= 1e-6 * Math.max(1.0, Math.abs(x[it])) }
+    }
+
     private fun compare(path: String, e: Any?, a: Any?, out: MutableList<String>) {
         when {
+            e is String && a is String && LOOSE.containsMatchIn(path) -> if (!sameNumbers(e, a)) out += "$path: expected ${show(e)}, got ${show(a)}"
             e is Map<*, *> && a is Map<*, *> -> (e.keys + a.keys).forEach { k -> compare("$path.$k", e[k], a[k], out) }
             e is List<*> && a is List<*> -> {
                 if (e.size != a.size) out += "$path: expected ${e.size} items, got ${a.size}: expected ${show(e)}, got ${show(a)}"

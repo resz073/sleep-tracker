@@ -357,5 +357,11 @@ export function scenarios() {
     entries: hist(38, "2026-04-08T07:00", { days: 25 }).filter(e => e.bed.slice(0, 10) !== "2026-04-04").concat([E("lh3", "2026-04-04T23:00", "2026-04-05T01:45", 2, T0 + 1), E("lh4", "2026-04-05T01:50", "2026-04-05T07:00", 3, T0 + 1)]),
     prefs: prefs({ born: 1983, wake: "07:00" })
   }, { reminders: ALL_ON });
+  // These also record every chart's shapes (the rest record screen text only, to keep the files small)
+  const CHARTS = ["empty document, morning", "dhaka 120 days, evening", "dhaka, morning, last night not logged", "dhaka, morning, last night logged",
+    "dhaka, long gap", "dhaka, ratings on most nights", "kathmandu, 6 AM", "asleep since 11:10 PM", "asleep since 3 days ago", "night and nap boundaries",
+    "split nights", "only naps", "plan: bedtime much later than target", "plan: target after midnight", "plan: bedtime passed",
+    "goal: birthday into 65 and over", "new york, clocks back 1 Nov", "santiago, no midnight on 6 Sep", "lord howe, clocks forward 30 minutes"];
+  CHARTS.forEach(n => { const s = list.find(x => x.name === n); if (!s) throw new Error("no scenario " + n); s.charts = true; });
   return list;
 }

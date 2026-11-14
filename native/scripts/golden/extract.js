@@ -3,8 +3,11 @@
 // Where the app works something out inside a screen function, the same lines are repeated here, and the
 // result is checked against what that screen actually showed, so this file can't drift from the app.
 (function () {
-  const textOf = id => { const e = __els.get(id); const v = e && e.textContent; return typeof v === "string" ? v : ""; };
-  const htmlOf = id => { const e = __els.get(id); const v = e && e.innerHTML; return typeof v === "string" ? v : ""; };
+  const decode = s => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
+  const stripTags = h => decode(h.replace(/<[^>]*>/g, ""));
+  // An element's text or markup, whichever the app set last (each stands in for the other)
+  const textOf = id => { const e = __els.get(id); if (!e) return ""; const v = e.textContent; if (typeof v === "string") return v; const h = e.innerHTML; return typeof h === "string" ? stripTags(h) : ""; };
+  const htmlOf = id => { const e = __els.get(id); if (!e) return ""; const v = e.innerHTML; if (typeof v === "string") return v; const t = e.textContent; return typeof t === "string" ? esc(t) : ""; };
   const must = (ok, msg) => { if (!ok) throw new Error("harness check failed: " + msg); };
   const shows = (id, s) => must(htmlOf(id).includes(s), id + " should show " + JSON.stringify(s) + " but has " + JSON.stringify(htmlOf(id).slice(0, 400)));
   const local = d => dstr(d) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
@@ -147,6 +150,10 @@
     });
     if (R.history.length) shows("histcard", hm(R.history[0][2]));
 
+    /* what each screen shows */
+    R.screens = screens(scn);
+    resetUi(); render();
+
     /* reminders, export */
     R.reminders = scn.reminders ? reminderList().map(n => [n.id, n.kind, n.type || null, n.title, n.body, local(n.at), n.at.getTime()]) : null;
     R.csv = csv();
@@ -154,6 +161,7 @@
     /* the add-entry form: what it suggests, and what it says about some times */
     resetForm();
     R.suggest = [$("bd").value, $("bt").value, $("wd").value, $("wt").value, fresh];
+    R.suggestMsg = marked(htmlOf("calc"));
     R.checks = (scn.checks || []).concat([[R.suggest[0], R.suggest[1], R.suggest[2], R.suggest[3], null]]).map(([bd, bt, wd, wt, ed]) => {
       $("bd").value = bd; $("bt").value = bt; $("wd").value = wd; $("wt").value = wt; $("q").value = "0"; fresh = false; edit = ed;
       calc();
@@ -166,7 +174,7 @@
       else throw new Error("unknown form message " + h);
       must($("save").disabled === (kind !== "ok"), "save button");
       edit = null;
-      return [bd, bt, wd, wt, ed, kind, detail];
+      return [bd, bt, wd, wt, ed, kind, detail, marked(h)];
     });
     resetUi();
 
@@ -246,6 +254,119 @@
     }
     return R;
   };
+
+  /* ---------- screens ----------
+     Text is recorded with its emphasis: bold as [b]…[/b] (or [b.bad]…[/b] when coloured), colour alone as
+     [warn]…[/warn]. Charts are recorded as their shapes, with every attribute, from the SVG the app made. */
+  const TONES = ["good", "bad", "warn"];
+  function attrsOf(tag) { const a = {}; for (const m of tag.matchAll(/([a-zA-Z0-9:-]+)="([^"]*)"/g)) a[m[1]] = decode(m[2]); return a; }
+  function marked(html) {
+    html = html.replace(/<svg[\s\S]*?<\/svg>/g, "");
+    let out = ""; const stack = [];
+    for (const m of html.matchAll(/<(\/?)([a-zA-Z0-9]+)([^>]*?)(\/?)>|([^<]+)/g)) {
+      if (m[5] != null) { out += decode(m[5]); continue; }
+      if (m[1] === "/") { const top = stack.pop(); if (top) out += top; continue; }
+      if (m[4] === "/") continue;
+      const cls = (attrsOf(m[3]).class || "").split(/\s+/), tone = TONES.find(t => cls.includes(t)), name = m[2].toLowerCase();
+      if (name === "b") { out += tone ? "[b." + tone + "]" : "[b]"; stack.push("[/b]"); }
+      else if (name === "span" && tone) { out += "[" + tone + "]"; stack.push("[/" + tone + "]"); }
+      else stack.push("");
+    }
+    return out;
+  }
+  function parseSvg(inner) {
+    const clips = {}, shapes = [];
+    inner = inner.replace(/<defs>([\s\S]*?)<\/defs>/g, (_, d) => { for (const m of d.matchAll(/<clipPath id="([^"]+)"><path d="([^"]*)"\/><\/clipPath>/g)) clips[m[1]] = m[2]; return ""; });
+    for (const m of inner.matchAll(/<(rect|line|path|circle|text)\b([^>]*?)(\/>|>([\s\S]*?)<\/\1>)/g)) {
+      let text = null, title = null;
+      if (m[4] != null) {
+        const t = /<title>([\s\S]*?)<\/title>/.exec(m[4]); if (t) title = decode(t[1]);
+        if (m[1] === "text") text = decode(m[4].replace(/<title>[\s\S]*?<\/title>/, ""));
+      }
+      shapes.push([m[1], attrsOf(m[2]), text, title]);
+    }
+    const left = inner.replace(/<(rect|line|path|circle|text)\b([^>]*?)(\/>|>([\s\S]*?)<\/\1>)/g, "").trim();
+    must(left === "", "unread chart markup " + left.slice(0, 200));
+    return { clips, shapes };
+  }
+  // The first chart in some markup
+  function svgOf(html) {
+    const m = /<svg([^>]*)>([\s\S]*?)<\/svg>/.exec(html); if (!m) return null;
+    const a = attrsOf(m[1]);
+    return { viewBox: a.viewBox, label: a["aria-label"] ?? null, ...parseSvg(m[2]) };
+  }
+  // A chart element the app draws into (its viewBox and label set as attributes)
+  function svgEl(id, viewBox) { const e = $(id); return { viewBox: e.getAttribute("viewBox") || viewBox, label: e.getAttribute("aria-label"), ...parseSvg(htmlOf(id)) }; }
+  const legendOf = h => [...h.matchAll(/<i class="lg-([a-z]+)"><\/i>([^<]*)/g)].map(m => [m[1], decode(m[2])]);
+  const rowsOf = h => [...h.matchAll(/<button type="button" class="prow( sel)?" data-p="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)].map(m => [m[2], !!m[1], marked(m[3])]);
+
+  function screens(scn) {
+    const charts = !!scn.charts, out = {};
+    ready = true; resetUi(); render(); setView("today", true);
+    out.header = textOf("abSub");
+    out.tonight = marked(htmlOf("tonight"));
+    if (charts) out.strip = svgOf(htmlOf("tonight"));
+    out.goalCard = $("goalCard").hidden === false;
+    out.lastnight = $("lastnight").hidden ? null : marked(htmlOf("lastnight"));
+    if (charts) out.ring = $("lastnight").hidden ? null : svgOf(htmlOf("lastnight"));
+    out.missing = $("missing").hidden ? [] : [...htmlOf("missChips").matchAll(/data-fill="([^"]+)"[^>]*>([^<]*)<\/button>/g)].map(m => [m[1], decode(m[2])]);
+    out.debt = [textOf("debt"), $("debt").className, textOf("debtlbl"), marked(htmlOf("debtstats"))];
+    if (charts) out.mini = { viewBox: "0 0 320 64", label: null, ...parseSvg(htmlOf("mini")) };
+
+    /* trends: each tab, its current period (all of it, then each day picked), then its first period */
+    out.trends = {};
+    ["m", "w", "r"].forEach(k => {
+      const c = VIEWS[k], T = { empty: !M.start };
+      tab = k; pick = -1; listOpen = false; sel.m = null; sel.w = null; renderTrends();
+      if (M.start) {
+        const view = () => ({ title: textOf("ttitle"), bal: marked(htmlOf("tbal")), read: marked(htmlOf("tread")), legend: legendOf(htmlOf("tlegend")),
+          nav: c.nav ? [$("tprev").disabled === true, $("tnext").disabled === true] : null, all: c.nav && $("tall").hidden === false ? textOf("tall") : null });
+        Object.assign(T, view());
+        if (charts) T.chart = svgEl("tchart");
+        listOpen = true; renderTrends();
+        T.list = c.nav ? rowsOf(htmlOf("tlist")) : null; T.allOpen = c.nav && $("tall").hidden === false ? textOf("tall") : null;
+        listOpen = false;
+        T.picks = [];
+        for (let i = 0; i < tN; i++) { pick = i; renderTrends(); const x = { read: marked(htmlOf("tread")) }; if (charts && k === "w") x.chart = svgEl("tchart"); T.picks.push(x); }
+        pick = -1;
+        if (c.nav) {
+          const first = c.first(M.start);
+          if (first !== c.cur(M.t)) { sel[k] = first; listOpen = true; renderTrends(); T.first = { ...view(), list: rowsOf(htmlOf("tlist")) }; listOpen = false; sel[k] = null; }
+          else T.first = null;
+        }
+      }
+      out.trends[k] = T;
+    });
+    tab = "m"; pick = -1; listOpen = false; sel.m = null; sel.w = null; renderTrends();
+
+    /* patterns */
+    out.timing = marked(htmlOf("timing"));
+    out.weekend = marked(htmlOf("weekend"));
+    out.quality = marked(htmlOf("quality"));
+    out.qualityBest = [...htmlOf("quality").matchAll(/class="cell( best)?"/g)].map(m => !!m[1]);
+
+    /* schedule */
+    const sky = htmlOf("schSky"), pl = $("schPlan").hidden ? null : htmlOf("schPlan"), di = $("schDiary").hidden ? null : htmlOf("schDiary");
+    out.schedule = {
+      sky: marked(sky), plan: pl == null ? null : marked(pl), dots: pl == null ? null : [...pl.matchAll(/class="dot( (hollow|end))?"/g)].map(m => m[2] || "dot"),
+      diary: di == null ? null : marked(di),
+      fixed: $("wkSet").getAttribute("aria-pressed") === "true", time: $("wkTime").hidden ? null : $("wkTime").value, note: textOf("wkNote"), lat: $("latSel").value
+    };
+    if (charts) { out.schedule.strip = svgOf(sky); out.schedule.chart = di == null ? null : svgOf(di); }
+
+    /* history: the three newest weeks */
+    const weeks = histWeeks();
+    out.history = (weeks.length ? weeks.slice(0, 3) : [null]).map(w => {
+      hWeek = w; renderHistory(); const h = htmlOf("histcard");
+      return [w, marked(h), /id="hprev"[^>]*disabled/.test(h), /id="hnext"[^>]*disabled/.test(h)];
+    });
+    hWeek = null;
+
+    /* sleep goal settings */
+    out.goal = [textOf("goalVal"), marked(htmlOf("goalNote")), $("goalDown").disabled === true, $("goalUp").disabled === true, $("bornSel").value];
+    ready = false;
+    return out;
+  }
 
   function formats(F) {
     return {
