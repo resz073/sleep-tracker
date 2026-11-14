@@ -1,0 +1,6 @@
+america-new-york.json
+america-santiago.json
+asia-dhaka.json
+asia-kathmandu.json
+australia-lord-howe.json
+europe-london.json

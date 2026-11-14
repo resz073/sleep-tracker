@@ -83,4 +83,7 @@ dependencies {
     implementation(libs.googleid)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // The sleep engine is checked against the current app (src/test, reference results from native/scripts/golden)
+    testImplementation(libs.junit)
 }

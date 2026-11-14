@@ -2,20 +2,31 @@ package com.resz073.sleeptracker.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
+import com.resz073.sleeptracker.engine.Entry
+import com.resz073.sleeptracker.engine.Now
+import com.resz073.sleeptracker.engine.SleepDoc
+import com.resz073.sleeptracker.engine.SleepModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.time.Duration
 import java.time.LocalDateTime
-
-/** One logged sleep, as the current app stores it: bed and wake as "YYYY-MM-DDTHH:MM" local times. */
-data class Entry(val id: String, val bed: LocalDateTime, val wake: LocalDateTime, val quality: Int) {
-    val minutes: Long get() = Duration.between(bed, wake).toMinutes()
-}
+import java.time.ZoneId
 
 sealed interface SleepState {
     data object Loading : SleepState
-    data class Ready(val entries: List<Entry>, val asleepSince: LocalDateTime?, val offline: Boolean) : SleepState
+
+    /**
+     * The account's data, read by the sleep engine exactly as the current app reads it.
+     * [entries] are the sleeps that count, newest first; [asleepSince] is set while a sleep is in progress.
+     */
+    data class Ready(
+        val doc: SleepDoc,
+        val entries: List<Entry>,
+        val asleepSince: LocalDateTime?,
+        val offline: Boolean,
+        val zone: ZoneId,
+    ) : SleepState
+
     data class Failed(val message: String) : SleepState
 }
 
@@ -24,8 +35,6 @@ sealed interface SleepState {
  * nothing here writes to the account.
  */
 object SleepData {
-    private val DT = Regex("""^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$""")
-
     fun listen(uid: String): Flow<SleepState> = callbackFlow {
         trySend(SleepState.Loading)
         val registration = FirebaseFirestore.getInstance().collection("users").document(uid)
@@ -34,35 +43,15 @@ object SleepData {
                     trySend(SleepState.Failed(Backend.message(error) ?: "Your entries couldn't be loaded."))
                     return@addSnapshotListener
                 }
-                val data = snap?.data
-                trySend(SleepState.Ready(entries(data), asleepSince(data), offline = snap?.metadata?.isFromCache == true))
+                trySend(ready(snap?.data, offline = snap?.metadata?.isFromCache == true))
             }
         awaitClose { registration.remove() }
     }
 
-    /** Entries newest first. Deleted entries (kept as markers for syncing) are left out. */
-    fun entries(data: Map<String, Any?>?): List<Entry> {
-        val raw = data?.get("entries") as? List<*> ?: return emptyList()
-        val seen = HashSet<String>()
-        return raw.mapNotNull { item ->
-            val m = item as? Map<*, *> ?: return@mapNotNull null
-            val del = m["del"]
-            if (del == true || (del as? Number)?.toInt() == 1) return@mapNotNull null
-            val bedText = (m["bed"] as? String)?.takeIf { DT.matches(it) } ?: return@mapNotNull null
-            val wakeText = (m["wake"] as? String)?.takeIf { DT.matches(it) } ?: return@mapNotNull null
-            val bed = runCatching { LocalDateTime.parse(bedText) }.getOrNull() ?: return@mapNotNull null
-            val wake = runCatching { LocalDateTime.parse(wakeText) }.getOrNull() ?: return@mapNotNull null
-            if (!wake.isAfter(bed)) return@mapNotNull null
-            val id = (m["id"] as? String)?.takeIf { it.isNotEmpty() } ?: "k$bedText|$wakeText"
-            if (!seen.add(id)) return@mapNotNull null
-            val quality = (m["q"] as? Number)?.toInt()?.takeIf { it in 1..5 } ?: 0
-            Entry(id, bed, wake, quality)
-        }.sortedByDescending { it.bed }
-    }
-
-    /** When the sleep in progress started, if "Going to sleep" was tapped and not yet "I'm awake". */
-    fun asleepSince(data: Map<String, Any?>?): LocalDateTime? {
-        val bed = ((data?.get("pending") as? Map<*, *>)?.get("bed") as? String)?.takeIf { DT.matches(it) } ?: return null
-        return runCatching { LocalDateTime.parse(bed) }.getOrNull()
+    fun ready(data: Map<String, Any?>?, offline: Boolean, now: Now = Now.system()): SleepState.Ready {
+        val doc = SleepDoc.read(data, now)
+        val model = SleepModel(doc, now)
+        // asReversed, not reversed(): on Android before 15 a Java reversed() would crash
+        return SleepState.Ready(doc, model.entries.asReversed().toList(), model.pending, offline, now.zone)
     }
 }

@@ -128,6 +128,14 @@ Google sign-in only works for apps registered in Firebase, and the preview is a 
 
 Until then, the preview still builds and email sign-in may work, but Google sign-in won't.
 
+### The sleep engine
+
+All of the app's sleep calculations are ported to Kotlin in `native/app/src/main/java/com/resz073/sleeptracker/engine/`. That covers how sleep splits across midnight, nights and naps, complete and incomplete days, nights not logged, sleep debt and averages, the goal by age, the bedtime plan and its steps, patterns, trends periods, history weeks, reminder times, CSV import and export, and the add-entry checks. It has no screens of its own yet. The preview reads your entries through it.
+
+It's tested against the current app itself. `native/scripts/golden/make.mjs` runs `src/app.js` on 70 test accounts in 6 time zones, including daylight-saving changes, and saves every result in `native/app/src/test/resources/golden/`. The Kotlin tests must match every value. Before each native build, GitHub runs those tests and checks that the saved results still match `src/app.js`. A change to the current app's calculations therefore fails the native build until the Kotlin engine matches again.
+
+After changing the calculations in `src/app.js`, refresh the saved results with `node native/scripts/golden/make.mjs`.
+
 ## Building on your own computer (optional)
 
 You need Node 22+, JDK 21 and Android Studio.

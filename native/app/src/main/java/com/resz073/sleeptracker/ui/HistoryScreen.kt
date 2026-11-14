@@ -27,8 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.resz073.sleeptracker.R
-import com.resz073.sleeptracker.data.Entry
 import com.resz073.sleeptracker.data.SleepState
+import com.resz073.sleeptracker.engine.Entry
+import com.resz073.sleeptracker.engine.History
+import com.resz073.sleeptracker.engine.Time
+import java.time.ZoneId
 
 /** Step 1: every entry in the account, newest first, grouped by month. Read only. */
 @Composable
@@ -69,7 +72,7 @@ fun HistoryScreen(sleep: SleepState) {
                         AppCard {
                             entries.forEachIndexed { i, e ->
                                 if (i > 0) HorizontalDivider(color = c.line, modifier = Modifier.padding(vertical = 10.dp))
-                                EntryRow(e)
+                                EntryRow(e, sleep.zone)
                             }
                         }
                     }
@@ -80,10 +83,10 @@ fun HistoryScreen(sleep: SleepState) {
 }
 
 @Composable
-private fun EntryRow(e: Entry) {
+private fun EntryRow(e: Entry, zone: ZoneId) {
     val c = LocalAppColors.current
-    // The current app counts sleep that starts between noon and 7 PM as a nap
-    val nap = e.bed.hour in 12..18
+    // Sleep that starts between noon and 7 PM is a nap
+    val nap = History.isNap(e)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -98,14 +101,14 @@ private fun EntryRow(e: Entry) {
             Text("${clock(e.bed)} – ${clock(e.wake)}", style = MaterialTheme.typography.bodyMedium, color = c.mute)
         }
         Column(horizontalAlignment = Alignment.End) {
-            Text(hm(e.minutes), style = MaterialTheme.typography.titleSmall, color = c.ink)
-            if (e.quality > 0) {
+            Text(hm(Time.minutes(e.bed, e.wake, zone)), style = MaterialTheme.typography.titleSmall, color = c.ink)
+            if (e.q > 0) {
                 Row {
                     for (i in 1..5) {
                         Icon(
                             painterResource(R.drawable.ic_star),
                             contentDescription = null,
-                            tint = if (i <= e.quality) c.acc else c.line,
+                            tint = if (i <= e.q) c.acc else c.line,
                             modifier = Modifier.size(12.dp),
                         )
                     }

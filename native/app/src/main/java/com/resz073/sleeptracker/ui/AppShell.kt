@@ -40,6 +40,7 @@ import com.resz073.sleeptracker.MainViewModel
 import com.resz073.sleeptracker.R
 import com.resz073.sleeptracker.data.Session
 import com.resz073.sleeptracker.data.SleepState
+import com.resz073.sleeptracker.engine.Time
 import java.time.LocalDate
 
 enum class Tab(val title: String, val icon: Int) {
@@ -142,7 +143,7 @@ private fun TodayPreview(sleep: SleepState) {
                             Text(dayLong(since.toLocalDate()), color = c.skyMute)
                         } else if (last != null) {
                             Text("Last logged sleep", style = MaterialTheme.typography.titleMedium, color = c.skyMute)
-                            Text(hm(last.minutes), style = MaterialTheme.typography.displaySmall, color = c.skyInk)
+                            Text(hm(Time.minutes(last.bed, last.wake, sleep.zone)), style = MaterialTheme.typography.displaySmall, color = c.skyInk)
                             Text("${clock(last.bed)} – ${clock(last.wake)}, ${dayShort(last.wake.toLocalDate())}", color = c.skyMute)
                         } else {
                             Text("No sleep logged yet", style = MaterialTheme.typography.titleLarge, color = c.skyInk)
