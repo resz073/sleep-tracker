@@ -14,6 +14,15 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -73,12 +82,13 @@ import com.resz073.sleeptracker.show.TodayShow
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 
-/** The four views, named as version 1 keeps them ("today", "trends", "schedule", "history") */
+/** The five views: version 1's four ("today", "trends", "schedule", "history") and Settings, now in the bottom bar */
 enum class Tab(val title: String, val key: String, val icon: Int) {
     Today("Today", "today", R.drawable.ic_nav_today),
     Trends("Trends", "trends", R.drawable.ic_nav_trends),
     Schedule("Schedule", "schedule", R.drawable.ic_nav_schedule),
     History("History", "history", R.drawable.ic_nav_history),
+    Settings("Settings", "settings", R.drawable.ic_nav_settings),
 }
 
 @Composable
@@ -86,7 +96,6 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
     val c = LocalAppColors.current
     val sleep by vm.sleep.collectAsStateWithLifecycle()
     val tab = Tab.entries.firstOrNull { it.key == vm.view } ?: Tab.Today
-    var settings by rememberSaveable { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
 
     // What only the screen can do for the view model: permissions, Android's settings pages, sharing a file
@@ -161,64 +170,51 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
         }
     }
 
-    // Back closes Settings, then returns to Today, then leaves the app
-    BackHandler(enabled = settings) { settings = false }
-    BackHandler(enabled = !settings && tab != Tab.Today) { vm.openView(Tab.Today.key) }
+    // Back returns to Today, then leaves the app
+    BackHandler(enabled = tab != Tab.Today) { vm.openView(Tab.Today.key) }
 
-    if (settings) {
-        // Settings has messages too (Imported, Reminders are on…): the same message bar, over it
-        Box(Modifier.fillMaxSize()) {
-            SettingsScreen(session = session, sleep = sleep, vm = vm, onBack = { settings = false })
-            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(8.dp)) { data ->
-                Snackbar(data, shape = RoundedCornerShape(14.dp), containerColor = c.ink, contentColor = c.bg, actionColor = c.accSoft)
+    Scaffold(
+        containerColor = c.bg,
+        snackbarHost = {
+            SnackbarHost(snackbar) { data ->
+                Snackbar(data, shape = RoundedCornerShape(14.dp), containerColor = c.ink, contentColor = c.bg, actionColor = c.acc)
             }
-        }
-    } else {
-        Scaffold(
-            containerColor = c.bg,
-            topBar = { Header(title = tab.title, sleep = sleep, onSettings = { settings = true }) },
-            snackbarHost = {
-                SnackbarHost(snackbar) { data ->
-                    Snackbar(data, shape = RoundedCornerShape(14.dp), containerColor = c.ink, contentColor = c.bg, actionColor = c.accSoft)
-                }
-            },
-            floatingActionButton = {
-                if (tab == Tab.History && sleep is SleepState.Ready) {
-                    ExtendedFloatingActionButton(
-                        text = { Text("Add entry", style = font(15f, FontWeight.ExtraBold)) },
-                        icon = { Icon(painterResource(R.drawable.ic_add), contentDescription = "Add entry") }, // the button's name for screen readers: Material leaves the text out
-                        onClick = vm::openAdd,
-                        shape = RoundedCornerShape(18.dp),
-                        containerColor = c.acc,
-                        contentColor = c.onAcc,
-                    )
-                }
-            },
-            bottomBar = {
-                NavigationBar(containerColor = c.card2) {
-                    Tab.entries.forEach { t ->
-                        NavigationBarItem(
-                            selected = tab == t,
-                            onClick = { vm.openView(t.key) },
-                            icon = { Icon(painterResource(t.icon), contentDescription = null) },
-                            label = { Text(t.title, style = font(12.5f, FontWeight.ExtraBold)) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = c.acc, selectedTextColor = c.ink, indicatorColor = c.accSoft,
-                                unselectedIconColor = c.mute, unselectedTextColor = c.mute,
-                            ),
-                        )
-                    }
-                }
-            },
-        ) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding)) {
-                when (val s = sleep) {
+        },
+        floatingActionButton = {
+            if (tab == Tab.History && sleep is SleepState.Ready) {
+                ExtendedFloatingActionButton(
+                    text = { Text("Add entry", style = font(16f, FontWeight.Bold)) },
+                    icon = { Icon(painterResource(R.drawable.ic_add), contentDescription = "Add entry") }, // the button's name for screen readers: Material leaves the text out
+                    onClick = vm::openAdd,
+                    shape = RoundedCornerShape(18.dp),
+                    containerColor = c.tonal,
+                    contentColor = c.onTonal,
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = if (c.dark) 0.dp else 3.dp, pressedElevation = if (c.dark) 0.dp else 4.dp,
+                        focusedElevation = if (c.dark) 0.dp else 3.dp, hoveredElevation = if (c.dark) 0.dp else 4.dp,
+                    ),
+                )
+            }
+        },
+        bottomBar = { BottomBar(tab) { vm.openView(it.key) } },
+    ) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding)) {
+            if (sleep is SleepState.Ready && (sleep as SleepState.Ready).sync == SyncState.NOT_SYNCED) {
+                Text(
+                    "Not synced yet: your changes are saved on this phone", style = font(13f, FontWeight.Bold), color = c.warn,
+                    modifier = Modifier.padding(horizontal = SIDE, vertical = 6.dp),
+                )
+            }
+            Box(Modifier.fillMaxWidth().weight(1f)) {
+                if (tab == Tab.Settings) SettingsScreen(session = session, sleep = sleep, vm = vm)
+                else when (val s = sleep) {
                     is SleepState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center), color = c.acc)
                     is SleepState.Ready -> when (tab) {
-                        Tab.Today -> TodayScreen(s, vm, onSetWake = { vm.openView(Tab.Schedule.key) }, onSetGoal = { settings = true })
+                        Tab.Today -> TodayScreen(s, vm, onSetWake = { vm.openView(Tab.Schedule.key) }, onSetGoal = { vm.openView(Tab.Settings.key) })
                         Tab.Trends -> TrendsScreen(s, vm)
                         Tab.Schedule -> ScheduleScreen(s, vm)
                         Tab.History -> HistoryScreen(s, vm)
+                        Tab.Settings -> {}
                     }
                 }
             }
@@ -247,8 +243,8 @@ private fun CsvDialog(text: String, ctx: Context, onClose: () -> Unit) {
     val c = LocalAppColors.current
     AlertDialog(
         onDismissRequest = onClose,
-        containerColor = c.card,
-        title = { Text("CSV backup", style = font(19f, FontWeight.ExtraBold), color = c.ink) },
+        containerColor = c.raised,
+        title = { Text("CSV backup", style = serif(22f, FontWeight.Medium), color = c.ink) },
         text = {
             Column {
                 Muted("Copy the text below and keep it somewhere safe.", Modifier.padding(bottom = 8.dp))
@@ -261,35 +257,29 @@ private fun CsvDialog(text: String, ctx: Context, onClose: () -> Unit) {
             TextButton(onClick = {
                 ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Sleep log", text))
                 onClose()
-            }) { Text("Copy", style = font(15f, FontWeight.ExtraBold), color = c.acc) }
+            }) { Text("Copy", style = font(15f, FontWeight.Bold), color = c.acc) }
         },
-        dismissButton = { TextButton(onClick = onClose) { Text("Close", style = font(15f, FontWeight.ExtraBold), color = c.acc) } },
+        dismissButton = { TextButton(onClick = onClose) { Text("Close", style = font(15f, FontWeight.Bold), color = c.acc) } },
     )
 }
 
+/** The bottom bar: an icon and a name for each view, the open one with the accent and a dot under it */
 @Composable
-private fun Header(title: String, sleep: SleepState, onSettings: () -> Unit) {
+private fun BottomBar(current: Tab, onOpen: (Tab) -> Unit) {
     val c = LocalAppColors.current
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(c.bg)
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .padding(start = 16.dp, end = 6.dp, top = 8.dp, bottom = 6.dp),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text(title, style = font(24f, FontWeight.ExtraBold), color = c.ink)
-                if (title == Tab.Today.title) {
-                    Text(if (sleep is SleepState.Ready) TodayShow.header(sleep.model) else dayLong(LocalDate.now()), style = font(13f, FontWeight.Bold), color = c.mute)
-                }
+    Row(Modifier.fillMaxWidth().background(c.panel).navigationBarsPadding().height(68.dp).padding(horizontal = 4.dp)) {
+        Tab.entries.forEach { t ->
+            val on = t == current
+            Column(
+                Modifier.weight(1f).fillMaxHeight().selectable(selected = on, onClick = { onOpen(t) }, role = Role.Tab).padding(top = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(painterResource(t.icon), contentDescription = null, tint = if (on) c.acc else c.mute, modifier = Modifier.size(24.dp))
+                Spacer(Modifier.height(3.dp))
+                Text(t.title, style = font(12f, if (on) FontWeight.Bold else FontWeight.Medium), color = if (on) c.ink else c.mute)
+                Spacer(Modifier.height(3.dp))
+                Box(Modifier.size(4.dp).background(if (on) c.acc else Color.Transparent, CircleShape))
             }
-            IconButton(onClick = onSettings) {
-                Icon(painterResource(R.drawable.ic_settings), contentDescription = "Settings", tint = c.ink)
-            }
-        }
-        if (sleep is SleepState.Ready && sleep.sync == SyncState.NOT_SYNCED) {
-            Text("Not synced yet: your changes are saved on this phone", style = font(13f, FontWeight.Bold), color = c.warn)
         }
     }
 }

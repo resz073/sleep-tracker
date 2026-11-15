@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The sky card is darker in the app's dark theme -->
-    <color name="widget_sky">#0A0E2B</color>
-    <color name="widget_on_button">#0A0E2B</color>
+    <!-- Dark mode is Lamplight, whatever the wallpaper (night mode wins over values-v31) -->
+    <color name="window">#151011</color>
+    <color name="widget_sky">#1F1918</color>
+    <color name="widget_ink">#E2D1BA</color>
+    <color name="widget_mute">#A8937F</color>
+    <color name="widget_accent">#CF9552</color>
+    <color name="widget_button">#4A3420</color>
+    <color name="widget_on_button">#F0C892</color>
 </resources>

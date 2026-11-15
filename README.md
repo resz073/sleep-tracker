@@ -78,7 +78,7 @@ The emulator tests create a throwaway account (`sleep-ci-…@example.com`) and d
 
 ## How the app works
 
-The app has four screens (Today, Trends, Schedule and History), a form to add and edit entries, and settings for the goal, birth year, wake-up time, time to fall asleep and weekend days.
+The app has five tabs (Today, Trends, Schedule, History and Settings) and a form to add and edit entries. You can set your goal, birth year, wake-up time, time to fall asleep and weekend days. Dark mode uses warm, dim colours with no blue in them. Light mode takes its colours from your wallpaper on Android 12 and later.
 
 - **Reminders** (Settings, or the card on Today): wind-down 30 minutes before tonight's bedtime, bedtime with a **Going to sleep** button, and a morning reminder with **Log it** while last night isn't logged. They're planned for the next 7 days and planned again whenever your data or schedule changes, when one arrives, after the phone restarts, and when the clock or time zone changes, so they keep coming without opening the app. On Android 14 and later, on-time reminders need the **Alarms & reminders** permission. Settings offers it; without it, Android may send them up to an hour late.
 - **Backup**: **Export CSV** shares a file of your entries; **Import CSV** adds entries from such a file, skipping ones already logged.

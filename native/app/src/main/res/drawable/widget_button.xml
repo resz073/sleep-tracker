@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The widget's button: the sky card's button colour -->
+<!-- The widget's button: the app's tonal button colour -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
     <solid android:color="@color/widget_button" />
-    <corners android:radius="999dp" />
+    <corners android:radius="18dp" />
 </shape>

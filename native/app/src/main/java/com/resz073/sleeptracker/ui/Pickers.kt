@@ -7,9 +7,9 @@ import android.text.format.DateFormat
 import com.resz073.sleeptracker.engine.Time
 import java.time.LocalDate
 
-/** Android's own time and date pickers (version 1 uses the browser's), in light or dark to match the phone */
+/** Android's own time and date pickers (version 1 uses the browser's), in the phone's own style, light or dark */
 object Pickers {
-    private fun theme(dark: Boolean) = if (dark) android.R.style.Theme_Material_Dialog else android.R.style.Theme_Material_Light_Dialog
+    private fun theme(dark: Boolean) = if (dark) android.R.style.Theme_DeviceDefault_Dialog else android.R.style.Theme_DeviceDefault_Light_Dialog
 
     /** [hhmm] is "HH:MM"; [onPick] gets the same format */
     fun time(context: Context, hhmm: String, dark: Boolean, onPick: (String) -> Unit) {
