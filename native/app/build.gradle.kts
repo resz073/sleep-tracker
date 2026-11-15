@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.play.services.auth)
 
     // Health Connect, when turned on in Settings
     implementation(libs.androidx.health.connect)

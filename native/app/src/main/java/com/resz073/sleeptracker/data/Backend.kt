@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseNetworkException
@@ -47,9 +48,11 @@ object Backend {
 
     /** A sentence to show the person, or null when there's nothing to say (they cancelled). */
     fun message(e: Throwable): String? = when (e) {
-        is GetCredentialCancellationException -> null
+        // Closing Google's window needs no message; Google stopping by itself does, with its reason
+        is GetCredentialCancellationException -> if (closedByPerson(e)) null else "Google sign-in stopped${reason(e)}. Try again, or use email."
         is NoCredentialException -> "No Google account is available on this phone. Add one in Android Settings, or use email."
-        is GetCredentialException -> "Google sign-in didn't work." +
+        is GoogleToken.Unfinished -> "Google sign-in didn't finish. Try again, or use email."
+        is GetCredentialException, is ApiException, is GoogleRefused -> "Google sign-in didn't work${reason(e)}." +
             (if (!BuildConfig.FIREBASE_APP_REGISTERED) " Google sign-in isn't set up in this build, so use email." else " Try again, or use email.")
         is FirebaseAuthWeakPasswordException -> "Use a password with at least 6 characters."
         is FirebaseAuthUserCollisionException -> "There's already an account with that email. Sign in instead."
@@ -67,6 +70,18 @@ object Backend {
             if (e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) "Your entries couldn't be read: the account doesn't have access."
             else "Your entries couldn't be loaded. Check your connection."
         else -> e.message?.takeIf { it.isNotBlank() } ?: "Something went wrong. Try again."
+    }
+
+    /** The person closed Google's window ("activity is cancelled by the user.", "User canceled the selector") */
+    private fun closedByPerson(e: Throwable): Boolean {
+        val m = e.message.orEmpty().lowercase()
+        return m.isBlank() || ("cancel" in m && "user" in m)
+    }
+
+    /** Google's reason, short, in brackets: " (Account reauth failed)" from "[16] Account reauth failed." */
+    private fun reason(e: Throwable): String {
+        val m = e.message.orEmpty().replace(Regex("""^\[?\d+]?:?\s*"""), "").trim().trimEnd('.')
+        return if (m.isEmpty()) "" else " (${m.take(90)})"
     }
 }
 

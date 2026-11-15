@@ -4,19 +4,18 @@ import android.app.Activity
 import android.content.Context
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.resz073.sleeptracker.BuildConfig
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+
+/** Firebase didn't accept the account Google returned */
+class GoogleRefused(cause: Throwable) : Exception(cause.message, cause)
 
 sealed interface Session {
     data object Starting : Session
@@ -50,20 +49,12 @@ class Account {
 
     /** Google's account picker, then a Firebase sign-in with the token it returns. */
     suspend fun signInWithGoogle(activity: Activity) {
-        auth.signInWithCredential(GoogleAuthProvider.getCredential(googleToken(activity), null)).awaitResult()
-    }
-
-    /** Google's account picker: an ID token for the account chosen */
-    private suspend fun googleToken(activity: Activity): String {
-        require(BuildConfig.WEB_CLIENT_ID.isNotEmpty()) { "Google sign-in isn't set up in this build." }
-        val option = GetSignInWithGoogleOption.Builder(serverClientId = BuildConfig.WEB_CLIENT_ID).build()
-        val request = GetCredentialRequest.Builder().addCredentialOption(option).build()
-        val result = CredentialManager.create(activity).getCredential(context = activity, request = request)
-        val credential = result.credential
-        if (credential !is CustomCredential || credential.type != GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            error("Google didn't return an account. Try again.")
+        val token = GoogleToken.get(activity)
+        try {
+            auth.signInWithCredential(GoogleAuthProvider.getCredential(token, null)).awaitResult()
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            throw GoogleRefused(e) // not "wrong email or password"
         }
-        return GoogleIdTokenCredential.createFrom(credential.data).idToken
     }
 
     /**
@@ -76,7 +67,7 @@ class Account {
         if (usesPassword) {
             require(!password.isNullOrEmpty()) { "Enter your password." }
             u.reauthenticate(EmailAuthProvider.getCredential(u.email.orEmpty(), password)).awaitResult()
-        } else u.reauthenticate(GoogleAuthProvider.getCredential(googleToken(activity), null)).awaitResult()
+        } else u.reauthenticate(GoogleAuthProvider.getCredential(GoogleToken.get(activity), null)).awaitResult()
     }
 
     /** Deletes the account's sleep data (users/{uid}), then the account itself, which signs out */

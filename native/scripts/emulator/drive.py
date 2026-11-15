@@ -293,6 +293,46 @@ def s_open():
     shot("01-sign-in")
 
 
+def focus():
+    """The window in front, like com.resz073.sleeptracker/com.resz073.sleeptracker.MainActivity"""
+    m = re.search(r"mCurrentFocus=Window\{\S+ \S+ ([^}]+)\}", sh("dumpsys window | grep mCurrentFocus"))
+    return m.group(1).strip() if m else ""
+
+
+@step("Continue with Google opens Google's window, and the app works after it closes")
+def s_google():
+    tap("Continue with Google")
+    # The emulator has no Google account: Google's window opens (to add one), or the app says there's none
+    seen, message = [], None
+    for _ in range(25):
+        time.sleep(1)
+        f = focus()
+        if f and f not in seen:
+            seen.append(f)
+        if f and "MainActivity" not in f:
+            break
+        root = dump()
+        message = next((n.get("text") for n, _ in nodes(root) if "Google" in n.get("text", "") and "sign-in" in n.get("text", "").lower()
+                        or "No Google account" in n.get("text", "")), None) if root is not None else None
+        if message:
+            break
+    shot("01c-google")
+    for _ in range(3):  # close Google's window
+        if "MainActivity" in focus():
+            break
+        sh("input keyevent KEYCODE_BACK")
+        time.sleep(3)
+    # Back in the app, it must not be left waiting: the Sign in button shows its text again
+    if not wait("Sign in", timeout=40, quiet=True):
+        shot("01d-google-stuck")
+        sh("am force-stop " + PKG)
+        sh("am start -W -n " + ACT, 60)
+        wait("Continue with Google", timeout=40)
+        raise Fail("still waiting for Google after its window closed (windows: %s)" % ", ".join(seen))
+    shot("01d-google-closed")
+    return ("message: " + message) if message else "windows: " + ", ".join(seen)
+
+
 @step("Create an account", critical=True)
 def s_signup():
     tap("Create an account")
@@ -558,9 +598,9 @@ def s_crashes():
 
 
 def main():
-    steps = [s_open, s_signup, s_reminders, s_import, s_today, s_trends, s_schedule, s_history, s_settings,
+    steps = [s_open, s_google, s_signup, s_reminders, s_import, s_today, s_trends, s_schedule, s_history, s_settings,
              s_health, s_export, s_alarms, s_shortcuts, s_tile, s_notification, s_delete, s_crashes] if FULL else \
-            [s_open, s_signup, s_today, s_trends, s_schedule, s_history, s_settings, s_delete, s_crashes]
+            [s_open, s_google, s_signup, s_today, s_trends, s_schedule, s_history, s_settings, s_delete, s_crashes]
     try:
         for s in steps:
             s()
