@@ -19,10 +19,11 @@ CSV_NAME = "sleep-sample.csv"
 
 
 def sample_csv():
-    """Seven weeks of nights ending last night, none missed: bedtimes around 11 PM, getting a little earlier,
-    wake-ups around 7 AM and later at weekends, most nights rated, and a nap on two Sundays"""
+    """Seven weeks of nights ending last night, none missed: bedtimes around 11:30 PM, wake-ups around 7 AM and
+    later at weekends (a few hours of sleep debt, and a plan to go to bed a little earlier), most nights rated,
+    and a nap on two Sundays"""
     today = datetime.date.fromisoformat(d.sh("date +%Y-%m-%d").strip())
-    r = random.Random(18)
+    r = random.Random(247)
     rows = ["bed_date,bed_time,wake_date,wake_time,minutes,quality"]
 
     def add(bed, wake, q):
@@ -31,12 +32,11 @@ def sample_csv():
 
     for i in range(49, -1, -1):  # i = 0: last night, waking up today
         day = today - datetime.timedelta(days=i)
-        drift = int(20 * i / 49)
-        bed = datetime.datetime.combine(day - datetime.timedelta(days=1), datetime.time(23, 0)) + \
-            datetime.timedelta(minutes=(drift + r.randint(-30, 35)) // 5 * 5)
+        bed = datetime.datetime.combine(day - datetime.timedelta(days=1), datetime.time(23, 30)) + \
+            datetime.timedelta(minutes=r.randint(-30, 30) // 5 * 5)
         weekend = day.weekday() in (5, 6)
-        wake = datetime.datetime.combine(day, datetime.time(6, 45)) + \
-            datetime.timedelta(minutes=(r.randint(35, 95) if weekend else r.randint(-15, 45)) // 5 * 5)
+        wake = datetime.datetime.combine(day, datetime.time(7, 5)) + \
+            datetime.timedelta(minutes=(r.randint(25, 70) if weekend else r.randint(-10, 25)) // 5 * 5)
         q = 4 if i == 0 else (r.randint(2, 5) if r.random() < 0.85 else "")
         add(bed, wake, q)
         if day.weekday() == 6 and i in (7, 21):
@@ -131,10 +131,10 @@ def shots(mode):
     d.tap(desc="Earlier week")
     time.sleep(1.5)
     d.shot(mode + "-history")
-    d.tap(desc="Add entry")
-    d.wait("Add sleep")
+    d.tap(desc="Edit sleep from", contains=True)
+    d.wait("Edit sleep")
     time.sleep(1)
-    d.shot(mode + "-add")
+    d.shot(mode + "-edit")
     d.tap("Cancel")
     time.sleep(1)
 
