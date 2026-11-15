@@ -55,3 +55,11 @@ writeFileSync(OUT, Object.entries(props).map(([k, v]) => `${k}=${String(v).repla
 if (own) say("notice", "Accounts", `On, with the Firebase project "${props.project_id}" and its Android app for ${APP_ID}.`);
 else say("warning", "Google sign-in", `google-services.json has no Android app for ${APP_ID}, so Google sign-in won't work in this build. In Firebase, add an Android app with that package name and your SHA-1 fingerprints, then download google-services.json again and update the GOOGLE_SERVICES_JSON secret.`);
 if (!web) say("warning", "Google sign-in", "google-services.json has no web client ID. Turn on Google sign-in in Firebase, then download the file again.");
+else {
+  // Client IDs aren't secret (every app carries them). The web client must belong to this project.
+  const webs = [...new Set(oauth.filter(o => o.client_type === 3).map(o => o.client_id))];
+  const number = String(json.project_info.project_number || "");
+  const own = web.startsWith(number + "-");
+  say(own ? "notice" : "warning", "Google sign-in", `Web client ${web}${webs.length > 1 ? ` (the file lists ${webs.length}: ${webs.join(", ")})` : ""}` +
+    (own ? `, from this project (${number}).` : `: not from this project (${number}), so Google will refuse sign-in. Download google-services.json again from this project.`));
+}
