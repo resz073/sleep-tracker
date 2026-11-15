@@ -78,9 +78,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
 
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
+    // Google sign-in (data/GoogleToken.kt)
     implementation(libs.play.services.auth)
 
     // Health Connect, when turned on in Settings

@@ -7,11 +7,8 @@ activityCompose = "1.13.0"
 coreKtx = "1.19.1"
 lifecycle = "2.11.0"
 firebaseBom = "35.1.0"
-credentials = "1.6.0"
-googleid = "1.2.1"
-# Google sign-in straight from Play services when Credential Manager's window doesn't open (data/GoogleToken.kt).
-# Credential Manager brings a newer one; the newer one is used.
-playServicesAuth = "21.3.0"
+# Google sign-in: Play services' own window (data/GoogleToken.kt), not Credential Manager, whose 1.6.0 hangs on some phones
+playServicesAuth = "21.5.1"
 healthConnect = "1.1.0"
 desugarJdkLibs = "2.1.4"
 junit = "4.13.2"
@@ -30,9 +27,6 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
-androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
-androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 androidx-health-connect = { group = "androidx.health.connect", name = "connect-client", version.ref = "healthConnect" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }

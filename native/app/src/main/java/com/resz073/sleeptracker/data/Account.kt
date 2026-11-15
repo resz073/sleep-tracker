@@ -2,8 +2,6 @@ package com.resz073.sleeptracker.data
 
 import android.app.Activity
 import android.content.Context
-import androidx.credentials.ClearCredentialStateRequest
-import androidx.credentials.CredentialManager
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -75,13 +73,13 @@ class Account {
         val u = auth.currentUser ?: return
         FirebaseFirestore.getInstance().collection("users").document(u.uid).delete().awaitResult()
         u.delete().awaitResult()
-        runCatching { CredentialManager.create(context).clearCredentialState(ClearCredentialStateRequest()) }
+        GoogleToken.forget(context)
     }
 
     suspend fun signOut(context: Context) {
         auth.signOut()
         // Also forget the Google account choice, so the picker shows next time
-        runCatching { CredentialManager.create(context).clearCredentialState(ClearCredentialStateRequest()) }
+        GoogleToken.forget(context)
     }
 
     private fun FirebaseUser?.toSession(): Session =
