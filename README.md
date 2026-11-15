@@ -121,8 +121,8 @@ Every build runs these before it publishes anything:
 
 Then the signed APK is installed on two Android emulators and used the way a person would (`native/scripts/emulator/drive.py`):
 
-- **Android 14**: checks that **Continue with Google** opens Google's window and that the app works again after it closes, creates an account, turns on reminders, imports a month of sleep from a CSV file, looks at every screen and the entry form, turns on Health Connect and checks every entry was saved there, exports a CSV file, checks the reminders and shortcuts Android has, starts and ends a sleep with the tile and with a reminder's button, and deletes the account.
-- **Android 9**: the same Google check, then creates an account, looks at each screen, and deletes the account.
+- **Android 14**: checks that **Continue with Google** opens Google's window and that the app works again after it closes, creates an account, turns on reminders, imports a month of sleep from a CSV file, looks at every screen and the entry form, turns on Health Connect and checks every entry was saved there, exports a CSV file, checks the reminders and shortcuts Android has, starts and ends a sleep with the tile and with a reminder's button, looks at every tab and the entry form in dark mode, and deletes the account.
+- **Android 9**: the same Google check, then creates an account, looks at each screen in light and dark mode, and deletes the account.
 
 A crash anywhere fails the test. The screenshots and the text on each screen are kept on the `emulator-api-34` and `emulator-api-28` branches, replaced by each build.
 

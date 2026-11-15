@@ -339,7 +339,8 @@ def s_google():
         if play_services_prompt(root):
             update = True
             break
-        if f and "MainActivity" not in f:
+        # A hung launcher can hold the focus while the app is in front: the app's own text says where we are
+        if f and "MainActivity" not in f and "Continue with Google" not in texts(root):
             break
         message = next((t for t in texts(root) if "Google" in t and ("sign-in" in t.lower() or "account" in t)
                         and t != "Continue with Google"), None)
@@ -352,7 +353,7 @@ def s_google():
         f.write("\n".join(log.splitlines()[:2000]).replace(PASSWORD, "<password>") + "\n")
     for _ in range(3):  # close Google's window, or Play services' prompt to update
         root = dump()
-        if "MainActivity" in focus() and not play_services_prompt(root):
+        if ("MainActivity" in focus() or "Continue with Google" in texts(root)) and not play_services_prompt(root):
             break
         sh("input keyevent KEYCODE_BACK")
         time.sleep(3)
@@ -608,10 +609,41 @@ def s_notification():
     time.sleep(1)
 
 
+@step("Dark mode: every tab and the entry form")
+def s_dark():
+    back_to_app_main()
+    sh("cmd uimode night yes")
+    time.sleep(4)
+    try:
+        for tab, name in [("Today", "16a-dark-today"), ("Trends", "16b-dark-trends"), ("Schedule", "16c-dark-schedule"),
+                          ("History", "16d-dark-history"), ("Settings", "16e-dark-settings")]:
+            nav(tab)
+            time.sleep(1.5)
+            shot(name)
+        nav("History")
+        tap(desc="Add entry")
+        wait("Add sleep")
+        shot("16f-dark-add-entry")
+        tap("Cancel")
+        nav("Today")
+        time.sleep(1)
+        swipe_up()
+        shot("16g-dark-today-lower")
+    finally:
+        sh("cmd uimode night no")
+        time.sleep(4)
+
+
 @step("Delete the account", critical=True)
 def s_delete():
     back_to_app_main()
+    # Settings keeps its place while it's open: from another tab it opens at the top, where the account is
+    nav("Today")
     nav("Settings")
+    for _ in range(8):
+        if present("Delete account"):
+            break
+        swipe_down()
     tap("Delete account")
     time.sleep(1)
     # Read before the password field has focus (see Create an account)
@@ -640,8 +672,8 @@ def s_crashes():
 
 def main():
     steps = [s_open, s_google, s_signup, s_reminders, s_import, s_today, s_trends, s_schedule, s_history, s_settings,
-             s_health, s_export, s_alarms, s_shortcuts, s_tile, s_notification, s_delete, s_crashes] if FULL else \
-            [s_open, s_google, s_signup, s_today, s_trends, s_schedule, s_history, s_settings, s_delete, s_crashes]
+             s_health, s_export, s_alarms, s_shortcuts, s_tile, s_notification, s_dark, s_delete, s_crashes] if FULL else \
+            [s_open, s_google, s_signup, s_today, s_trends, s_schedule, s_history, s_settings, s_dark, s_delete, s_crashes]
     try:
         for s in steps:
             s()
