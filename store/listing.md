@@ -29,6 +29,9 @@ Optional reminders to wind down, go to bed, and log your sleep in the morning. T
 Right from your home screen
 A widget shows tonight's bedtime and your last 14 days, with a Going to sleep button. Start and end a sleep from Quick Settings or the app icon's shortcuts too.
 
+Easy on the eyes at night
+Dark mode uses warm, dim colours with no blue in them. In light mode, the app takes its colours from your wallpaper.
+
 Works with Health Connect
 Optionally save your sleep to Health Connect, so other health apps you allow can see it.
 
@@ -43,9 +46,9 @@ Sleep Tracker is not a medical device and doesn't give medical advice. If you're
 | --- | --- |
 | App icon (512 × 512) | `icon-512.png` |
 | Feature graphic (1024 × 500) | `feature-graphic.png` |
-| Phone screenshots (2–8) | `screenshots/01-today.png` to `05-dark.png` |
+| Phone screenshots (2–8) | `screenshots/01-today.png` to `06-edit.png` |
 
-The screenshots show made-up sample data.
+The screenshots show made-up sample data. To make them again after the app changes, run **Store screenshots** in the repository's Actions tab. It takes them from the newest release on an Android emulator and keeps them on the `store-raw` branch. Then run `python3 store/compose.py` on that branch's files to frame them and remake the feature graphic.
 
 ## Other fields
 
@@ -56,4 +59,4 @@ The screenshots show made-up sample data.
 
 ## Release notes for version 2.0.0 (500 characters max)
 
-Sleep Tracker is now a native Android app: faster, with a home screen widget, a Quick Settings tile, shortcuts, and the option to save your sleep to Health Connect. After updating, sign in again. Your entries are in your account.
+Sleep Tracker is now a native Android app, with a new design. Dark mode uses warm, dim colours, and light mode takes its colours from your wallpaper. Trends shows each day as a candle, lit when you met your goal. Settings has its own tab, and you rate nights with stars. Also new: a home screen widget, a Quick Settings tile, shortcuts, and the option to save your sleep to Health Connect. After updating, sign in again. Your entries are in your account.
