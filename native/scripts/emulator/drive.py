@@ -118,12 +118,38 @@ def find(text=None, desc=None, contains=False, lowest=False, root=None, nocase=F
     return max(hits, key=lambda h: h[1]) if lowest else hits[0]
 
 
+ANRS = [0]
+
+
+def save_anr(title):
+    """What a hung app was doing: the system's report from the log, and the main thread from its trace file"""
+    if ANRS[0] >= 2:
+        return
+    ANRS[0] += 1
+    try:
+        ensure_root()
+        log = run(["adb", "logcat", "-d", "-v", "time"], 90).stdout
+        i = log.rfind("ANR in ")
+        report = log[max(0, i - 3000):i + 5000] if i >= 0 else "(no ANR report in the log)\n" + "\n".join(log.splitlines()[-150:])
+        name = sh("ls -t /data/anr/ 2>/dev/null | head -1").strip()
+        main = "(no trace file)"
+        if name:
+            t = sh("cat /data/anr/" + name, 90)
+            j = t.find('"main"')
+            main = name + "\n" + (t[j:j + 8000] if j >= 0 else t[:8000])
+        with open(os.path.join(OUT, "diag-anr-%d.txt" % ANRS[0]), "w") as f:
+            f.write((title + "\n\n" + report + "\n\n" + main).replace(PASSWORD, "<password>"))  # results are published
+    except Exception as e:
+        print("couldn't save the ANR report:", e, flush=True)
+
+
 def system_dialogs(root):
     """Slow emulators show "X isn't responding" for other apps (the launcher): wait it out. Returns True if one was there."""
     if root is None:
         return False
     for n, _ in nodes(root):
         if "isn't responding" in n.get("text", ""):
+            save_anr(n.get("text", ""))
             h = find("Wait", root=root)
             if h:
                 sh("input tap %d %d" % h)
@@ -187,6 +213,23 @@ def hide_keyboard():
 def type_text(s):
     sh("input text '%s'" % s)
     time.sleep(0.5)
+
+
+def fill(handle, value, check=True):
+    """Types into the field at handle. A system dialog popping up half way takes the keys, so when the text
+    isn't all there (check), the field is emptied and typed again. Older Androids can't read the screen while a
+    text field's cursor blinks, so there it's typed once."""
+    check = check and API.isdigit() and int(API) >= 30
+    for _ in range(3):
+        sh("input tap %d %d" % handle)
+        time.sleep(0.8)
+        type_text(value)
+        if not check or value in texts(dump()):  # dump() waits out a system dialog
+            return
+        sh("input tap %d %d" % handle)
+        time.sleep(0.5)
+        sh("input keyevent KEYCODE_MOVE_END " + " ".join(["KEYCODE_DEL"] * 80))
+        time.sleep(0.5)
 
 
 def swipe_up():
@@ -380,12 +423,8 @@ def s_signup():
     f, button = fields(root), find("Create account", root=root)
     if len(f) < 2 or button is None:
         raise Fail("didn't find the email and password fields and the Create account button")
-    sh("input tap %d %d" % f[0])
-    time.sleep(0.8)
-    type_text(EMAIL)
-    sh("input tap %d %d" % f[1])
-    time.sleep(0.8)
-    type_text(PASSWORD)
+    fill(f[0], EMAIL)
+    fill(f[1], PASSWORD, check=False)  # hidden, so it can't be checked
     sh("input keyevent KEYCODE_ENTER")  # Done on the keyboard creates the account
     if not wait("History", timeout=30, quiet=True):
         hide_keyboard()
