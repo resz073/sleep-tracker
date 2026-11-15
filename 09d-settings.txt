@@ -1,0 +1,19 @@
+Backup
+Save all your entries as a CSV file, or add entries from one.
+Export CSV
+Import CSV
+Health Connect
+Save your sleep to Health Connect, so other health apps you allow can see it. Install or update Health Connect first.
+Get Health Connect
+Sync
+Your entries are saved to your account and sync across your devices.
+About
+Privacy policy
+How account deletion works
+Version 2.0.0 (build 1025)
+Fonts: Literata and Atkinson Hyperlegible Next, under the SIL Open Font License.
+Today
+Trends
+Schedule
+History
+Settings

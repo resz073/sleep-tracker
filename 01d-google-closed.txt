@@ -1,0 +1,12 @@
+Sleep Tracker
+Sign in to see your sleep. Your entries sync with your account.
+Continue with Google
+or use email
+Email
+Password
+Show
+Google sign-in didn't work (code 17: Error resolution was canceled by the user, original error message: CANCELED: null). Try again, or use email.
+Sign in
+Create an account
+Forgot password?
+By continuing you agree to the Privacy Policy.

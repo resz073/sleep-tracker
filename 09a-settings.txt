@@ -1,0 +1,28 @@
+Settings
+Account
+Signed in as sleep-ci-1794762497-28@example.com.
+Sign out
+Delete account
+Reminders
+Wind-down
+30 minutes before bedtime
+Wind-down reminder
+Bedtime
+With a Going to sleep button
+Bedtime reminder
+Morning
+An hour after wake-up, to log your sleep
+Morning reminder
+Reminders start once your bedtime is set.
+Sleep goal
+Birth year
+Choose your birth year
+15 minutes less
+8h 00m
+a night
+15 minutes more
+Today
+Trends
+Schedule
+History
+Settings

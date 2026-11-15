@@ -1,0 +1,28 @@
+Close sheet
+Add sleep
+Close
+Went to bed
+Time
+Went to bed, time: 11:00 PM
+11:00 PM
+Date
+Went to bed, date: Sat 14 Nov
+Sat 14 Nov
+Woke up
+Now
+Time
+Woke up, time: 7:00 AM
+7:00 AM
+Date
+Woke up, date: Sun 15 Nov
+Sun 15 Nov
+Quality
+1 of 5
+2 of 5
+3 of 5
+4 of 5
+5 of 5
+3 – OK
+Sleep time 8h 00m, about 5.3 cycles
+Cancel
+Save

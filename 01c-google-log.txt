@@ -1,0 +1,909 @@
+--------- beginning of main
+11-15 17:09:17.003 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:17.005 I/CarrierServices( 3555): [217] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:17.007 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.008 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.008 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.008 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:17.011 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:17.012 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.013 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.013 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.014 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.014 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.016 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:17.016 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:17.018 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.018 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.018 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.019 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.019 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.021 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:17.021 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:17.022 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.023 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.023 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.024 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.024 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.026 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:17.026 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:17.027 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.028 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.028 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.029 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.029 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.030 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:17.030 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:17.032 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.032 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.032 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.033 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.033 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.035 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:17.035 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:17.036 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.037 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.037 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.038 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.038 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.039 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:17.039 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:17.041 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.041 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.041 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.042 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.042 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.044 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.045 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.045 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:17.045 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:17.046 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.046 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.046 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.047 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.047 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.056 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.061 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.062 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:17.062 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:17.062 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:17.062 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:17.064 W/AccessibilityNodeInfoDumper( 5423): Fetch time: 2ms
+--------- beginning of system
+11-15 17:09:17.065 W/WindowManager( 2006): removeWindowToken: Attempted to remove non-existing token: android.os.Binder@a1cee24
+11-15 17:09:17.065 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:17.065 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:17.065 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:17.065 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.066 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:17.066 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.069 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.069 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:17.069 D/AndroidRuntime( 5423): Shutting down VM
+11-15 17:09:17.071 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:17.182 D/AndroidRuntime( 5455): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-15 17:09:17.205 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:17.205 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:17.205 W/app_process( 5455): Unexpected CPU variant for X86 using defaults: x86_64
+11-15 17:09:17.205 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.211 I/app_process( 5455): The ClassLoaderContext is a special shared library.
+11-15 17:09:17.212 I/app_process( 5455): The ClassLoaderContext is a special shared library.
+11-15 17:09:17.218 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:17.220 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:17.220 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:17.220 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:17.220 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.229 D/AndroidRuntime( 5455): Calling main entry com.android.commands.uiautomator.Launcher
+11-15 17:09:17.355 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:17.357 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:17.358 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:17.360 I/CarrierServices( 3555): [217] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:17.361 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.362 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.362 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.362 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:17.365 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:17.367 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.367 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.367 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.368 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.368 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.370 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:17.370 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:17.372 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.372 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.372 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.373 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.373 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.375 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:17.375 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:17.377 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.377 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.377 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.378 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.378 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.380 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:17.380 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:17.381 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.382 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.382 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.383 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.383 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.384 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:17.384 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:17.386 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.387 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.387 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.388 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.388 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.389 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:17.389 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:17.392 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.392 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.392 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.393 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.393 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.395 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:17.395 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:17.397 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.397 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.398 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.398 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.398 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.399 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.399 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.400 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:17.400 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:17.401 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.401 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.402 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:17.402 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:17.403 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:17.404 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.404 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.405 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.405 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.406 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:17.406 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:17.407 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.407 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.408 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:17.408 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:17.409 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:17.409 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:17.409 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:17.409 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.479 I/BeaconBle( 2160): Scan : No clients left, canceling alarm. [CONTEXT service_id=111 ]
+11-15 17:09:17.545 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:17.545 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:17.545 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.566 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:17.567 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:17.567 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:17.567 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:17.567 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.667 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:17.669 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:17.670 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:17.671 I/CarrierServices( 3555): [221] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:17.672 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.673 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.673 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.673 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:17.678 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:17.679 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.680 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.680 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.681 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.681 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.682 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:17.682 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:17.683 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.684 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.684 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.685 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.685 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.687 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:17.687 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:17.688 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.688 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.688 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.689 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.689 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.697 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:17.697 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:17.698 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.699 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.699 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.699 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.699 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.701 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:17.701 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:17.702 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.703 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.703 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.703 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.704 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.705 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:17.705 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:17.706 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.707 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.707 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.708 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.708 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.709 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:17.709 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:17.710 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.711 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.711 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.712 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.712 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.713 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.715 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.715 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:17.715 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:17.715 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:17.716 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:17.716 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:17.717 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:17.717 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:17.717 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.718 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.719 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:17.719 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:17.719 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:17.719 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:17.720 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:17.720 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:17.721 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:17.722 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:17.722 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:17.722 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:17.722 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.721 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:17.855 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:17.855 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:17.855 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.875 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:17.876 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:17.876 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:17.876 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:17.876 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:17.903 I/GnssLocationProvider( 2006): WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@9bda6ac)
+11-15 17:09:17.904 I/GnssLocationProvider( 2006): WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@9bda6ac)
+11-15 17:09:17.998 I/dex2oat ( 5333): Explicit concurrent copying GC freed 76429(12MB) AllocSpace objects, 0(0B) LOS objects, 94% free, 86KB/1622KB, paused 435us total 27.073ms
+11-15 17:09:18.015 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:18.017 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:18.019 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:18.020 I/CarrierServices( 3555): [221] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:18.021 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.021 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.021 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.021 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:18.024 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:18.025 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.026 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.026 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.027 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.027 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.028 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:18.028 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:18.029 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.030 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.030 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.031 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.031 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.032 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:18.032 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:18.034 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.034 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.034 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.035 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.035 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.037 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:18.037 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:18.038 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.038 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.038 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.039 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.039 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.041 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:18.041 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:18.042 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.043 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.043 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.044 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.044 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.046 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:18.046 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:18.047 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.048 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.048 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.049 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.049 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.050 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:18.050 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:18.050 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.051 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.052 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.053 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.053 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.054 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.054 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.055 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:18.055 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:18.056 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.057 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.057 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:18.058 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:18.060 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.061 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.061 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.062 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.062 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.064 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:18.064 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:18.064 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.064 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.064 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:18.064 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:18.066 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:18.066 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:18.067 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:18.067 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.205 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:18.205 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:18.205 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.220 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:18.221 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:18.221 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:18.221 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:18.221 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.263 W/AccessibilityNodeInfoDumper( 5455): Fetch time: 2ms
+11-15 17:09:17.248 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:18.265 W/WindowManager( 2006): removeWindowToken: Attempted to remove non-existing token: android.os.Binder@bf2579e
+11-15 17:09:18.266 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:18.269 D/AndroidRuntime( 5455): Shutting down VM
+11-15 17:09:18.355 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:18.357 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:18.367 D/AndroidRuntime( 5485): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-15 17:09:18.372 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:18.376 I/CarrierServices( 3555): [217] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:18.378 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.379 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.379 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.379 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:18.381 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:18.382 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.383 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.383 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.384 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.384 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.386 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:18.386 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:18.389 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.390 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.390 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.391 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.391 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.393 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:18.393 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:18.394 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.395 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.395 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.396 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.396 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.398 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:18.398 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:18.400 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.401 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.401 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.402 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.402 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.405 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:18.405 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:18.406 W/app_process( 5485): Unexpected CPU variant for X86 using defaults: x86_64
+11-15 17:09:18.407 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.408 I/app_process( 5485): The ClassLoaderContext is a special shared library.
+11-15 17:09:18.408 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.408 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.409 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.409 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.411 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:18.411 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:18.412 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.412 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.412 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.414 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.414 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.417 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:18.417 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:18.418 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.418 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.419 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.420 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.420 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.421 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.421 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.423 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:18.423 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:18.423 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.423 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.423 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:18.423 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:18.426 I/CarrierServices( 3555): [217] inq.e: Network Operator: 310260
+11-15 17:09:18.426 I/CarrierServices( 3555): [217] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.426 I/CarrierServices( 3555): [217] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.428 I/CarrierServices( 3555): [217] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.428 I/CarrierServices( 3555): [217] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.430 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:18.430 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:18.430 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.430 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.431 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:18.431 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:18.439 D/AndroidRuntime( 5485): Calling main entry com.android.commands.input.Input
+11-15 17:09:18.440 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:18.440 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:18.440 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:18.440 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.444 I/Input   ( 5485): injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=582.0, y[0]=782.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=124974, downTime=124974, deviceId=0, source=0x1002 }
+11-15 17:09:18.466 I/Input   ( 5485): injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=582.0, y[0]=782.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=124974, downTime=124974, deviceId=0, source=0x1002 }
+11-15 17:09:18.501 D/AndroidRuntime( 5485): Shutting down VM
+11-15 17:09:18.503 I/AudioTrack( 2006): AUDIO_OUTPUT_FLAG_FAST successful; frameCount 0 -> 4512
+11-15 17:09:18.578 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:18.578 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:18.578 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.603 I/CarrierServices( 3555): [217] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:18.604 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:18.604 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:18.604 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:18.604 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.735 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:18.739 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:18.741 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:18.743 I/CarrierServices( 3555): [221] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:18.745 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.746 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.746 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.746 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:18.748 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:18.751 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.752 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.752 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.753 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.753 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.756 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:18.756 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:18.758 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.759 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.759 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.762 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.762 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.769 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:18.769 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:18.771 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.772 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.772 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.774 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.774 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.777 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:18.777 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:18.780 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.781 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.781 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.784 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.784 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.787 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:18.787 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:18.790 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.790 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.790 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.792 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.792 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.796 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:18.796 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:18.798 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.799 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.799 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.801 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.801 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.805 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:18.805 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:18.806 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.806 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.809 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.813 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.814 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.826 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.826 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.839 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:18.839 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:18.839 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.840 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.840 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:18.840 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:18.845 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:18.846 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:18.846 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:18.848 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:18.848 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:18.850 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:18.850 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:18.850 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:18.851 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:18.851 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:18.851 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:18.853 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:18.854 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:18.854 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:18.854 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.905 I/GnssLocationProvider( 2006): WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@344b004)
+11-15 17:09:18.906 I/GnssLocationProvider( 2006): WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@344b004)
+11-15 17:09:18.978 W/GoogleApiManager( 5259): com.google.android.gms.internal.auth-api.zbau could not execute call because it requires feature (auth_api_credentials_get_sign_in_intent, 6).
+11-15 17:09:18.980 W/GoogleApiManager( 5259): A dialog should be displayed for missing feature: auth_api_credentials_get_sign_in_intent, version: 6
+11-15 17:09:18.991 W/GooglePlayServicesUtil( 5259): Google Play services out of date for com.resz073.sleeptracker.  Requires 253600000 but found 202414023
+11-15 17:09:18.991 W/GoogleApiManager( 5259): The service for com.google.android.gms.common.internal.service.zab is not available: ConnectionResult{statusCode=SERVICE_VERSION_UPDATE_REQUIRED, resolution=null, message=null, clientMethodKey=null}
+11-15 17:09:18.994 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:18.994 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:18.994 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:18.998 W/GooglePlayServicesUtil( 5259): Google Play services out of date for com.resz073.sleeptracker.  Requires 253600000 but found 202414023
+11-15 17:09:18.999 W/GoogleApiManager( 5259): The service for com.google.android.gms.common.internal.service.zab is not available: ConnectionResult{statusCode=SERVICE_VERSION_UPDATE_REQUIRED, resolution=null, message=null, clientMethodKey=null}
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): Creating dialog for Google Play services availability issue. ConnectionResult=2
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): java.lang.IllegalArgumentException
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at com.google.android.gms.common.GoogleApiAvailability.zaa(com.google.android.gms:play-services-base@@18.9.0:15)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at com.google.android.gms.common.GoogleApiAvailability.zab(com.google.android.gms:play-services-base@@18.9.0:2)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at com.google.android.gms.common.api.internal.zao.run(com.google.android.gms:play-services-base@@18.9.0:10)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at android.os.Handler.handleCallback(Handler.java:873)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at android.os.Looper.loop(Looper.java:193)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at android.app.ActivityThread.main(ActivityThread.java:6669)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at java.lang.reflect.Method.invoke(Native Method)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:493)
+11-15 17:09:19.013 W/GoogleApiAvailability( 5259): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:858)
+11-15 17:09:19.039 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:19.041 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:19.042 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:19.042 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:19.042 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:19.061 D/SurfaceFlinger( 1958): duplicate layer name: changing com.resz073.sleeptracker/com.resz073.sleeptracker.MainActivity to com.resz073.sleeptracker/com.resz073.sleeptracker.MainActivity#1
+11-15 17:09:19.063 D/gralloc_ranchu( 1596): gralloc_alloc: Creating ashmem region of size 3211264
+11-15 17:09:19.064 D/gralloc_ranchu( 1596): gralloc_alloc: Creating ashmem region of size 3211264
+11-15 17:09:19.065 D/gralloc_ranchu( 1596): gralloc_alloc: Creating ashmem region of size 3211264
+11-15 17:09:19.108 D/EGL_emulation( 5259): eglMakeCurrent: 0x74dcaae375e0: ver 3 0 (tinfo 0x74dcaae0de60)
+11-15 17:09:19.175 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:19.177 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:19.180 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Migration complete.
+11-15 17:09:19.181 I/CarrierServices( 3555): [221] inq.shouldUseCarrierServicesApkForV1Apis: Checking if using CarrierServices.apk is possible. Enabled: true, isAtLeastM: true, runningInsideBugle: true
+11-15 17:09:19.182 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.184 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.185 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.185 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Rcs Engine should be running in cs.apk. Stopping JibeService.
+11-15 17:09:19.209 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: JibeService stopped: true
+11-15 17:09:19.211 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.212 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.212 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.213 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.213 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.215 D/RcsClientLib( 3555): Service com.google.android.rcs.client.chatsession.ChatSessionService connected. Will notify listeners: true
+11-15 17:09:19.215 V/BugleRcs( 3555): com.google.android.rcs.client.chatsession.ChatSessionService RCS service connected
+11-15 17:09:19.217 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.218 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.218 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.220 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.226 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.240 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.242 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.242 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.244 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.244 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.247 D/RcsClientLib( 3555): Service com.google.android.rcs.client.events.EventService connected. Will notify listeners: true
+11-15 17:09:19.247 V/BugleRcs( 3555): com.google.android.rcs.client.events.EventService RCS service connected
+11-15 17:09:19.253 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.255 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.255 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.256 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.256 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.262 D/RcsClientLib( 3555): Service com.google.android.rcs.client.contacts.ContactsService connected. Will notify listeners: true
+11-15 17:09:19.262 V/BugleRcs( 3555): com.google.android.rcs.client.contacts.ContactsService RCS service connected
+11-15 17:09:19.262 D/RcsClientLib( 3555): Service com.google.android.rcs.client.filetransfer.FileTransferService connected. Will notify listeners: true
+11-15 17:09:19.262 V/BugleRcs( 3555): com.google.android.rcs.client.filetransfer.FileTransferService RCS service connected
+11-15 17:09:19.293 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.299 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.299 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.300 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.300 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.302 D/RcsClientLib( 3555): Service com.google.android.rcs.client.locationsharing.LocationSharingService connected. Will notify listeners: true
+11-15 17:09:19.302 V/BugleRcs( 3555): com.google.android.rcs.client.locationsharing.LocationSharingService RCS service connected
+11-15 17:09:19.303 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.379 D/EGL_emulation( 2192): eglMakeCurrent: 0x74dcaae390c0: ver 3 0 (tinfo 0x74dcaae6b260)
+11-15 17:09:19.380 D/EGL_emulation( 5259): eglMakeCurrent: 0x74dcaae375e0: ver 3 0 (tinfo 0x74dcaae0de60)
+11-15 17:09:19.415 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.415 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.431 D/EGL_emulation( 2192): eglMakeCurrent: 0x74dcaae390c0: ver 3 0 (tinfo 0x74dcaae6b260)
+11-15 17:09:19.434 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.434 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.451 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.452 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.452 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.456 D/RcsClientLib( 3555): Service com.google.android.rcs.client.ims.ImsConnectionTrackerService connected. Will notify listeners: true
+11-15 17:09:19.463 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.463 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.462 V/BugleRcs( 3555): com.google.android.rcs.client.ims.ImsConnectionTrackerService RCS service connected
+11-15 17:09:19.466 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:19.467 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:19.476 I/CarrierServices( 3555): [221] inq.e: Network Operator: 310260
+11-15 17:09:19.477 I/CarrierServices( 3555): [221] inq.e: carrierWithOldEcApis: false
+11-15 17:09:19.477 I/CarrierServices( 3555): [221] inq.e: hasDialerThatSupportsNewEc: false
+11-15 17:09:19.479 I/CarrierServices( 3555): [221] jsn.connect: shouldUseCarrierServicesJibeService: true, CarrierServices rcs service found: true
+11-15 17:09:19.479 I/CarrierServices( 3555): [221] jsn.connect: Binding to JibeService in CarrierServices.
+11-15 17:09:19.488 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:27)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:19.488 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:19.488 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:19.489 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:19.490 D/RcsClientLib( 3555): Service com.google.android.rcs.client.profile.RcsProfileService connected. Will notify listeners: true
+11-15 17:09:19.490 V/BugleRcs( 3555): com.google.android.rcs.client.profile.RcsProfileService RCS service connected
+11-15 17:09:19.491 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:19.491 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:19.491 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:19.492 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:19.496 D/RcsClientLib( 3555): Service com.google.android.rcs.client.businessinfo.BusinessInfoService connected. Will notify listeners: true
+11-15 17:09:19.496 V/BugleRcs( 3555): com.google.android.rcs.client.businessinfo.BusinessInfoService RCS service connected
+11-15 17:09:19.496 V/BugleRcs( 3555): kicking off RCS sending/receiving
+11-15 17:09:19.496 V/BugleAction( 3555): no RCS because we're not registered
+11-15 17:09:19.497 W/CarrierServices( 3611): [76] bmc.a: No config URL. RCS will be disabled!
+11-15 17:09:19.497 I/BugleRcs( 3555): RcsAvailability ACS url: null
+11-15 17:09:19.628 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:19.628 D/RcsProvisioning( 3555): Clearing backup token
+11-15 17:09:19.628 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:19.640 I/CarrierServices( 3555): [221] RcsStateProvider.onMigrationComplete: Deleted transfers file: false
+11-15 17:09:19.641 W/RcsProvisioning( 3555): Failed to read configuration: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): java.io.FileNotFoundException: /data/user/0/com.google.android.apps.messaging/files/rcsconfig (No such file or directory)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open0(Native Method)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.open(FileInputStream.java:231)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at java.io.FileInputStream.<init>(FileInputStream.java:165)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:560)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:202)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at ion.a(SourceFile:2)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at idl.a(SourceFile:4)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at idm.a(SourceFile:7)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at iez.buildConferencesFileName(SourceFile:30)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at com.google.android.apps.messaging.rcsmigration.RcsStateProvider.onMigrationComplete(SourceFile:48)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at com.google.android.ims.rcsmigration.IRcsStateProvider$Stub.dispatchTransaction(SourceFile:14)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at com.google.android.aidl.BaseStub.onTransact(SourceFile:18)
+11-15 17:09:19.641 W/RcsProvisioning( 3555): 	at android.os.Binder.execTransact(Binder.java:731)
+11-15 17:09:19.641 D/RcsProvisioning( 3555): Retrieving backup token
+11-15 17:09:19.641 D/RcsProvisioning( 3555): Exception while getting subscriber Id. Using default
+11-15 17:09:19.775 D/RcsProvisioning( 3555): No backup token found
+11-15 17:09:19.777 I/CarrierServices( 3611): [2] aww.a: Unbinding RcsMigrationService
+11-15 17:09:19.778 E/memtrack( 2006): Couldn't load memtrack module
+11-15 17:09:19.778 W/android.os.Debug( 2006): failed to get memory consumption info: -1
+11-15 17:09:19.905 I/GnssLocationProvider( 2006): WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@94ec9)
+11-15 17:09:19.905 I/GnssLocationProvider( 2006): WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@94ec9)
+11-15 17:09:20.022 I/dex2oat ( 5333): Explicit concurrent copying GC freed 72668(9MB) AllocSpace objects, 0(0B) LOS objects, 94% free, 95KB/1631KB, paused 475us total 20.743ms
+11-15 17:09:20.510 I/ActivityManager( 2006): Killing 4831:com.google.android.onetimeinitializer/u0a33 (adj 906): empty #17
+11-15 17:09:20.510 W/libprocessgroup( 2006): kill(-4831, 9) failed: No such process
+11-15 17:09:20.555 W/libprocessgroup( 2006): kill(-4831, 9) failed: No such process
+11-15 17:09:20.556 I/Zygote  ( 1959): Process 4831 exited due to signal (9)
+11-15 17:09:20.618 W/libprocessgroup( 2006): kill(-4831, 9) failed: No such process
+11-15 17:09:20.618 I/libprocessgroup( 2006): Successfully killed process cgroup uid 10033 pid 4831 in 107ms
+11-15 17:09:20.657 D/EGL_emulation( 5259): eglMakeCurrent: 0x74dcaae375e0: ver 3 0 (tinfo 0x74dcaae0de60)
+11-15 17:09:20.864 W/dex2oat ( 5333): Verification of void cdap.<clinit>() took 131.058ms
+11-15 17:09:20.914 I/GnssLocationProvider( 2006): WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@26df9ce)
+11-15 17:09:20.924 I/GnssLocationProvider( 2006): WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@26df9ce)
+11-15 17:09:21.073 D/AndroidRuntime( 5512): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-15 17:09:21.103 W/app_process( 5512): Unexpected CPU variant for X86 using defaults: x86_64
+11-15 17:09:21.106 I/app_process( 5512): The ClassLoaderContext is a special shared library.
+11-15 17:09:21.106 I/app_process( 5512): The ClassLoaderContext is a special shared library.
+11-15 17:09:21.121 D/AndroidRuntime( 5512): Calling main entry com.android.commands.uiautomator.Launcher
+11-15 17:09:21.131 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:21.402 I/dex2oat ( 5333): Explicit concurrent copying GC freed 76289(7MB) AllocSpace objects, 0(0B) LOS objects, 94% free, 97KB/1633KB, paused 420us total 19.866ms
+11-15 17:09:21.665 I/dex2oat ( 5333): Explicit concurrent copying GC freed 11535(1168KB) AllocSpace objects, 0(0B) LOS objects, 93% free, 99KB/1635KB, paused 444us total 3.180ms
+11-15 17:09:21.684 I/dex2oat ( 5333): dex2oat took 10.071s (12.164s cpu) (threads: 2) arena alloc=0B (0B) java alloc=99KB (102384B) native alloc=9MB (9567704B) free=2MB (3015208B) swap=16MB (16777216B)
+11-15 17:09:21.691 V/installed( 1748): DexInv: --- END '/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' (success) ---
+11-15 17:09:21.695 I/system_server( 2006): The ClassLoaderContext is a special shared library.
+11-15 17:09:21.802 I/chatty  ( 2006): uid=1000 system_server identical 43 lines
+11-15 17:09:21.805 I/system_server( 2006): The ClassLoaderContext is a special shared library.
+11-15 17:09:21.806 I/BackgroundDexOptService( 2006): Pinning optimized code {com.google.android.gms}
+11-15 17:09:21.854 W/audio_hw_generic( 1934): Not supplying enough data to HAL, expected position 306200 , only wrote 154080
+11-15 17:09:21.907 I/GnssLocationProvider( 2006): WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@d73e4da)
+11-15 17:09:21.907 I/GnssLocationProvider( 2006): WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@d73e4da)
+11-15 17:09:22.141 W/AccessibilityNodeInfoDumper( 5512): Fetch time: 1ms
+11-15 17:09:22.142 W/WindowManager( 2006): removeWindowToken: Attempted to remove non-existing token: android.os.Binder@e4450ef
+11-15 17:09:22.143 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:22.146 D/AndroidRuntime( 5512): Shutting down VM
+11-15 17:09:22.259 E/SurfaceFlinger( 1958): ro.sf.lcd_density must be defined as a build property
+11-15 17:09:22.260 D/gralloc_ranchu( 1596): gralloc_alloc: Creating ashmem region of size 10371072
+11-15 17:09:22.274 D/HostConnection( 5532): createUnique: call
+11-15 17:09:22.275 D/HostConnection( 5532): HostConnection::get() New Host Connection established 0x7d027ce41640, tid 5532
+11-15 17:09:22.276 D/HostConnection( 5532): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_YUV420_888_to_NV21 ANDROID_EMU_YUV_Cache ANDROID_EMU_sync_buffer_data ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+11-15 17:09:22.276 E/eglCodecCommon( 5532): GoldfishAddressSpaceHostMemoryAllocator: ioctl_ping failed for device_type=5, ret=-1
+11-15 17:09:22.419 D/AndroidRuntime( 5535): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-15 17:09:22.441 W/app_process( 5535): Unexpected CPU variant for X86 using defaults: x86_64
+11-15 17:09:22.442 I/app_process( 5535): The ClassLoaderContext is a special shared library.
+11-15 17:09:22.442 I/app_process( 5535): The ClassLoaderContext is a special shared library.
+11-15 17:09:22.452 D/AndroidRuntime( 5535): Calling main entry com.android.commands.uiautomator.Launcher
+11-15 17:09:22.787 W/DnsTlsSocket( 1967): SSL_connect error 5, errno=111
+11-15 17:09:22.907 I/GnssLocationProvider( 2006): WakeLock acquired by sendMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@e4a273)
+11-15 17:09:22.907 I/GnssLocationProvider( 2006): WakeLock released by handleMessage(REPORT_SV_STATUS, 0, com.android.server.location.GnssLocationProvider$SvStatusInfo@e4a273)
+11-15 17:09:23.177 W/ChimeraConfigurator( 2512): Error syncing flags: qoq: COMMIT_TIMEOUT
+11-15 17:09:23.177 I/ChmraDebugLogger( 2512): [79] COMMIT_TIMEOUT
+11-15 17:09:23.178 E/memtrack( 2006): Couldn't load memtrack module
+11-15 17:09:23.178 W/android.os.Debug( 2006): failed to get memory consumption info: -1
+11-15 17:09:23.183 I/ChmraDebugLogger( 2512): [52] null
+11-15 17:09:23.196 I/ChimeraConfigService( 2512): Scheduling checkin for one-off execution between [3300,43200] seconds from now (1794762563196)
+11-15 17:09:23.203 I/ChimeraConfigurator( 2512): Starting update, reason: 4 urgentFeatures: vision.ocr:-1
+11-15 17:09:23.299 E/FirebaseInstanceId( 4952): Token retrieval failed: INVALID_SENDER
+11-15 17:09:23.322 W/Conscrypt( 2160): Could not set socket write timeout: java.net.SocketException: Socket closed
+11-15 17:09:23.323 W/Conscrypt( 2160): 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-15 17:09:23.324 W/Conscrypt( 2160): 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-15 17:09:23.353 W/Conscrypt( 2160): Could not set socket write timeout: java.net.SocketException: Socket closed
+11-15 17:09:23.353 W/Conscrypt( 2160): 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-15 17:09:23.353 W/Conscrypt( 2160): 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-15 17:09:23.466 W/AccessibilityNodeInfoDumper( 5535): Fetch time: 1ms
+11-15 17:09:22.458 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:23.467 W/WindowManager( 2006): removeWindowToken: Attempted to remove non-existing token: android.os.Binder@d103bad
+11-15 17:09:23.468 V/SettingsProvider( 2006): Notifying for 0: content://settings/secure/accessibility_enabled
+11-15 17:09:23.471 D/AndroidRuntime( 5535): Shutting down VM

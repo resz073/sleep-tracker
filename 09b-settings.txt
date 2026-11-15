@@ -1,0 +1,21 @@
+Sleep goal
+Birth year
+Choose your birth year
+15 minutes less
+8h 00m
+a night
+15 minutes more
+Add your birth year to set a goal that fits your age. Until then, your goal is 8 hours.
+Age ranges from the National Sleep Foundation.
+Backup
+Save all your entries as a CSV file, or add entries from one.
+Export CSV
+Import CSV
+Health Connect
+Save your sleep to Health Connect, so other health apps you allow can see it. Install or update Health Connect first.
+Get Health Connect
+Today
+Trends
+Schedule
+History
+Settings
