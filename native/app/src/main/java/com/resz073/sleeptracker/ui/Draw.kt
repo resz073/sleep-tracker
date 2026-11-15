@@ -52,30 +52,28 @@ fun DrawingView(d: Drawing, modifier: Modifier = Modifier, onTap: ((Float) -> Un
     }
 }
 
-/** A colour role from version 1's stylesheet ("var(--acc)") */
+/** A colour role from version 1's stylesheet ("var(--acc)"), in the redesign's colours */
 fun role(colors: AppColors, v: String?): Color? {
     if (v == null || v == "none") return null
     return when (v.removePrefix("var(--").removeSuffix(")")) {
-        "acc" -> colors.acc
-        "acc-soft" -> colors.accSoft
-        "good" -> colors.good
+        "acc" -> colors.met
+        "acc-soft" -> colors.window
+        "good" -> colors.acc
         "bad" -> colors.bad
         "warn" -> colors.warn
-        "good-soft" -> colors.goodSoft
-        "bad-soft" -> colors.badSoft
-        "warn-soft" -> colors.warnSoft
+        "good-soft" -> colors.met.copy(alpha = 0.16f)
+        "bad-soft" -> colors.under.copy(alpha = 0.16f)
+        "warn-soft" -> colors.warn.copy(alpha = 0.16f)
         "ink" -> colors.ink
         "mute" -> colors.mute
-        "line" -> colors.line
-        "grid" -> colors.grid
-        "card" -> colors.card
-        "card2" -> colors.card2
-        "sky" -> colors.sky
-        "sky-ink" -> colors.skyInk
-        "sky-mute" -> colors.skyMute
-        "sky-acc" -> colors.skyAcc
-        "sky-line" -> colors.skyLine
-        "sky-dawn" -> colors.skyDawn
+        "line", "grid" -> colors.line
+        "card" -> colors.panel
+        "card2" -> colors.raised
+        "sky" -> colors.bg
+        "sky-ink" -> colors.ink
+        "sky-mute" -> colors.mute
+        "sky-acc", "sky-dawn" -> colors.acc
+        "sky-line" -> colors.raised
         else -> colors.ink
     }
 }
@@ -130,8 +128,8 @@ private fun DrawScope.shape(s: Shape, path: Path?, clips: Map<String, Path>, col
         "text" -> {
             val text = s.text ?: return
             val style = TextStyle(
-                fontFamily = Nunito, fontSize = s.num("font-size", 10f).toSp(),
-                fontWeight = when (s["font-weight"]) { "800" -> FontWeight.ExtraBold; "700" -> FontWeight.Bold; else -> FontWeight.Normal }, color = fill ?: colors.ink
+                fontFamily = Atkinson, fontSize = s.num("font-size", 10f).toSp(),
+                fontWeight = when (s["font-weight"]) { "800", "700" -> FontWeight.Bold; else -> FontWeight.Normal }, color = fill ?: colors.ink
             )
             val layout = measurer.measure(text, style)
             val w = layout.size.width.toFloat()
