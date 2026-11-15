@@ -1,0 +1,21 @@
+Age ranges from the National Sleep Foundation.
+Backup
+Save all your entries as a CSV file, or add entries from one.
+Export CSV
+Import CSV
+Health Connect
+Save sleep to Health Connect
+So other health apps you allow can see it
+Save sleep to Health Connect
+New, changed and deleted entries are saved there. Nothing is read from Health Connect.
+Open Health Connect
+Sync
+Your entries are saved to your account and sync across your devices.
+About
+Privacy policy
+How account deletion works
+Today
+Trends
+Schedule
+History
+Settings

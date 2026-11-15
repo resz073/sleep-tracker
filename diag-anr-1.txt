@@ -1,0 +1,193 @@
+Pixel Launcher isn't responding
+
+ted: 261072174; UID 1000; state: ENABLED
+11-15 17:08:54.931 D/CompatibilityChangeReporter(  522): Compat change id reported: 261072174; UID 10132; state: DISABLED
+11-15 17:08:54.931 I/SP      ( 1549): Scheduling job with delay of 0s for {m:b:u:l, bg}, 1 candidates
+11-15 17:08:54.932 W/JobScheduler(  522): Job didn't exist in JobStore: 5925e75 #u0a132/-183 com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService
+11-15 17:08:54.933 D/CompatibilityChangeReporter(  522): Compat change id reported: 161145287; UID 10132; state: DISABLED
+11-15 17:08:54.938 I/Nearby  ( 1429): is blocked device type false, isAuto=false, isIot=false, isLatchsky=false, isChinaWearable=false, isTv=false, isWearable=false (supportWearOs=false), isChromeOsDevice=false (supportChromeOs=false) [CONTEXT service_id=49 ]
+11-15 17:08:54.939 I/NearbyDiscovery( 1429): DiscoveryController, showNotification, itemSize=0 [CONTEXT service_id=265 ]
+11-15 17:08:54.939 I/NearbyDiscovery( 1429): Show notifications: 0 total, no changes since last shown, no-op. [CONTEXT service_id=265 ]
+11-15 17:08:54.941 D/nativeloader( 3816): Configuring clns-10 for other apk . target_sdk_version=31, uses_libraries=ALL, library_path=/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk!/lib/x86_64:/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+11-15 17:08:54.945 D/ConnectivityService(  522): requestNetwork for uid/pid:10132/3816 activeRequest: null callbackRequest: 105 [NetworkRequest [ REQUEST id=106, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10132 RequestorUid: 10132 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+11-15 17:08:54.947 W/PermissionManagerService(  522): Datasource AttributionSource { uid = 10141, packageName = com.google.android.gm, attributionTag = null, token = android.os.BinderProxy@e714174, next = android.content.AttributionSourceState@517b712 } protecting data with platform defined runtime permission android.permission.READ_CONTACTS while not having android.permission.UPDATE_APP_OPS_STATS
+11-15 17:08:54.949 I/cr_CronetLibraryLoader( 3816): Cronet version: 113.0.5672.51, arch: x86_64
+11-15 17:08:54.955 I/ProvidersCache( 2365): Updating roots due to change on user 0at content://com.android.externalstorage.documents
+11-15 17:08:54.956 I/ProvidersCache( 2365): Updating roots due to change on user 0at content://com.android.externalstorage.documents
+11-15 17:08:54.960 I/AiAiEcho( 1623): AppFetcherImpl onPackageChanged com.android.intentresolver.
+11-15 17:08:54.961 I/AiAiEcho( 1623): AppIndexer Package:[com.android.intentresolver] UserProfile:[0] Enabled:[true].
+11-15 17:08:54.961 I/AiAiEcho( 1623): AppFetcherImplV2 updateApps package:[com.android.intentresolver], userId:[0], reason:[package is updated.].
+11-15 17:08:54.964 E/ActivityManager(  522): ANR in com.google.android.apps.nexuslauncher (com.google.android.apps.nexuslauncher/.NexusLauncherActivity)
+11-15 17:08:54.964 E/ActivityManager(  522): PID: 1091
+11-15 17:08:54.964 E/ActivityManager(  522): Reason: Input dispatching timed out (Application does not have a focused window)
+11-15 17:08:54.964 E/ActivityManager(  522): Parent: com.google.android.apps.nexuslauncher/.NexusLauncherActivity
+11-15 17:08:54.964 E/ActivityManager(  522): ErrorId: 98ea6aa0-436d-4d69-afc9-56b941c5de03
+11-15 17:08:54.964 E/ActivityManager(  522): Frozen: false
+11-15 17:08:54.964 E/ActivityManager(  522): Load: 9.17 / 2.06 / 0.68
+11-15 17:08:54.964 E/ActivityManager(  522): ----- Output from /proc/pressure/memory -----
+11-15 17:08:54.964 E/ActivityManager(  522): some avg10=14.10 avg60=3.71 avg300=0.83 total=2607523
+11-15 17:08:54.964 E/ActivityManager(  522): full avg10=1.96 avg60=0.48 avg300=0.10 total=435559
+11-15 17:08:54.964 E/ActivityManager(  522): ----- End output from /proc/pressure/memory -----
+11-15 17:08:54.964 E/ActivityManager(  522): ----- Output from /proc/pressure/cpu -----
+11-15 17:08:54.964 E/ActivityManager(  522): some avg10=73.80 avg60=27.25 avg300=6.75 total=21333777
+11-15 17:08:54.964 E/ActivityManager(  522): full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+11-15 17:08:54.964 E/ActivityManager(  522): ----- End output from /proc/pressure/cpu -----
+11-15 17:08:54.964 E/ActivityManager(  522): ----- Output from /proc/pressure/io -----
+11-15 17:08:54.964 E/ActivityManager(  522): some avg10=17.37 avg60=6.30 avg300=1.59 total=5230415
+11-15 17:08:54.964 E/ActivityManager(  522): full avg10=0.37 avg60=0.46 avg300=0.14 total=574321
+11-15 17:08:54.964 E/ActivityManager(  522): ----- End output from /proc/pressure/io -----
+11-15 17:08:54.964 E/ActivityManager(  522): 
+11-15 17:08:54.964 E/ActivityManager(  522): CPU usage from 2675ms to 17281ms later (2026-11-15 17:08:40.293 to 2026-11-15 17:08:54.899):
+11-15 17:08:54.964 E/ActivityManager(  522):   26% 522/system_server: 18% user + 8.2% kernel / faults: 34799 minor 96 major
+11-15 17:08:54.964 E/ActivityManager(  522):   12% 1429/com.google.android.gms.persistent: 8.9% user + 3.6% kernel / faults: 30365 minor 309 major
+11-15 17:08:54.964 E/ActivityManager(  522):   11% 1091/com.google.android.apps.nexuslauncher: 5.4% user + 6.5% kernel / faults: 39876 minor 390 major
+11-15 17:08:54.964 E/ActivityManager(  522):   9.8% 1466/com.google.android.gms: 7.3% user + 2.4% kernel / faults: 26360 minor 262 major
+11-15 17:08:54.964 E/ActivityManager(  522):   9.6% 2880/com.google.android.tts: 8.1% user + 1.5% kernel / faults: 29497 minor 200 major
+11-15 17:08:54.964 E/ActivityManager(  522):   9.5% 1549/com.google.android.inputmethod.latin: 7.6% user + 1.8% kernel / faults: 8817 minor 126 major
+11-15 17:08:54.964 E/ActivityManager(  522):   7.1% 390/android.hardware.graphics.composer3-service.ranchu: 0.1% user + 6.9% kernel / faults: 1 major
+11-15 17:08:54.964 E/ActivityManager(  522):   6.5% 2620/com.google.android.apps.wallpaper: 6.4% user + 0.1% kernel / faults: 7179 minor 7 major
+11-15 17:08:54.964 E/ActivityManager(  522):   4.6% 837/com.android.systemui: 2.9% user + 1.7% kernel / faults: 14651 minor 2423 major
+11-15 17:08:54.964 E/ActivityManager(  522):   3.8% 1749/com.google.android.apps.youtube.music: 3.2% user + 0.6% kernel / faults: 16269 minor 58 major
+11-15 17:08:54.964 E/ActivityManager(  522): 100% TOTAL: 55% user + 41% kernel + 3.4% softirq
+11-15 17:08:54.964 E/ActivityManager(  522): CPU usage from 272ms to 870ms later (2026-11-15 17:08:37.890 to 2026-11-15 17:08:38.488):
+11-15 17:08:54.964 E/ActivityManager(  522):   40% 522/system_server: 30% user + 10% kernel / faults: 4509 minor 1 major
+11-15 17:08:54.964 E/ActivityManager(  522):     11% 532/HeapTaskDaemon: 10% user + 1.6% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     5% 2879/AnrAuxiliaryTas: 1.6% user + 3.3% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     3.3% 544/android.display: 1.6% user + 1.6% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     3.3% 552/ActivityManager: 1.6% user + 1.6% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 522/system_server: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 537/binder:522_1: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 575/PackageManager: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 596/binder:522_4: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 607/eduling.default: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 627/InputReader: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 758/NetworkPolicy: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 767/ConnectivitySer: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager(  522):     1.6% 1726/binder:522_10: 1.6% user + 0% kernel
+11-15 17:08:54.964 E/ActivityManager( 
+
+anr_2026-11-15-17-08-37-872
+"main" prio=5 tid=1 Native
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x72320e08 self=0x7f6e9685d2c0
+  | sysTid=1091 nice=-10 cgrp=top-app sched=0/0 handle=0x7f704895b4f8
+  | state=S schedstat=( 220018858 1205385309 1191 ) utm=15 stm=6 core=0 HZ=100
+  | stack=0x7ffd3f5e3000-0x7ffd3f5e5000 stackSize=8188KB
+  | held mutexes=
+  native: #00 pc 0005db96  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+22) (BuildId: fa337969c798946280caa45e2d71a2e7)
+  native: #01 pc 003cf3eb  /apex/com.android.art/lib64/libart.so (art::ConditionVariable::WaitHoldingLocks+107) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #02 pc 0091d90f  /apex/com.android.art/lib64/libart.so (artJniMethodEnd+431) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #03 pc 003762e7  /apex/com.android.art/lib64/libart.so (art_jni_method_end+23) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  at android.os.BinderProxy.transactNative(Native method)
+  at android.os.BinderProxy.transact(BinderProxy.java:584)
+  at android.view.IWindowSession$Stub$Proxy.relayout(IWindowSession.java:1356)
+  at android.view.ViewRootImpl.relayoutWindow(ViewRootImpl.java:8264)
+  at android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:3223)
+  at android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:2465)
+  at android.view.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:9305)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1339)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1348)
+  at android.view.Choreographer.doCallbacks(Choreographer.java:952)
+  at android.view.Choreographer.doFrame(Choreographer.java:882)
+  at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1322)
+  at android.os.Handler.handleCallback(Handler.java:958)
+  at android.os.Handler.dispatchMessage(Handler.java:99)
+  at android.os.Looper.loopOnce(Looper.java:205)
+  at android.os.Looper.loop(Looper.java:294)
+  at android.app.ActivityThread.main(ActivityThread.java:8177)
+  at java.lang.reflect.Method.invoke(Native method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:552)
+  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:971)
+
+"ReferenceQueueDaemon" daemon prio=5 tid=8 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x136cded0 self=0x7f6e96857f50
+  | sysTid=1106 nice=4 cgrp=top-app sched=0/0 handle=0x7f6d2df84cf0
+  | state=S schedstat=( 369990 30041287 3 ) utm=0 stm=0 core=0 HZ=100
+  | stack=0x7f6d2de82000-0x7f6d2de84000 stackSize=1035KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x065763d8> (a java.lang.Class<java.lang.ref.ReferenceQueue>)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.Object.wait(Object.java:524)
+  at java.lang.Daemons$ReferenceQueueDaemon.runInternal(Daemons.java:239)
+  - locked <0x065763d8> (a java.lang.Class<java.lang.ref.ReferenceQueue>)
+  at java.lang.Daemons$Daemon.run(Daemons.java:145)
+  at java.lang.Thread.run(Thread.java:1012)
+
+"FinalizerDaemon" daemon prio=5 tid=9 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x136cdf48 self=0x7f6e9685b6f0
+  | sysTid=1107 nice=4 cgrp=top-app sched=0/0 handle=0x7f6d2de7bcf0
+  | state=S schedstat=( 736131 29995022 3 ) utm=0 stm=0 core=0 HZ=100
+  | stack=0x7f6d2dd79000-0x7f6d2dd7b000 stackSize=1035KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x04b18331> (a java.lang.Object)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:210)
+  - locked <0x04b18331> (a java.lang.Object)
+  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:231)
+  at java.lang.Daemons$FinalizerDaemon.runInternal(Daemons.java:309)
+  at java.lang.Daemons$Daemon.run(Daemons.java:145)
+  at java.lang.Thread.run(Thread.java:1012)
+
+"FinalizerWatchdogDaemon" daemon prio=5 tid=10 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x136cdfc0 self=0x7f6e96859b20
+  | sysTid=1108 nice=4 cgrp=top-app sched=0/0 handle=0x7f6d2dd72cf0
+  | state=S schedstat=( 56689 30912177 6 ) utm=0 stm=0 core=0 HZ=100
+  | stack=0x7f6d2dc70000-0x7f6d2dc72000 stackSize=1035KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x0e73fa16> (a java.lang.Daemons$FinalizerWatchdogDaemon)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.Object.wait(Object.java:524)
+  at java.lang.Daemons$FinalizerWatchdogDaemon.sleepUntilNeeded(Daemons.java:428)
+  - locked <0x0e73fa16> (a java.lang.Daemons$FinalizerWatchdogDaemon)
+  at java.lang.Daemons$FinalizerWatchdogDaemon.runInternal(Daemons.java:408)
+  at java.lang.Daemons$Daemon.run(Daemons.java:145)
+  at java.lang.Thread.run(Thread.java:1012)
+
+"launcher-loader" prio=5 tid=17 Native
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x136c91a0 self=0x7f6e9688dd80
+  | sysTid=1134 nice=10 cgrp=top-app sched=0/0 handle=0x7f6d2d0c9cf0
+  | state=S schedstat=( 83377072 1067028172 410 ) utm=5 stm=2 core=1 HZ=100
+  | stack=0x7f6d2cfc7000-0x7f6d2cfc9000 stackSize=1035KB
+  | held mutexes=
+  native: #00 pc 0005db96  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+22) (BuildId: fa337969c798946280caa45e2d71a2e7)
+  native: #01 pc 003cf3eb  /apex/com.android.art/lib64/libart.so (art::ConditionVariable::WaitHoldingLocks+107) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #02 pc 0091d90f  /apex/com.android.art/lib64/libart.so (artJniMethodEnd+431) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #03 pc 003762e7  /apex/com.android.art/lib64/libart.so (art_jni_method_end+23) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  at android.content.res.AssetManager.nativeOpenXmlAsset(Native method)
+  at android.content.res.AssetManager.openXmlBlockAsset(AssetManager.java:1122)
+  - locked <0x00985f97> (a android.content.res.AssetManager)
+  at android.content.res.ResourcesImpl.loadXmlResourceParser(ResourcesImpl.java:1240)
+  - locked <0x03cae584> (a android.content.res.XmlBlock[])
+  at android.content.res.ResourcesImpl.loadXmlDrawable(ResourcesImpl.java:943)
+  at android.content.res.ResourcesImpl.loadDrawableForCookie(ResourcesImpl.java:888)
+  at android.content.res.ResourcesImpl.loadDrawable(ResourcesImpl.java:681)
+  at android.content.res.Resources.loadDrawable(Resources.java:1004)
+  at android.content.res.Resources.getDrawableForDensity(Resources.java:994)
+  at android.content.res.Resources.getDrawableForDensity(Resources.java:968)
+  at android.content.pm.LauncherActivityInfo.getIcon(LauncherActivityInfo.java:108)
+  at L0.p.get(unavailable:4)
+  at com.android.launcher3.icons.IconProvider.getIconWithOverrides(unavailable:257)
+  at com.android.launcher3.icons.IconProvider.getIcon(SourceFile:1)
+  at com.android.launcher3.icons.LauncherActivityCachingLogic.loadIcon(unavailable:16)
+  at com.android.launcher3.icons.cache.BaseIconCache.loadFallbackIcon(unavailable:4)
+  at com.android.launcher3.icons.IconCache.b(unavailable:336)
+  at L0.o.accept(unavailable:6)
+  at java.util.HashMap.forEach(HashMap.java:1423)
+  at com.android.launcher3.icons.IconCache.getTitlesAndIconsInBulk(unavailable:41)
+  - locked <0x076a216d> (a com.android.launcher3.icons.IconCache)
+  at com.android.launcher3.model.LoaderTask.tryLoadWorkspaceIconsInBulk(unavailable:7)
+  at com.android.launcher3.model.LoaderTask.loadWorkspaceImpl(unavailable:388)
+  - locked <0x05ada1a2> (a com.android.launcher3.model.BgDataModel)
+  at com.android.launcher3.model.LoaderTask.loadWorkspace(unavailable:5)
+  at com.android.launcher3.model.LoaderTask.run(unavailable:39)
+  at android.os.Handler.handleCallback(Handler.java:958)
+  at android.os.Handler.dispatchMessage(Handler.java:99)
+  at android.os.Looper.loopOnce(Looper.java:205)
+  at android.os.Looper.loop(Looper.java:294)
+  at android.os.HandlerThread.run(HandlerThread.java:67)
+
+"com.google.android.apps.wallpaper.recents" prio=5 tid=33 TimedWaiting
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x13765760 self=0x7f6e968cc6c0
+  | sysTid=2618 nice=0 cgrp=top-app sched=0/0 handle=0x7f6d20

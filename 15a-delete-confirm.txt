@@ -1,0 +1,26 @@
+Settings
+Account
+Signed in as sleep-ci-1794762521-34@example.com.
+Sign out
+Delete account
+Delete your account? This permanently deletes your account and all your sleep entries. Export a CSV backup first if you want to keep them.
+••••••••••••••••
+Enter your password to confirm
+Keep account
+Delete account
+Reminders
+Wind-down
+30 minutes before bedtime
+Wind-down reminder
+Bedtime
+With a Going to sleep button
+Bedtime reminder
+Morning
+An hour after wake-up, to log your sleep
+Morning reminder
+Android can hold reminders back by up to an hour to save battery.
+Today
+Trends
+Schedule
+History
+Settings

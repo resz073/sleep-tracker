@@ -1,0 +1,279 @@
+Pixel Launcher isn't responding
+
+(no ANR report in the log)
+11-15 17:09:19.401 I/FontLog ( 1429): Pulling font file for id = 10, cache size = 10 [CONTEXT service_id=132 ]
+11-15 17:09:19.426 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.445 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.456 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.487 E/RoleControllerServiceImpl(  839): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+11-15 17:09:19.488 I/Role    (  839): com.google.android.gms not qualified for android.app.role.SYSTEM_CALL_STREAMING due to missing RequiredComponent{mIntentFilterData=IntentFilterData{mAction='android.telecom.CallStreamingService', mCategories='[]', mDataScheme='null', mDataType='null'}, mMinTargetSdkVersion=1, mFlags='0', mPermission='android.permission.BIND_CALL_STREAMING_SERVICE', mQueryFlags=0, mMetaData=[]}
+11-15 17:09:19.489 E/RoleControllerServiceImpl(  839): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.SYSTEM_CALL_STREAMING
+11-15 17:09:19.491 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.502 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.509 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.510 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.521 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.523 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.537 W/Role    (  839): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+11-15 17:09:19.537 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.550 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.560 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.564 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.582 W/WindowMagnificationMgr(  522): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-15 17:09:19.582 W/Bugle   ( 4514): TextClassifierLibManagerImpl: Reclaiming memory at level: 40
+11-15 17:09:19.583 I/BugleNetwork( 4514): NewLightTickleFcmHandler: Handling firebase new token
+11-15 17:09:19.585 I/BugleNetwork( 4514): RegistrationProvider: Refresh Tachyon Registration Now
+11-15 17:09:19.588 I/BugleNetwork( 4514): RegistrationProvider: Tachyon registration token is null, ignore immediate refresh
+11-15 17:09:19.589 I/BugleNetwork( 4514): NewLightTickleFcmHandler: Successfully handled firebase new token.
+11-15 17:09:19.599 E/system_server(  522): No package ID 7f found for resource ID 0x7f080577.
+11-15 17:09:19.599 E/system_server(  522): No package ID 7f found for resource ID 0x7f140ba2.
+11-15 17:09:19.600 E/system_server(  522): No package ID 7f found for resource ID 0x7f080606.
+11-15 17:09:19.600 E/system_server(  522): No package ID 7f found for resource ID 0x7f141fd7.
+11-15 17:09:19.602 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.627 I/Fitness ( 1429): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-15 17:09:19.635 I/Fitness ( 1429): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-15 17:09:19.640 I/Icing   ( 1466): IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=36
+11-15 17:09:19.642 I/AiAiEcho( 1623): AppFetcherImpl onPackageChanged com.google.android.apps.maps.
+11-15 17:09:19.642 I/AiAiEcho( 1623): AppIndexer Package:[com.google.android.apps.maps] UserProfile:[0] Enabled:[true].
+11-15 17:09:19.642 I/AiAiEcho( 1623): AppFetcherImplV2 updateApps package:[com.google.android.apps.maps], userId:[0], reason:[package is updated.].
+11-15 17:09:19.671 E/system_server(  522): No package ID 7f found for resource ID 0x7f080107.
+11-15 17:09:19.671 E/system_server(  522): No package ID 7f found for resource ID 0x7f150560.
+11-15 17:09:19.676 I/AiAiEcho( 1623): AppFetcherImpl onPackageChanged com.google.android.contacts.
+11-15 17:09:19.676 I/AiAiEcho( 1623): AppIndexer Package:[com.google.android.contacts] UserProfile:[0] Enabled:[true].
+11-15 17:09:19.676 I/AiAiEcho( 1623): AppFetcherImplV2 updateApps package:[com.google.android.contacts], userId:[0], reason:[package is updated.].
+11-15 17:09:19.679 I/CredManSysServiceImpl(  522): CredentialManagerServiceImpl constructed for: com.google.android.gms/.auth.api.credentials.credman.service.PasswordAndPasskeyService
+11-15 17:09:19.679 I/CredManSysServiceImpl(  522): newServiceInfoLocked, mInfo null, com.google.android.gms/com.google.android.gms.auth.api.credentials.credman.service.PasswordAndPasskeyService
+11-15 17:09:19.681 I/AiAiEcho( 1623): AppFetcherImpl onPackageChanged com.google.android.gms.
+11-15 17:09:19.682 I/AiAiEcho( 1623): AppIndexer Package:[com.google.android.gms] UserProfile:[0] Enabled:[true].
+11-15 17:09:19.682 I/AiAiEcho( 1623): AppFetcherImplV2 updateApps package:[com.google.android.gms], userId:[0], reason:[package is updated.].
+11-15 17:09:19.683 D/AppWidgetServiceImpl(  522): Provider info from ComponentInfo{com.google.android.apps.maps/com.google.android.apps.gmm.widget.SearchWidgetProvider} won't be persisted.
+11-15 17:09:19.683 D/AppWidgetServiceImpl(  522): Provider info from ComponentInfo{com.google.android.apps.maps/com.google.android.apps.gmm.widget.traffic.TrafficWidgetProvider} won't be persisted.
+11-15 17:09:19.710 I/BugleNetwork( 4514): NewLightTickleFcmHandler: Handling firebase new token
+11-15 17:09:19.710 I/BugleNetwork( 4514): RegistrationProvider: Refresh Tachyon Registration Now
+11-15 17:09:19.712 I/BugleNetwork( 4514): RegistrationProvider: Tachyon registration token is null, ignore immediate refresh
+11-15 17:09:19.712 I/BugleNetwork( 4514): NewLightTickleFcmHandler: Successfully handled firebase new token.
+11-15 17:09:19.726 D/AppWidgetServiceImpl(  522): Provider info from ComponentInfo{com.google.android.apps.maps/com.google.android.apps.gmm.widget.SearchWidgetProvider} won't be persisted.
+11-15 17:09:19.726 D/AppWidgetServiceImpl(  522): Provider info from ComponentInfo{com.google.android.apps.maps/com.google.android.apps.gmm.widget.traffic.TrafficWidgetProvider} won't be persisted.
+11-15 17:09:19.778 I/DynamiteModule( 3082): Considering local module com.google.android.gms.googlecertificates:7 and remote module com.google.android.gms.googlecertificates:7
+11-15 17:09:19.778 I/DynamiteModule( 3082): Selected local version of com.google.android.gms.googlecertificates
+11-15 17:09:19.781 D/StatusBarIconController(  837): ignoring old pipeline callbacks, because the new mobile icons are enabled
+11-15 17:09:19.795 W/DG      ( 3082): [flow tachyon_registration] DroidGuardRunner.newVmProcessForFastSignalCollection(): Fast program not found [CONTEXT service_id=25 ]
+11-15 17:09:19.802 D/TrafficStats( 3082): tagSocket(114) with statsTag=0x1803, statsUid=10130
+11-15 17:09:19.835 D/EGL_emulation(  837): app_time_stats: avg=13467.47ms min=13467.47ms max=13467.47ms count=1
+11-15 17:09:19.884 I/LockboxIntentOp( 1429): Completed task: true [CONTEXT service_id=26 ]
+11-15 17:09:19.911 E/TaskPersister(  522): File error accessing recents directory (directory doesn't exist?).
+11-15 17:09:19.921 I/RemoteProvisionSysSvc(  522): getRegistration(android.hardware.security.keymint.IRemotelyProvisionedComponent/default)
+11-15 17:09:19.923 I/RegistrationProxy(  522): onServiceConnected: com.android.rkpdapp.service.RemoteProvisioningService
+11-15 17:09:19.928 I/RegistrationProxy(  522): IGetRegistrationCallback.onSuccess
+11-15 17:09:20.124 I/servicemanager(    0): Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-15 17:09:19.930 I/RemoteProvisionSysSvc(  522): Fetching key 10131 for client 96161904
+11-15 17:09:19.930 I/RegistrationProxy(  522): getKeyAsync operation started with callback 165908457
+11-15 17:09:19.930 I/RkpdRegistrationBinder( 3791): Key requested for : android.hardware.security.keymint.IRemotelyProvisionedComponent/default, clientUid: 1017, keyId: 10131, callback: 140539530
+11-15 17:09:19.930 I/RkpdRegistrationBinder( 3791): Key successfully assigned to client
+11-15 17:09:19.931 I/RemoteProvisionSysSvc(  522): Successfully fetched key for client 96161904
+11-15 17:09:20.033 D/OomAdjuster(  522): Not killing cached processes
+11-15 17:09:20.039 W/Icing   ( 1466): No valid account for uploading user actions
+11-15 17:09:20.055 I/Choreographer( 4986): Skipped 60 frames!  The application may be doing too much work on its main thread.
+11-15 17:09:20.072 I/OpenGLRenderer( 4986): Davey! duration=2159ms; Flags=0, FrameTimelineVsyncId=7203, IntendedVsync=86257597422, Vsync=86674264072, InputEventId=0, HandleInputStart=86708648521, AnimationStart=86708649352, PerformTraversalsStart=86826910026, DrawStart=87356429092, FrameDeadline=86724264070, FrameInterval=86690673151, FrameStartTime=16666666, SyncQueued=87371998578, SyncStart=87377579820, IssueDrawCommandsStart=87384032265, SwapBuffers=88326345145, FrameCompleted=88422424757, DequeueBufferDuration=3366, QueueBufferDuration=3242723, GpuCompleted=88422347393, SwapBuffersCompleted=88422424757, DisplayPresentTime=0, CommandSubmissionCompleted=88326345145, 
+11-15 17:09:20.180 I/OpenGLRenderer( 4986): Davey! duration=1088ms; Flags=0, FrameTimelineVsyncId=7408, IntendedVsync=87407597376, Vsync=88407597336, InputEventId=0, HandleInputStart=88424697646, AnimationStart=88424698006, PerformTraversalsStart=88424698176, DrawStart=88424725547, FrameDeadline=88490930666, FrameInterval=88423109616, FrameStartTime=16666666, SyncQueued=88425753213, SyncStart=88470353300, IssueDrawCommandsStart=88470387053, SwapBuffers=88475222043, FrameCompleted=88541061810, DequeueBufferDuration=1433, QueueBufferDuration=95147, GpuCompleted=88541061810, SwapBuffersCompleted=88537550947, DisplayPresentTime=0, CommandSubmissionCompleted=88475222043, 
+11-15 17:09:20.212 W/AccessibilityNodeInfoDumper( 5072): Fetch time: 50ms
+11-15 17:09:20.215 W/WindowMagnificationMgr(  522): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-15 17:09:20.215 D/AccessibilityManagerService(  522): restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+11-15 17:09:20.217 D/AndroidRuntime( 5072): Shutting down VM
+11-15 17:09:20.339 W/Looper  (  522): Slow dispatch took 124ms main h=com.android.providers.settings.SettingsProvider$SettingsRegistry$MyHandler c=null m=1
+11-15 17:09:20.359 I/AiAiEcho( 1623): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-15 17:09:20.361 D/BatterySaverPolicy(  522): accessibility changed to false, updating policy.
+11-15 17:09:20.365 W/system_server(  522): Long monitor contention with owner binder:522_1E (2402) at java.util.Set com.android.server.pm.permission.PermissionManagerServiceImpl.getInstalledPermissions(java.lang.String)(PermissionManagerServiceImpl.java:5203) waiters=0 in int com.android.server.pm.permission.PermissionManagerServiceImpl.checkPermissionInternal(com.android.server.pm.pkg.AndroidPackage, boolean, java.lang.String, int) for 130ms
+11-15 17:09:20.376 W/.gms.persistent( 1429): Long monitor contention with owner GoogleApiHandler (1798) at boolean abnp.d(abno, android.content.ServiceConnection, java.lang.String, java.util.concurrent.Executor)(:com.google.android.gms@231818047@23.18.18 (190800-535401451):15) waiters=0 in boolean abnr.handleMessage(android.os.Message) for 187ms
+11-15 17:09:20.377 D/BoundBrokerSvc( 1429): onUnbind: Intent { act=com.google.android.gms.auth.proximity.devicesyncservice.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentBoundBrokerService }
+11-15 17:09:20.442 I/Icing   ( 1466): IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
+11-15 17:09:20.447 I/A       ( 3816): NGA disabled due to not being eligible.
+11-15 17:09:20.452 I/AiAiEcho( 1623): Predicting[0]: 
+11-15 17:09:20.452 I/AiAiEcho( 1623): EchoTargets: 
+11-15 17:09:20.452 I/AiAiEcho( 1623): Filtered by AiAi flag check: 
+11-15 17:09:20.452 I/AiAiEcho( 1623): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+11-15 17:09:20.453 I/AiAiEcho( 1623): Predicting[0]: 
+11-15 17:09:20.453 I/AiAiEcho( 1623): EchoTargets: 
+11-15 17:09:20.453 I/AiAiEcho( 1623): Filtered by AiAi flag check: 
+11-15 17:09:20.453 I/AiAiEcho( 1623): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+11-15 17:09:20.462 I/AiAiEcho( 1623): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+11-15 17:09:20.464 I/AiAiEcho( 1623): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+11-15 17:09:20.464 W/PageIndicator(  837): Total number of pages invalid: 0. Assuming 1 page.
+11-15 17:09:20.478 W/Looper  (  837): Slow delivery took 30ms wmshell.main h=android.view.ViewRootImpl$ViewRootHandler c=android.view.accessibility.AccessibilityManager$$ExternalSyntheticLambda1@a10650c m=0
+11-15 17:09:20.478 W/Looper  (  837): Drained
+11-15 17:09:20.520 I/resolv  (  337): GetAddrInfoHandler::run: {101 786533 101 983141 10131 0}
+11-15 17:09:20.521 D/TrafficStats( 3082): tagSocket(115) with statsTag=0x1809, statsUid=-1
+11-15 17:09:20.524 D/TrafficStats( 3082): tagSocket(115) with statsTag=0x1809, statsUid=-1
+11-15 17:09:20.526 D/TrafficStats( 3082): tagSocket(115) with statsTag=0x1809, statsUid=-1
+11-15 17:09:20.527 I/AlarmManager( 1429): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 618895]
+11-15 17:09:20.540 E/native  ( 1466): E0000 00:00:1794762560.535825    3276 document-store.cc:1358] Failed to update per-doc-data with usage report
+11-15 17:09:20.553 I/Icing   ( 1466): Usage reports ok 0, Failed Usage reports 1, indexed 0, rejected 0
+11-15 17:09:20.579 I/AlarmManager( 1429): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 618947]
+11-15 17:09:20.596 I/AlarmManager( 1429): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 618964]
+11-15 17:09:20.598 W/Icing   ( 1466): No valid account for uploading user actions
+11-15 17:09:20.604 I/Icing   ( 1466): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-15 17:09:20.666 I/system_server(  522): Background young concurrent copying GC freed 760326(25MB) AllocSpace objects, 68(1800KB) LOS objects, 46% free, 27MB/51MB, paused 65us,34us total 133.149ms
+11-15 17:09:20.682 I/DropBoxManagerService(  522): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+11-15 17:09:20.697 W/libc    ( 3082): Access denied finding property "persist.adb.tls_server.enable"
+11-15 17:09:20.697 W/libc    ( 3082): Access denied finding property "service.adb.tls.port"
+11-15 17:09:20.689 W/binder:3082_1( 3082): type=1400 audit(0.0:31): avc:  denied  { read } for  name="u:object_r:system_adbd_prop:s0" dev="tmpfs" ino=292 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-15 17:09:20.693 W/binder:3082_1( 3082): type=1400 audit(0.0:32): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=60 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-15 17:09:20.722 W/SystemServiceRegistry( 3082): No service published for: persistent_data_block
+11-15 17:09:20.738 W/ziparchive( 4514): Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.dm': No such file or directory
+11-15 17:09:20.738 W/ziparchive( 4514): Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.dm': No such file or directory
+11-15 17:09:20.741 I/DynamiteModule( 4514): Considering local module com.google.android.gms.cronet_dynamite:0 and remote module com.google.android.gms.cronet_dynamite:2411
+11-15 17:09:20.741 I/DynamiteModule( 4514): Selected remote version of com.google.android.gms.cronet_dynamite, version >= 2411
+11-15 17:09:20.741 V/DynamiteModule( 4514): Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-15 17:09:20.749 W/ziparchive( 4514): Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.dm': No such file or directory
+11-15 17:09:20.749 W/ziparchive( 4514): Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.dm': No such file or directory
+11-15 17:09:20.757 D/nativeloader( 4514): Configuring clns-11 for other apk . target_sdk_version=34, uses_libraries=ALL, library_path=/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk!/lib/x86_64:/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+11-15 17:09:20.760 I/cr_CronetLibraryLoader( 4514): Cronet version: 113.0.5672.51, arch: x86_64
+11-15 17:09:20.767 I/BugleNetwork( 4514): Creating gRPC Managed channel with Cronet: instantmessaging-pa.googleapis.com:443
+11-15 17:09:20.771 D/ConnectivityService(  522): requestNetwork for uid/pid:10130/4514 activeRequest: null callbackRequest: 123 [NetworkRequest [ REQUEST id=124, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10130 RequestorUid: 10130 RequestorPkg: com.google.android.apps.messaging UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+11-15 17:09:20.772 D/ConnectivityService(  522): NetReassign [124 : null → 101] [c 1] [a 0] [i 0]
+11-15 17:09:20.772 D/WifiNetworkFactory(  522): got request NetworkRequest [ REQUEST id=124, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10130 RequestorUid: 10130 RequestorPkg: com.google.android.apps.messaging UnderlyingNetworks: Null] ]
+11-15 17:09:20.772 D/UntrustedWifiNetworkFactory(  522): got request NetworkRequest [ REQUEST id=124, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10130 RequestorUid: 10130 RequestorPkg: com.google.android.apps.messaging UnderlyingNetworks: Null] ]
+11-15 17:09:20.772 D/OemPaidWifiNetworkFactory(  522): got request NetworkRequest [ REQUEST id=124, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10130 RequestorUid: 10130 RequestorPkg: com.google.android.apps.messaging UnderlyingNetworks: Null] ]
+11-15 17:09:20.773 D/MultiInternetWifiNetworkFactory(  522): got request NetworkRequest [ REQUEST id=124, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10130 RequestorUid: 10130 RequestorPkg: com.google.android.apps.messaging UnderlyingNetworks: Null] ]
+11-15 17:09:20.776 D/ConnectivityService(  522): NetReassign [no changes] [c 0] [a 1] [i 1]
+11-15 17:09:20.785 I/resolv  (  337): GetAddrInfoHandler::run: {101 786533 101 983141 10130 0}
+11-15 17:09:20.785 I/resolv  (  337): res_nmkquery: (QUERY, IN, AAAA)
+11-15 17:09:20.786 I/resolv  (  337): res_nmkquery: (QUERY, IN, A)
+11-15 17:09:20.793 I/resolv  (  337): res_nsend: used send_dg 276 terrno: 0
+11-15 17:09:20.793 I/resolv  (  337): doQuery: rcode=0, ancount=8, return value=276
+11-15 17:09:20.802 I/resolv  (  337): res_nsend: used send_dg 180 terrno: 0
+11-15 17:09:20.802 I/resolv  (  337): doQuery: rcode=0, ancount=8, return value=180
+11-15 17:09:21.115 I/cr_CronetUrlRequestContext( 4514): destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@10fbc8c
+11-15 17:09:21.128 I/Bugle   ( 4514): VerifiedSmsEnabledCheckerImpl: VSMS is disabled via Phenotype flag.
+11-15 17:09:21.133 I/Bugle   ( 4514): VerifiedSmsStartupTask: Checking if Verified SMS tasks should be enqueued. feature supported: false, feature enabled: false, eligible / has registered key: false, C11N: false
+11-15 17:09:21.133 I/Bugle   ( 4514): VerifiedSmsStartupTask: Not enqueuing VSMS periodic task, VSMS is disabled or not supported.
+11-15 17:09:21.133 I/Bugle   ( 4514): VerifiedSmsStartupTask: Not calling C11N to get phone numbers.
+11-15 17:09:21.149 D/BoundBrokerSvc( 1466): onUnbind: Intent { act=com.google.android.mdd.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+11-15 17:09:21.150 W/ProcessStats(  522): Tracking association SourceState{2af9f9f com.google.android.gms.persistent/10131 BTop #3909} whose proc state 2 is better than process ProcessState{e573ef2 com.google.android.gms/10131 pkg=com.google.android.gms} proc state 4 (6777 skipped)
+11-15 17:09:21.404 I/logd    (    0): logdr: UID=0 GID=0 PID=5124 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+
+anr_2026-11-15-17-08-37-872
+"main" prio=5 tid=1 Native
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x72320e08 self=0x7f6e9685d2c0
+  | sysTid=1091 nice=-10 cgrp=top-app sched=0/0 handle=0x7f704895b4f8
+  | state=S schedstat=( 220018858 1205385309 1191 ) utm=15 stm=6 core=0 HZ=100
+  | stack=0x7ffd3f5e3000-0x7ffd3f5e5000 stackSize=8188KB
+  | held mutexes=
+  native: #00 pc 0005db96  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+22) (BuildId: fa337969c798946280caa45e2d71a2e7)
+  native: #01 pc 003cf3eb  /apex/com.android.art/lib64/libart.so (art::ConditionVariable::WaitHoldingLocks+107) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #02 pc 0091d90f  /apex/com.android.art/lib64/libart.so (artJniMethodEnd+431) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #03 pc 003762e7  /apex/com.android.art/lib64/libart.so (art_jni_method_end+23) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  at android.os.BinderProxy.transactNative(Native method)
+  at android.os.BinderProxy.transact(BinderProxy.java:584)
+  at android.view.IWindowSession$Stub$Proxy.relayout(IWindowSession.java:1356)
+  at android.view.ViewRootImpl.relayoutWindow(ViewRootImpl.java:8264)
+  at android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:3223)
+  at android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:2465)
+  at android.view.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:9305)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1339)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1348)
+  at android.view.Choreographer.doCallbacks(Choreographer.java:952)
+  at android.view.Choreographer.doFrame(Choreographer.java:882)
+  at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1322)
+  at android.os.Handler.handleCallback(Handler.java:958)
+  at android.os.Handler.dispatchMessage(Handler.java:99)
+  at android.os.Looper.loopOnce(Looper.java:205)
+  at android.os.Looper.loop(Looper.java:294)
+  at android.app.ActivityThread.main(ActivityThread.java:8177)
+  at java.lang.reflect.Method.invoke(Native method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:552)
+  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:971)
+
+"ReferenceQueueDaemon" daemon prio=5 tid=8 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x136cded0 self=0x7f6e96857f50
+  | sysTid=1106 nice=4 cgrp=top-app sched=0/0 handle=0x7f6d2df84cf0
+  | state=S schedstat=( 369990 30041287 3 ) utm=0 stm=0 core=0 HZ=100
+  | stack=0x7f6d2de82000-0x7f6d2de84000 stackSize=1035KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x065763d8> (a java.lang.Class<java.lang.ref.ReferenceQueue>)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.Object.wait(Object.java:524)
+  at java.lang.Daemons$ReferenceQueueDaemon.runInternal(Daemons.java:239)
+  - locked <0x065763d8> (a java.lang.Class<java.lang.ref.ReferenceQueue>)
+  at java.lang.Daemons$Daemon.run(Daemons.java:145)
+  at java.lang.Thread.run(Thread.java:1012)
+
+"FinalizerDaemon" daemon prio=5 tid=9 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x136cdf48 self=0x7f6e9685b6f0
+  | sysTid=1107 nice=4 cgrp=top-app sched=0/0 handle=0x7f6d2de7bcf0
+  | state=S schedstat=( 736131 29995022 3 ) utm=0 stm=0 core=0 HZ=100
+  | stack=0x7f6d2dd79000-0x7f6d2dd7b000 stackSize=1035KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x04b18331> (a java.lang.Object)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:210)
+  - locked <0x04b18331> (a java.lang.Object)
+  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:231)
+  at java.lang.Daemons$FinalizerDaemon.runInternal(Daemons.java:309)
+  at java.lang.Daemons$Daemon.run(Daemons.java:145)
+  at java.lang.Thread.run(Thread.java:1012)
+
+"FinalizerWatchdogDaemon" daemon prio=5 tid=10 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x136cdfc0 self=0x7f6e96859b20
+  | sysTid=1108 nice=4 cgrp=top-app sched=0/0 handle=0x7f6d2dd72cf0
+  | state=S schedstat=( 56689 30912177 6 ) utm=0 stm=0 core=0 HZ=100
+  | stack=0x7f6d2dc70000-0x7f6d2dc72000 stackSize=1035KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x0e73fa16> (a java.lang.Daemons$FinalizerWatchdogDaemon)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.Object.wait(Object.java:524)
+  at java.lang.Daemons$FinalizerWatchdogDaemon.sleepUntilNeeded(Daemons.java:428)
+  - locked <0x0e73fa16> (a java.lang.Daemons$FinalizerWatchdogDaemon)
+  at java.lang.Daemons$FinalizerWatchdogDaemon.runInternal(Daemons.java:408)
+  at java.lang.Daemons$Daemon.run(Daemons.java:145)
+  at java.lang.Thread.run(Thread.java:1012)
+
+"launcher-loader" prio=5 tid=17 Native
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x136c91a0 self=0x7f6e9688dd80
+  | sysTid=1134 nice=10 cgrp=top-app sched=0/0 handle=0x7f6d2d0c9cf0
+  | state=S schedstat=( 83377072 1067028172 410 ) utm=5 stm=2 core=1 HZ=100
+  | stack=0x7f6d2cfc7000-0x7f6d2cfc9000 stackSize=1035KB
+  | held mutexes=
+  native: #00 pc 0005db96  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+22) (BuildId: fa337969c798946280caa45e2d71a2e7)
+  native: #01 pc 003cf3eb  /apex/com.android.art/lib64/libart.so (art::ConditionVariable::WaitHoldingLocks+107) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #02 pc 0091d90f  /apex/com.android.art/lib64/libart.so (artJniMethodEnd+431) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  native: #03 pc 003762e7  /apex/com.android.art/lib64/libart.so (art_jni_method_end+23) (BuildId: b6dc79e02101ea00827a35a55ab6597a)
+  at android.content.res.AssetManager.nativeOpenXmlAsset(Native method)
+  at android.content.res.AssetManager.openXmlBlockAsset(AssetManager.java:1122)
+  - locked <0x00985f97> (a android.content.res.AssetManager)
+  at android.content.res.ResourcesImpl.loadXmlResourceParser(ResourcesImpl.java:1240)
+  - locked <0x03cae584> (a android.content.res.XmlBlock[])
+  at android.content.res.ResourcesImpl.loadXmlDrawable(ResourcesImpl.java:943)
+  at android.content.res.ResourcesImpl.loadDrawableForCookie(ResourcesImpl.java:888)
+  at android.content.res.ResourcesImpl.loadDrawable(ResourcesImpl.java:681)
+  at android.content.res.Resources.loadDrawable(Resources.java:1004)
+  at android.content.res.Resources.getDrawableForDensity(Resources.java:994)
+  at android.content.res.Resources.getDrawableForDensity(Resources.java:968)
+  at android.content.pm.LauncherActivityInfo.getIcon(LauncherActivityInfo.java:108)
+  at L0.p.get(unavailable:4)
+  at com.android.launcher3.icons.IconProvider.getIconWithOverrides(unavailable:257)
+  at com.android.launcher3.icons.IconProvider.getIcon(SourceFile:1)
+  at com.android.launcher3.icons.LauncherActivityCachingLogic.loadIcon(unavailable:16)
+  at com.android.launcher3.icons.cache.BaseIconCache.loadFallbackIcon(unavailable:4)
+  at com.android.launcher3.icons.IconCache.b(unavailable:336)
+  at L0.o.accept(unavailable:6)
+  at java.util.HashMap.forEach(HashMap.java:1423)
+  at com.android.launcher3.icons.IconCache.getTitlesAndIconsInBulk(unavailable:41)
+  - locked <0x076a216d> (a com.android.launcher3.icons.IconCache)
+  at com.android.launcher3.model.LoaderTask.tryLoadWorkspaceIconsInBulk(unavailable:7)
+  at com.android.launcher3.model.LoaderTask.loadWorkspaceImpl(unavailable:388)
+  - locked <0x05ada1a2> (a com.android.launcher3.model.BgDataModel)
+  at com.android.launcher3.model.LoaderTask.loadWorkspace(unavailable:5)
+  at com.android.launcher3.model.LoaderTask.run(unavailable:39)
+  at android.os.Handler.handleCallback(Handler.java:958)
+  at android.os.Handler.dispatchMessage(Handler.java:99)
+  at android.os.Looper.loopOnce(Looper.java:205)
+  at android.os.Looper.loop(Looper.java:294)
+  at android.os.HandlerThread.run(HandlerThread.java:67)
+
+"com.google.android.apps.wallpaper.recents" prio=5 tid=33 TimedWaiting
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x13765760 self=0x7f6e968cc6c0
+  | sysTid=2618 nice=0 cgrp=top-app sched=0/0 handle=0x7f6d20

@@ -1,0 +1,8 @@
+Get Started with Health Connect
+Health Connect stores your health and fitness data, giving you a simple way to sync the different apps on your phone
+Share data with your apps
+Choose the data each app can read or write to Health Connect
+Manage your settings and privacy
+Change app permissions and manage your data at any time
+Go back
+Get started

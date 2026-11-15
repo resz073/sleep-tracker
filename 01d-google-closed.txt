@@ -1,0 +1,12 @@
+Sleep Tracker
+Sign in to see your sleep. Your entries sync with your account.
+Continue with Google
+or use email
+Email
+Password
+Show
+Google sign-in isn't set up for this version of the app (code 10, key SHA-1 55:7A:E9:C2:97:4C:FA:45:90:EA:02:46:7B:2B:60:9C:D1:18:13:1B). Use email for now.
+Sign in
+Create an account
+Forgot password?
+By continuing you agree to the Privacy Policy.

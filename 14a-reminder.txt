@@ -1,0 +1,31 @@
+Going to sleep, Bedtime 11:00 PM
+Going to sleep
+Internet, AndroidWifi
+Internet
+Bluetooth, On
+Bluetooth
+Flashlight, Camera in use
+Flashlight
+Time for bed
+•
+now
+Alerted
+Tap Going to sleep when you lie down.
+Expand
+Going to sleep
+Silent
+Android System
+Expand
+2
+Serial console enabled
+Performance is impacted. To disable, check bootloader.
+Configure AT Translated Set 2 keyboard
+Tap to select language and layout
+Manage
+Clear all
+5:15 
+Sun, Nov 15
+Wifi signal full.
+Phone signal full.
+Battery charging, 100 percent.
+100%
