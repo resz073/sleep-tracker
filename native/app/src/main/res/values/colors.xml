@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- The launcher icon (unchanged) -->
     <color name="night">#141C48</color>
     <color name="moon">#A3ABFF</color>
     <color name="ic_launcher_background">#141C48</color>
-    <!-- The widget, in the app's sky card colours (src/styles.css) -->
-    <color name="widget_sky">#141C48</color>
-    <color name="widget_ink">#EEF0FF</color>
-    <color name="widget_mute">#AAB0E0</color>
-    <color name="widget_button">#A3ABFF</color>
-    <color name="widget_on_button">#141C48</color>
+    <!-- Light mode: the window while the app starts, and the widget, in the sage colours (dynamic ones in values-v31) -->
+    <color name="window">#F9FAEF</color>
+    <color name="widget_sky">#EEEFE3</color>
+    <color name="widget_ink">#1A1C16</color>
+    <color name="widget_mute">#44483D</color>
+    <color name="widget_accent">#4C662B</color>
+    <color name="widget_button">#CDEDA3</color>
+    <color name="widget_on_button">#354E16</color>
 </resources>

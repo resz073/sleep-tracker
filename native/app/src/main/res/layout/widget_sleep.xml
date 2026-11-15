@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The home screen widget: the app's night-sky card in small (SleepWidget fills in the text) -->
+<!-- The home screen widget: tonight's bedtime in a panel, with the app's wave (SleepWidget fills in the text) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/w_root"
     android:layout_width="match_parent"
@@ -7,26 +7,43 @@
     android:background="@drawable/widget_bg"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingTop="12dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="12dp">
+    android:paddingLeft="18dp"
+    android:paddingTop="16dp"
+    android:paddingRight="18dp"
+    android:paddingBottom="16dp">
 
-    <TextView
-        android:id="@+id/w_label"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="Bedtime tonight"
-        android:textColor="@color/widget_mute"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/w_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Bedtime tonight"
+            android:textColor="@color/widget_mute"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="16dp"
+            android:layout_marginLeft="8dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/widget_wave" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/w_big"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
+        android:layout_marginTop="2dp"
+        android:fontFamily="serif"
         android:includeFontPadding="false"
         android:maxLines="1"
         android:text="–"
@@ -37,7 +54,7 @@
         android:id="@+id/w_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:maxLines="2"
         android:textColor="@color/widget_mute"
         android:textSize="13sp" />
@@ -54,13 +71,14 @@
     <TextView
         android:id="@+id/w_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/widget_button"
-        android:paddingLeft="16dp"
-        android:paddingTop="8dp"
+        android:drawableLeft="@drawable/widget_moon"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="12dp"
         android:paddingRight="16dp"
-        android:paddingBottom="8dp"
         android:text="Going to sleep"
         android:textColor="@color/widget_on_button"
         android:textSize="14sp"

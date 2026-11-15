@@ -1,22 +1,21 @@
 package com.resz073.sleeptracker.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,11 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.resz073.sleeptracker.MainViewModel
+import com.resz073.sleeptracker.R
 import com.resz073.sleeptracker.data.SleepState
 import com.resz073.sleeptracker.engine.Words
 import com.resz073.sleeptracker.engine.hmin
@@ -52,60 +53,71 @@ fun HistoryScreen(sleep: SleepState, vm: MainViewModel) {
     val m = sleep.model
     var week by rememberSaveable { mutableStateOf<Long?>(null) }
     val v = HistoryShow.view(m, week?.let { LocalDate.ofEpochDay(it) })
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 4.dp)) {
-        AppCard {
-            if (v.empty) {
-                CardTitle("No entries yet")
-                Muted("Tap Add entry to log a night, or use Going to sleep on Today.")
-            } else {
-                Row(Modifier.fillMaxWidth().padding(bottom = 6.dp).heightIn(min = 44.dp), verticalAlignment = Alignment.CenterVertically) {
-                    NavButton("‹", "Earlier week", v.canGoBack) { week = HistoryShow.step(m, v.week, -1)?.toEpochDay() }
-                    Text(v.title, style = font(16f, FontWeight.ExtraBold), color = c.ink, modifier = Modifier.padding(horizontal = 6.dp))
-                    NavButton("›", "Later week", v.canGoForward) { week = HistoryShow.step(m, v.week, 1)?.toEpochDay() }
-                    Spacer(Modifier.weight(1f))
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(v.total, style = font(17f, FontWeight.ExtraBold), color = c.ink)
-                        Text(v.count, style = font(12.5f, FontWeight.Bold), color = c.mute)
-                    }
+    HeroSheet(
+        glow = false,
+        gap = 18.dp,
+        sheetPadding = PaddingValues(top = 8.dp, bottom = 96.dp), // room under the last entry for the Add entry button
+        top = {
+            ScreenTitle("History")
+            if (!v.empty) {
+                Row(Modifier.padding(start = 12.dp, end = 12.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    NavArrow(false, "Earlier week", v.canGoBack, { week = HistoryShow.step(m, v.week, -1)?.toEpochDay() })
+                    Text(v.title, style = serif(22f, FontWeight.Medium, 28f), color = c.ink, modifier = Modifier.padding(horizontal = 4.dp))
+                    NavArrow(true, "Later week", v.canGoForward, { week = HistoryShow.step(m, v.week, 1)?.toEpochDay() })
                 }
-                v.rows.forEachIndexed { i, r ->
-                    if (i > 0) HorizontalDivider(color = c.line)
-                    HistoryRowView(r, vm.form?.editing == r.id, { vm.startEdit(r.id) }, { vm.delete(r.id) })
+                Row(Modifier.padding(start = SIDE, end = SIDE, top = 2.dp), verticalAlignment = Alignment.Bottom) {
+                    Text(v.total, style = serif(30f, FontWeight.Normal, 38f), color = c.ink, modifier = Modifier.alignByBaseline())
+                    Spacer(Modifier.width(10.dp))
+                    Text(v.count, style = font(15f), color = c.mute, modifier = Modifier.alignByBaseline())
                 }
             }
-        }
-        Spacer(Modifier.height(104.dp)) // room for the Add entry button
-    }
+        },
+        sheet = {
+            if (v.empty) {
+                Column(Modifier.padding(start = SIDE, end = SIDE, top = 16.dp)) {
+                    SectionTitle("No entries yet")
+                    Muted("Tap Add entry to log a night, or use Going to sleep on Today.", Modifier.padding(top = 8.dp), size = 15f)
+                }
+            } else v.rows.forEach { r ->
+                HistoryRowView(r, vm.form?.editing == r.id, { vm.startEdit(r.id) }, { vm.delete(r.id) })
+                HorizontalDivider(color = c.line)
+            }
+        },
+    )
 }
 
 @Composable
 private fun HistoryRowView(r: HistoryRow, editing: Boolean, onEdit: () -> Unit, onDelete: () -> Unit) {
     val c = LocalAppColors.current
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Surface(
-            onClick = onEdit, shape = RoundedCornerShape(14.dp), color = if (editing) c.accSoft else Color.Transparent, contentColor = c.ink,
-            modifier = Modifier.weight(1f).padding(vertical = 2.dp).semantics { contentDescription = "Edit sleep from " + r.time },
-        ) {
-            Column(Modifier.padding(horizontal = 8.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(r.length, style = font(18f, FontWeight.ExtraBold), color = c.ink)
-                    if (r.nap) Tag("Nap")
-                    Spacer(Modifier.weight(1f))
-                    val rating = r.rating
-                    if (rating != null) Text(rating, style = font(15f, FontWeight.ExtraBold), color = c.acc) else Muted("Not rated")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Muted(glued(r.time), Modifier.weight(1f))
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .background(if (editing) c.sel else Color.Transparent)
+            .clickable(onClick = onEdit)
+            .semantics { contentDescription = "Edit sleep from " + r.time }
+            .padding(start = SIDE, end = 10.dp, top = 14.dp, bottom = 14.dp),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(r.length, style = serif(24f, FontWeight.Normal, 30f), color = c.ink, modifier = Modifier.alignByBaseline())
+                if (r.nap) Tag("Nap", Modifier.padding(start = 10.dp).alignByBaseline())
+                r.rating?.let { rating ->
                     Spacer(Modifier.width(10.dp))
-                    Muted(r.cycles)
+                    Row(Modifier.alignByBaseline(), verticalAlignment = Alignment.CenterVertically) {
+                        Star(true, 15.dp, c.acc, c.acc)
+                        Spacer(Modifier.width(3.dp))
+                        Text(rating.removePrefix("★").trim(), style = font(15f, FontWeight.Bold), color = c.ink)
+                    }
                 }
-                r.countsAs?.let { Muted(glued(it)) }
+                Spacer(Modifier.width(10.dp))
+                Text(r.cycles, style = font(13f), color = c.mute, modifier = Modifier.alignByBaseline())
             }
+            Text(glued(r.time), style = font(14f), color = c.ink, modifier = Modifier.padding(top = 4.dp))
+            r.countsAs?.let { Text(glued(it), style = font(13f), color = c.mute, modifier = Modifier.padding(top = 2.dp)) }
         }
-        Surface(onClick = onDelete, shape = RoundedCornerShape(12.dp), color = Color.Transparent, contentColor = c.mute, modifier = Modifier.semantics { contentDescription = "Delete sleep from " + r.time }) {
-            Box(Modifier.padding(horizontal = 12.dp, vertical = 14.dp), contentAlignment = Alignment.Center) {
-                Text("✕", style = font(16f), color = c.mute)
-            }
+        IconButton(onClick = onDelete, modifier = Modifier.size(44.dp).semantics { contentDescription = "Delete sleep from " + r.time }) {
+            Icon(painterResource(R.drawable.ic_close), contentDescription = null, tint = c.mute, modifier = Modifier.size(20.dp))
         }
     }
 }

@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
@@ -110,12 +112,13 @@ fun WaveMark(modifier: Modifier = Modifier) {
  * calls [onPick] with its index.
  */
 @Composable
-fun CandleChart(m: SleepModel, days: List<LocalDate>, pick: Int, week: Boolean, label: String?, onPick: (Int) -> Unit) {
+fun CandleChart(m: SleepModel, days: List<LocalDate>, pick: Int, week: Boolean, label: String?, goalLabel: String?, onPick: (Int) -> Unit) {
     val c = LocalAppColors.current
     val measurer = rememberTextMeasurer()
     val count = days.size
     if (count == 0) return
     val today = m.today
+    val pickNow by rememberUpdatedState(onPick)
     val status = days.map { m.status(it) }
     val slept = days.map { m.sleptOn(it) }
     val goals = days.map { m.goalOn(it) }
@@ -128,7 +131,7 @@ fun CandleChart(m: SleepModel, days: List<LocalDate>, pick: Int, week: Boolean, 
             .fillMaxWidth()
             .height(170.dp + axis)
             .semantics { if (label != null) contentDescription = label }
-            .pointerInput(count) { detectTapGestures { o -> onPick((o.x / size.width * count).toInt().coerceIn(0, count - 1)) } },
+            .pointerInput(count) { detectTapGestures { o -> pickNow((o.x / size.width * count).toInt().coerceIn(0, count - 1)) } },
     ) {
         val w = size.width
         val plot = 170.dp.toPx()
@@ -164,6 +167,15 @@ fun CandleChart(m: SleepModel, days: List<LocalDate>, pick: Int, week: Boolean, 
                 val half = if (week) 10.dp.toPx() else slot / 2
                 drawLine(c.mute, Offset(mx - half, plot - 4.5.dp.toPx()), Offset(mx + half, plot - 4.5.dp.toPx()), 3.dp.toPx(), StrokeCap.Round)
             }
+        }
+        // "Goal 8h" on the goal line at the right, on a patch of the ground so a bar under it can't hide it
+        if (goalLabel != null) {
+            val g = measurer.measure(goalLabel, font(12f, FontWeight.Bold).copy(color = c.mute))
+            val pad = 4.dp.toPx()
+            val left = w - g.size.width - pad
+            val gy = (y(goals[count - 1]) - 4.dp.toPx() - g.size.height).coerceAtLeast(0f)
+            drawRoundRect(c.bg, Offset(left - pad, gy), Size(g.size.width + pad * 2, g.size.height.toFloat()), CornerRadius(4.dp.toPx()))
+            drawText(g, topLeft = Offset(left, gy))
         }
         val ti = days.indexOf(today)
         for (i in 0 until count) {
@@ -215,8 +227,15 @@ fun clockRange(s: String): Pair<Int, Int>? {
 private const val AXIS_START = 22 * 60
 private const val AXIS_LENGTH = 600
 
-/** Where [minute] falls on the 10 PM to 8 AM axis, 0 to 1 */
-private fun onAxis(minute: Int): Float = (((minute - AXIS_START) % 1440 + 1440) % 1440).coerceAtMost(AXIS_LENGTH) / AXIS_LENGTH.toFloat()
+/** Where [minute] falls on the 10 PM to 8 AM axis, 0 to 1: times from 8 AM to 3 PM sit at the end, from 3 PM to 10 PM at the start */
+private fun onAxis(minute: Int): Float {
+    val offset = ((minute - AXIS_START) % 1440 + 1440) % 1440
+    return when {
+        offset <= AXIS_LENGTH -> offset / AXIS_LENGTH.toFloat()
+        offset < AXIS_LENGTH + 420 -> 1f
+        else -> 0f
+    }
+}
 
 /** The labels over the weekend bars: 10 PM to 8 AM */
 @Composable

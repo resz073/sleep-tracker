@@ -194,6 +194,11 @@ def swipe_up():
     time.sleep(1)
 
 
+def swipe_down():
+    sh("input swipe 540 750 540 1750 450")
+    time.sleep(1)
+
+
 def shot(name):
     data = subprocess.run(["adb", "exec-out", "screencap -p"], capture_output=True, timeout=60).stdout
     with open(os.path.join(OUT, name + ".png"), "wb") as f:
@@ -409,7 +414,7 @@ def s_import():
     sh("content call --uri content://media --method scan_volume --arg external_primary", 120)
     sh("am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Download/sleep-ci.csv")
     time.sleep(2)
-    tap(desc="Settings")
+    nav("Settings")
     for _ in range(6):
         if present("Import CSV"):
             break
@@ -485,7 +490,7 @@ def s_history():
 
 @step("Settings, all of it")
 def s_settings():
-    tap(desc="Settings")
+    nav("Settings")
     time.sleep(1)
     shot("09a-settings")
     for i in range(4):
@@ -529,10 +534,15 @@ def s_health():
 
 @step("Export CSV opens the share sheet")
 def s_export():
+    # Backup is above Health Connect: look further down, then back up
     for _ in range(4):
         if present("Export CSV"):
             break
         swipe_up()
+    for _ in range(6):
+        if present("Export CSV"):
+            break
+        swipe_down()
     tap("Export CSV")
     time.sleep(3)
     shot("11-export-share-sheet")
@@ -601,7 +611,7 @@ def s_notification():
 @step("Delete the account", critical=True)
 def s_delete():
     back_to_app_main()
-    tap(desc="Settings")
+    nav("Settings")
     tap("Delete account")
     time.sleep(1)
     # Read before the password field has focus (see Create an account)

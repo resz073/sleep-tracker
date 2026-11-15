@@ -1,23 +1,27 @@
 package com.resz073.sleeptracker.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -25,13 +29,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +38,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
@@ -48,8 +51,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.resz073.sleeptracker.MainViewModel
@@ -57,6 +58,7 @@ import com.resz073.sleeptracker.R
 
 const val PRIVACY_URL = "https://resz073.github.io/sleep-tracker/privacy.html"
 
+/** Signing in: Google, or email and password (or creating an account), with the privacy policy at the bottom */
 @Composable
 fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
     val c = LocalAppColors.current
@@ -65,107 +67,76 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
     var create by rememberSaveable { mutableStateOf(false) }
     var show by rememberSaveable { mutableStateOf(false) }
     val keyboard = LocalSoftwareKeyboardController.current
+    // The lamp light behind the title, in dark mode
+    val lamp = if (c.dark) Modifier.drawBehind {
+        val center = Offset(size.width * 0.5f, 280.dp.toPx())
+        val radius = 300.dp.toPx()
+        drawCircle(Brush.radialGradient(listOf(c.acc.copy(alpha = 0.075f), c.acc.copy(alpha = 0.025f), Color.Transparent), center, radius), radius, center)
+    } else Modifier
 
-    Box(Modifier.fillMaxSize()) {
+    BoxWithConstraints(Modifier.fillMaxSize().then(lamp).windowInsetsPadding(WindowInsets.safeDrawing).imePadding()) {
+        val height = maxHeight
         Column(
-            Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing)
-                .imePadding()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).heightIn(min = height).padding(start = SIDE, end = SIDE, top = 52.dp, bottom = 32.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            // The night-sky header, as in version 1
-            Surface(shape = RoundedCornerShape(28.dp), color = c.sky, contentColor = c.skyInk, modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(horizontal = 24.dp, vertical = 26.dp)) {
-                    Icon(painterResource(R.drawable.ic_moon), contentDescription = null, tint = c.skyAcc, modifier = Modifier.size(44.dp))
-                    Spacer(Modifier.height(10.dp))
-                    Text("Sleep Tracker", style = MaterialTheme.typography.headlineMedium, color = c.skyInk)
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "Sign in to see your sleep. Your entries sync with your account.",
-                        style = MaterialTheme.typography.bodyLarge, color = c.skyMute,
-                    )
-                }
-            }
-
-            AppCard {
+            Column {
+                WaveMark()
+                Text("Sleep Tracker", style = serif(40f, FontWeight.Normal, 48f), color = c.ink, modifier = Modifier.padding(top = 18.dp))
+                Text("Sign in to see your sleep. Your entries sync with your account.", style = font(17f), color = c.mute, modifier = Modifier.padding(top = 10.dp))
                 if (!configured) {
-                    CardTitle("Accounts aren't set up in this build")
-                    Spacer(Modifier.height(6.dp))
-                    Muted("Add the Firebase settings to the GitHub secrets and build again. The setup guide in the repository explains how.")
+                    SectionTitle("Accounts aren't set up in this build", Modifier.padding(top = 36.dp))
+                    Muted("Add the Firebase settings to the GitHub secrets and build again. The setup guide in the repository explains how.", Modifier.padding(top = 8.dp), size = 15f)
                 } else {
                     OutlinedButton(
                         onClick = { vm.clearMessages(); onGoogle() },
                         enabled = !vm.busy,
-                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                        shape = CircleShape,
+                        border = BorderStroke(1.5.dp, c.line),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = c.ink),
+                        modifier = Modifier.padding(top = 36.dp).fillMaxWidth().height(56.dp),
                     ) {
                         Image(painterResource(R.drawable.ic_google), contentDescription = null, modifier = Modifier.size(20.dp))
-                        Spacer(Modifier.width(10.dp))
-                        Text("Continue with Google", style = MaterialTheme.typography.labelLarge, color = c.ink)
+                        Spacer(Modifier.width(12.dp))
+                        Text("Continue with Google", style = font(16f, FontWeight.Bold), color = c.ink)
                     }
-
-                    Row(Modifier.padding(vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.padding(top = 22.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                         HorizontalDivider(Modifier.weight(1f), color = c.line)
-                        Text("  or use email  ", style = MaterialTheme.typography.bodySmall, color = c.mute)
+                        Text("or use email", style = font(13f), color = c.mute, modifier = Modifier.padding(horizontal = 12.dp))
                         HorizontalDivider(Modifier.weight(1f), color = c.line)
                     }
-
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Email") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                        modifier = Modifier.fillMaxWidth(),
+                    LabeledField(
+                        "Email", email, { email = it }, Modifier.padding(top = 14.dp),
+                        keyboard = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
                     )
-                    Spacer(Modifier.height(10.dp))
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text("Password") },
-                        singleLine = true,
-                        visualTransformation = if (show) VisualTransformation.None else PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    LabeledField(
+                        "Password", password, { password = it }, Modifier.padding(top = 14.dp),
+                        keyboard = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                         // Done on the keyboard signs in, like the button
-                        keyboardActions = KeyboardActions(onDone = { keyboard?.hide(); if (!vm.busy) vm.submit(email, password, create) }),
-                        trailingIcon = {
-                            TextButton(onClick = { show = !show }) { Text(if (show) "Hide" else "Show") }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
+                        actions = KeyboardActions(onDone = { keyboard?.hide(); if (!vm.busy) vm.submit(email, password, create) }),
+                        secret = !show,
+                        trailing = { PillButton(if (show) "Hide" else "Show", { show = !show }, kind = Btn.TEXT, size = 15f) },
                     )
-
-                    vm.error?.let {
-                        Spacer(Modifier.height(10.dp))
-                        Text(it, color = c.bad, style = MaterialTheme.typography.bodyMedium)
-                    }
-                    vm.notice?.let {
-                        Spacer(Modifier.height(10.dp))
-                        Text(it, color = c.good, style = MaterialTheme.typography.bodyMedium)
-                    }
-
-                    Spacer(Modifier.height(14.dp))
+                    vm.error?.let { Text(it, style = font(15f, FontWeight.Bold), color = c.bad, modifier = Modifier.padding(top = 12.dp)) }
+                    vm.notice?.let { Text(it, style = font(15f, FontWeight.Bold), color = c.acc, modifier = Modifier.padding(top = 12.dp)) }
                     Button(
                         onClick = { vm.submit(email, password, create) },
                         enabled = !vm.busy,
-                        modifier = Modifier.fillMaxWidth().height(52.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = c.acc, contentColor = c.onAcc),
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = c.tonal, contentColor = c.onTonal, disabledContainerColor = c.tonal, disabledContentColor = c.onTonal),
+                        contentPadding = PaddingValues(horizontal = 24.dp),
+                        modifier = Modifier.padding(top = 20.dp).fillMaxWidth().height(56.dp),
                     ) {
-                        if (vm.busy) CircularProgressIndicator(Modifier.size(22.dp), color = c.onAcc, strokeWidth = 2.5.dp)
-                        else Text(if (create) "Create account" else "Sign in", style = MaterialTheme.typography.labelLarge)
+                        if (vm.busy) CircularProgressIndicator(Modifier.size(22.dp), color = c.onTonal, strokeWidth = 2.5.dp)
+                        else Text(if (create) "Create account" else "Sign in", style = font(17f, FontWeight.Bold))
                     }
-
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        TextButton(onClick = { create = !create; vm.clearMessages() }) {
-                            Text(if (create) "I have an account" else "Create an account")
-                        }
-                        if (!create) TextButton(onClick = { vm.resetPassword(email) }, enabled = !vm.busy) { Text("Forgot password?") }
+                    Row(Modifier.fillMaxWidth().padding(top = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        PillButton(if (create) "I have an account" else "Create an account", { create = !create; vm.clearMessages() }, Modifier.offset(x = (-12).dp), kind = Btn.TEXT, size = 15f)
+                        if (!create) PillButton("Forgot password?", { vm.resetPassword(email) }, Modifier.offset(x = 12.dp), kind = Btn.TEXT, enabled = !vm.busy, size = 15f)
                     }
                 }
             }
-
-            // As in the earlier app: continuing means agreeing to the privacy policy, which is linked
+            // Continuing means agreeing to the privacy policy, which is linked
             Text(
                 buildAnnotatedString {
                     append("By continuing you agree to the ")
@@ -175,7 +146,7 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
                     append(".")
                 },
                 style = font(13f), color = c.mute,
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+                modifier = Modifier.padding(top = 32.dp),
             )
         }
     }

@@ -49,6 +49,7 @@ class SleepWidget : AppWidgetProvider() {
             val action = v.action
             if (action != null && v.button != null) {
                 views.setTextViewText(R.id.w_button, v.button)
+                views.setTextViewCompoundDrawables(R.id.w_button, if (action == "awake") R.drawable.widget_sun else R.drawable.widget_moon, 0, 0, 0)
                 views.setViewVisibility(R.id.w_button, View.VISIBLE)
                 views.setOnClickPendingIntent(R.id.w_button, open(context, action, if (action == "awake") 402 else 401))
             } else views.setViewVisibility(R.id.w_button, View.GONE)

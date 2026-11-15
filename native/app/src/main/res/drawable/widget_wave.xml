@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Two waves, the app's mark, at the widget's top right -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="16dp"
+    android:viewportWidth="48"
+    android:viewportHeight="16">
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M2 8L3.5 6.2L4.9 4.7L6.4 3.7L7.9 3.5L9.3 4.1L10.8 5.4L12.3 7.1L13.7 8.9L15.2 10.6L16.7 11.9L18.1 12.5L19.6 12.3L21.1 11.3L22.5 9.8L24 8L25.5 6.2L26.9 4.7L28.4 3.7L29.9 3.5L31.3 4.1L32.8 5.4L34.3 7.1L35.7 8.9L37.2 10.6L38.7 11.9L40.1 12.5L41.6 12.3L43.1 11.3L44.5 9.8L46 8"
+        android:strokeWidth="3"
+        android:strokeColor="@color/widget_accent"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

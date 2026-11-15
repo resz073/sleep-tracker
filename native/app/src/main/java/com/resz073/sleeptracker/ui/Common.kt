@@ -4,6 +4,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Box
@@ -111,7 +119,13 @@ fun SectionDivider() {
  * bottom of the screen. [glow]: the faint lamp light behind the top part, in dark mode.
  */
 @Composable
-fun HeroSheet(glow: Boolean, top: @Composable ColumnScope.() -> Unit, sheet: @Composable ColumnScope.() -> Unit) {
+fun HeroSheet(
+    glow: Boolean,
+    top: @Composable ColumnScope.() -> Unit,
+    sheet: @Composable ColumnScope.() -> Unit,
+    gap: Dp = 24.dp,
+    sheetPadding: PaddingValues = PaddingValues(start = SIDE, end = SIDE, top = 24.dp, bottom = 28.dp),
+) {
     val c = LocalAppColors.current
     val density = LocalDensity.current
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -133,11 +147,11 @@ fun HeroSheet(glow: Boolean, top: @Composable ColumnScope.() -> Unit, sheet: @Co
             )
             Column(
                 Modifier
-                    .padding(top = 24.dp)
+                    .padding(top = gap)
                     .fillMaxWidth()
-                    .heightIn(min = (viewport - topHeight - 24.dp).coerceAtLeast(0.dp))
+                    .heightIn(min = (viewport - topHeight - gap).coerceAtLeast(0.dp))
                     .background(c.panel, RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                    .padding(start = SIDE, end = SIDE, top = 24.dp, bottom = 28.dp),
+                    .padding(sheetPadding),
                 content = sheet,
             )
         }
@@ -259,6 +273,16 @@ fun StatGrid(stats: List<Stat>, modifier: Modifier = Modifier, columns: Int = 3,
     }
 }
 
+/** A small label next to a title ("This month", "Nap") */
+@Composable
+fun Tag(text: String, modifier: Modifier = Modifier) {
+    val c = LocalAppColors.current
+    Text(
+        text, style = font(12f, FontWeight.Bold), color = c.onSel,
+        modifier = modifier.background(c.sel, CircleShape).padding(horizontal = 9.dp, vertical = 2.dp),
+    )
+}
+
 /** A night not logged, as a chip that logs it */
 @Composable
 fun WarnChip(text: String, onClick: () -> Unit) {
@@ -320,7 +344,8 @@ fun Swatch(mark: LegendItem.Mark) {
         LegendItem.Mark.MISSING -> Box(Modifier.size(14.dp, 3.dp).background(c.mute, RoundedCornerShape(2.dp)))
         LegendItem.Mark.LIVE -> Box(Modifier.size(7.dp, 14.dp).border(1.5.dp, c.met, bar))
         LegendItem.Mark.SLEEP -> Box(Modifier.size(16.dp, 8.dp).background(c.met, RoundedCornerShape(4.dp)))
-        LegendItem.Mark.NAP -> Box(Modifier.size(16.dp, 8.dp).background(c.under, RoundedCornerShape(4.dp)))
+        // The Schedule diary draws naps as sleep at half strength
+        LegendItem.Mark.NAP -> Box(Modifier.size(16.dp, 8.dp).background(c.met.copy(alpha = 0.5f), RoundedCornerShape(4.dp)))
         LegendItem.Mark.PLAN -> Box(Modifier.size(16.dp, 12.dp).background(c.window, RoundedCornerShape(3.dp)).border(1.dp, c.line, RoundedCornerShape(3.dp)))
     }
 }
@@ -435,4 +460,54 @@ fun StarPicker(value: Int, onPick: (Int) -> Unit, clearable: Boolean = true, siz
             }
         }
     }
+}
+
+/**
+ * A one-line text field with its label above it, in a raised box (an accent outline while typing). The label
+ * sits in the field's decoration, so screen readers announce it with the field.
+ */
+@Composable
+fun LabeledField(
+    label: String,
+    value: String,
+    onChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    keyboard: KeyboardOptions = KeyboardOptions.Default,
+    actions: KeyboardActions = KeyboardActions.Default,
+    secret: Boolean = false,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    val c = LocalAppColors.current
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    BasicTextField(
+        value = value,
+        onValueChange = onChange,
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        textStyle = font(17f).copy(color = c.ink),
+        cursorBrush = SolidColor(c.acc),
+        visualTransformation = if (secret) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = keyboard,
+        keyboardActions = actions,
+        interactionSource = interaction,
+        decorationBox = { inner ->
+            Column {
+                Text(label, style = font(13f), color = c.mute)
+                Row(
+                    Modifier
+                        .padding(top = 6.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp)
+                        .background(c.raised, RoundedCornerShape(16.dp))
+                        .border(2.dp, if (focused) c.acc else Color.Transparent, RoundedCornerShape(16.dp))
+                        .padding(start = 16.dp, end = if (trailing != null) 6.dp else 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(Modifier.weight(1f)) { inner() }
+                    trailing?.invoke()
+                }
+            }
+        },
+    )
 }
