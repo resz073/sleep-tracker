@@ -54,10 +54,6 @@ The screenshots show made-up sample data.
 - **Website:** https://resz073.github.io/sleep-tracker/
 - **Privacy policy:** https://resz073.github.io/sleep-tracker/privacy.html
 
-## Release notes for the first release
-
-First release: log your sleep, track your sleep debt, and get a bedtime schedule with optional reminders.
-
-## Release notes for version 2 (500 characters max)
+## Release notes for version 2.0.0 (500 characters max)
 
 Sleep Tracker is now a native Android app: faster, with a home screen widget, a Quick Settings tile, shortcuts, and the option to save your sleep to Health Connect. After updating, sign in again. Your entries are in your account.
