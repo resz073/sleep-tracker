@@ -92,12 +92,16 @@ jarsigner -verify "dist/$NAME.aab" | grep -q "jar verified" || fail "Signing" "T
 
 echo "::notice title=Signed::$NAME.apk ($(du -h "dist/$NAME.apk" | cut -f1)) and $NAME.aab, signed with $KIND (SHA-1 $CERTC), build tools $(basename "$BT")."
 
-# Google sign-in only works when this key's fingerprint is registered in Firebase
+# Google sign-in only works when this key's fingerprint is registered for the app's package in Firebase
+# (a fingerprint registered for another package, such as the old preview's, doesn't count)
+APP_PACKAGE="${APP_PACKAGE:-com.resz073.sleeptracker}"
 if [ -f "$GS_JSON" ] && ! grep -q "sleep-tracker-placeholder" "$GS_JSON"; then
-  if grep -qi "$CERT" "$GS_JSON"; then
-    echo "::notice title=Google sign-in::This key's SHA-1 is registered in your Firebase project."
+  REG="$(node scripts/gs-fingerprints.mjs "$GS_JSON" "$APP_PACKAGE" 2>/dev/null || true)"
+  LIST="$(printf '%s\n' "$REG" | grep . | tr 'a-f' 'A-F' | sed 's/../&:/g; s/:$//' | paste -sd ',' - | sed 's/,/, /g')"
+  if printf '%s\n' "$REG" | grep -qix "$CERT"; then
+    echo "::notice title=Google sign-in::This key's SHA-1 is registered for $APP_PACKAGE in your google-services.json. All registered: $LIST."
   else
-    echo "::notice title=Google sign-in::Your google-services.json doesn't list this key's SHA-1 ($CERTC). That's fine if Google sign-in works in the app. If it shows an error, add this SHA-1 to your Android app in Firebase (Project settings, Add fingerprint)."
+    echo "::warning title=Google sign-in::Google sign-in won't work in this build: its key's SHA-1 ($CERTC) isn't registered for $APP_PACKAGE in your google-services.json (registered: ${LIST:-none}). In Firebase, open Project settings, the Android app $APP_PACKAGE, Add fingerprint, and paste it. Then download google-services.json again and update the GOOGLE_SERVICES_JSON secret."
   fi
 fi
 ls -l dist
