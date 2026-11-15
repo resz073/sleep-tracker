@@ -321,6 +321,7 @@ def play_services_prompt(root):
 
 @step("Continue with Google opens Google's window, and the app works after it closes")
 def s_google():
+    since = sh("date +'%m-%d %H:%M:%S.000'").strip()
     tap("Continue with Google")
     # The emulator has no Google account: Google's window opens (to add one), or the app says what happened
     seen, message, update = [], None, False
@@ -340,12 +341,10 @@ def s_google():
         if message:
             break
     shot("01c-google")
-    # What Google Play services said about it (its reasons only appear in the log)
-    log = run(["adb", "logcat", "-d", "-v", "brief"], 60).stdout
-    keep = [l for l in log.splitlines() if re.search(
-        r"(?i)auth|signin|sign-in|identity|developer|oauth|certif|credential|apiexception|unregistered|verif|client.?id|consent", l)]
+    # Everything logged since the tap: Google Play services' reasons only appear there
+    log = run(["adb", "logcat", "-d", "-v", "time", "-T", since], 60).stdout
     with open(os.path.join(OUT, "01c-google-log.txt"), "w") as f:
-        f.write("\n".join(keep[-400:]).replace(PASSWORD, "<password>") + "\n")
+        f.write("\n".join(log.splitlines()[:2000]).replace(PASSWORD, "<password>") + "\n")
     for _ in range(3):  # close Google's window, or Play services' prompt to update
         root = dump()
         if "MainActivity" in focus() and not play_services_prompt(root):
