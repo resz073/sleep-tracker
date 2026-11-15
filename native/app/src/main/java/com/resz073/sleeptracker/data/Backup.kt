@@ -20,7 +20,7 @@ object Backup {
         null
     }
 
-    /** Android's share sheet, as the current app opens it: "Save or send your sleep log" */
+    /** Android's share sheet, as version 1 opens it: "Save or send your sleep log" */
     fun shareIntent(uri: Uri): Intent {
         val send = Intent(Intent.ACTION_SEND)
             .setType("text/csv")

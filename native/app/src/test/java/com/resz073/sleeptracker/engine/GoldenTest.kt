@@ -5,9 +5,10 @@ import org.junit.Test
 import java.time.ZoneId
 
 /**
- * Checks the Kotlin sleep engine against the current app. The reference results in
- * src/test/resources/golden come from running src/app.js itself on the same accounts
- * (native/scripts/golden/make.mjs), in several time zones, so any difference is a porting mistake.
+ * Checks the Kotlin sleep engine against version 1 of the app. The reference results in
+ * src/test/resources/golden were saved by running version 1's own code (the web app's src/app.js, in
+ * the repository's history) on the same accounts, in several time zones, so any difference is a change
+ * from how version 1 worked.
  */
 class GoldenTest {
     companion object {
@@ -41,10 +42,10 @@ class GoldenTest {
             if (found.size > 6) problems += "${label(c)}: and ${found.size - 6} more differences"
         }
         assertTrue("${cases.size} cases checked", cases.size >= 70)
-        assertTrue("${problems.size} differences from the current app:\n" + problems.take(80).joinToString("\n"), problems.isEmpty())
+        assertTrue("${problems.size} differences from version 1:\n" + problems.take(80).joinToString("\n"), problems.isEmpty())
     }
 
-    /** What the native app writes to the account must be exactly what the current app writes, and read back unchanged */
+    /** What the native app writes to the account must be exactly what version 1 writes, and read back unchanged */
     @Test
     fun writesWhatTheCurrentAppWrites() {
         val problems = ArrayList<String>()
@@ -52,14 +53,14 @@ class GoldenTest {
             val now = Now((c["nowMs"] as Number).toLong(), ZoneId.of(c["zone"] as String))
             val doc = SleepDoc.read(c["doc"], now)
             val written = doc.toFirestore()
-            if (Json.stringify(written) != doc.canon()) problems += "${label(c)}: written ${Json.stringify(written).take(200)} but the current app writes ${doc.canon().take(200)}"
+            if (Json.stringify(written) != doc.canon()) problems += "${label(c)}: written ${Json.stringify(written).take(200)} but version 1 writes ${doc.canon().take(200)}"
             if (SleepDoc.read(written, now).canon() != doc.canon()) problems += "${label(c)}: what's written doesn't read back the same"
             if (SleepDoc.fromText(doc.canon(), now).canon() != doc.canon()) problems += "${label(c)}: the copy on the phone doesn't read back the same"
             fun wholeNumbers(v: Any?, path: String) {
                 when (v) {
                     is Map<*, *> -> v.forEach { (k, x) -> wholeNumbers(x, "$path.$k") }
                     is List<*> -> v.forEachIndexed { i, x -> wholeNumbers(x, "$path[$i]") }
-                    is Double -> if (v == Math.rint(v)) problems += "${label(c)}: $path is written as a decimal ($v), the current app writes an integer"
+                    is Double -> if (v == Math.rint(v)) problems += "${label(c)}: $path is written as a decimal ($v), version 1 writes an integer"
                     is Int -> problems += "${label(c)}: $path is an Int, expected Long"
                 }
             }

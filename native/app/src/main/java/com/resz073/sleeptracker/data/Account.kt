@@ -23,7 +23,7 @@ sealed interface Session {
     data class SignedIn(val uid: String, val email: String, val google: Boolean, val password: Boolean = false) : Session
 }
 
-/** Signing in and out, with the same Firebase accounts as the current app. */
+/** Signing in and out, with the same Firebase accounts as version 1. */
 class Account {
     private val auth: FirebaseAuth get() = FirebaseAuth.getInstance()
 

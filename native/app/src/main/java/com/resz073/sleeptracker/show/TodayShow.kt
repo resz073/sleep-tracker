@@ -55,7 +55,7 @@ class Debt(val value: String, val tone: Tone, val label: String, val stats: List
     fun statsMarked() = stats.joinToString("") { it.marked() }
 }
 
-/** What the Today screen shows (src/app.js renderTonight and renderToday) */
+/** What the Today screen shows (version 1's app.js renderTonight and renderToday) */
 object TodayShow {
     /** The date under the title: "Saturday 14 November" */
     fun header(m: SleepModel): String = Words.dayLong(m.today)

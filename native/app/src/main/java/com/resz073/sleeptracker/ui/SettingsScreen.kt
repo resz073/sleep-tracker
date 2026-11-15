@@ -63,7 +63,7 @@ import com.resz073.sleeptracker.show.rich
 
 const val DELETION_URL = "https://resz073.github.io/sleep-tracker/delete-account.html"
 
-/** The reminder switches, as the current app labels them */
+/** The reminder switches, as version 1 labels them */
 private val SWITCHES = listOf(
     Triple(ReminderKind.WIND_DOWN, "Wind-down", "30 minutes before bedtime"),
     Triple(ReminderKind.BEDTIME, "Bedtime", "With a Going to sleep button"),
@@ -76,7 +76,7 @@ private fun Context.activity(): Activity? = when (this) {
     else -> null
 }
 
-/** Settings, in the current app's order: account, reminders, sleep goal, backup, sync, about */
+/** Settings, in version 1's order: account, reminders, sleep goal, backup, sync, about */
 @Composable
 fun SettingsScreen(session: Session.SignedIn, sleep: SleepState, vm: MainViewModel, onBack: () -> Unit) {
     val c = LocalAppColors.current
@@ -220,7 +220,7 @@ private fun ReminderField(vm: MainViewModel, hasPlan: Boolean) {
             )
         }
     }
-    // The current app's note under the switches
+    // Version 1's note under the switches
     val note = if (!vm.notificationsAllowed && r.any) "Notifications are blocked for Sleep Tracker. Allow them in Android Settings to get reminders."
     else if (!hasPlan) "Reminders start once your bedtime is set." else ""
     if (note.isNotEmpty()) Muted(note, Modifier.padding(top = 4.dp))

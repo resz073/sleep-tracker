@@ -4,7 +4,7 @@ Log your sleep in two taps, see your sleep debt against a goal that fits your ag
 
 The app is a native Android app written in Kotlin with Jetpack Compose, in `native/`. GitHub builds and tests it for you, so you don't need Android Studio.
 
-Version 1 was a web app wrapped for Android with [Capacitor](https://capacitorjs.com), in `src/`. Version 2, the native app, replaced it with the same package name, so it installs as an update. The web app's code stays here because the native app is tested against it (see [Tests](#tests)).
+Version 1 was a web app wrapped for Android with [Capacitor](https://capacitorjs.com). Version 2, the native app, replaced it with the same package name, so it installs as an update. Version 1's code is in the repository's history.
 
 ## Get the app on your phone
 
@@ -41,17 +41,15 @@ A minute later these work:
    - SHA-1: the **upload key** SHA-1 from `sleep-tracker-signing.txt` (the signing-key notes you were given). The form may call this field "Debug signing certificate"; paste it there anyway.
    - Register, then **download `google-services.json`**. Skip the remaining steps.
    - Back on the Android app's card, **Add fingerprint** and also add the **test key** SHA-1: `7B:B3:FD:4A:2C:B3:C2:EF:25:47:5D:88:A1:D3:69:3C:3E:35:3B:4C`
-5. **Add app → Web** (`</>`), nickname **Sleep Tracker web**, register, and copy the `firebaseConfig` snippet it shows.
 
 Turn on Google sign-in (step 2) before downloading `google-services.json`. If you downloaded it first, download it again.
 
 ### 3. Add the secrets to GitHub
 
-In this repository, **Settings → Secrets and variables → Actions → New repository secret.** Add these four:
+In this repository, **Settings → Secrets and variables → Actions → New repository secret.** Add these three:
 
 | Name | Value |
 | --- | --- |
-| `FIREBASE_WEB_CONFIG` | The `firebaseConfig` snippet from step 2.5 (paste all of it). Only the web app (version 1) uses it. |
 | `GOOGLE_SERVICES_JSON` | Everything in `google-services.json` (open it in a text editor) |
 | `KEYSTORE_BASE64` | Everything in `KEYSTORE_BASE64.txt`: one line of about 3,500 characters (it's also in `sleep-tracker-signing.txt`) |
 | `KEYSTORE_PASSWORD` | The `KEYSTORE_PASSWORD` from `sleep-tracker-signing.txt` |
@@ -117,9 +115,7 @@ Things to know:
 | --- | --- |
 | `native/` | The app (Kotlin, Jetpack Compose): see [How the app works](#how-the-app-works) |
 | `.github/workflows/native.yml` | The build that runs on GitHub: tests, build, signing, release, emulator tests |
-| `src/` | Version 1, the web app: screens (`index.html`, `styles.css`) and logic (`app.js`), Firebase (`backend.js`), Android features (`platform.js`). The native app is tested against `app.js`. |
-| `scripts/` | Signing (`sign.sh`), and build helpers for the web app |
-| `.github/workflows/android.yml` | The web app's build, kept for reference: it only runs with **Run workflow** |
+| `scripts/` | Signing (`sign.sh`) and the build's helpers |
 | `firestore.rules` | Database rules: each person can only read and write their own data |
 | `docs/` | Website: home page, privacy policy, account deletion |
 | `store/` | Google Play listing text, icon, feature graphic and screenshots |
@@ -131,11 +127,11 @@ The app has four screens (Today, Trends, Schedule and History), adding and editi
 
 ### The sleep engine
 
-All of the app's sleep calculations are in `native/app/src/main/java/com/resz073/sleeptracker/engine/`, ported from version 1's `src/app.js`. That covers how sleep splits across midnight, nights and naps, complete and incomplete days, nights not logged, sleep debt and averages, the goal by age, the bedtime plan and its steps, patterns, trends periods, history weeks, reminder times, CSV import and export, and the add-entry checks. The screens are drawn from it.
+All of the app's sleep calculations are in `native/app/src/main/java/com/resz073/sleeptracker/engine/`, ported from version 1. That covers how sleep splits across midnight, nights and naps, complete and incomplete days, nights not logged, sleep debt and averages, the goal by age, the bedtime plan and its steps, patterns, trends periods, history weeks, reminder times, CSV import and export, and the add-entry checks. The screens are drawn from it.
 
-It's tested against version 1 itself. `native/scripts/golden/make.mjs` runs `src/app.js` on 78 test accounts in 6 time zones, including daylight-saving changes, and saves every result in `native/app/src/test/resources/golden/`. The Kotlin tests must match every value. Before each native build, GitHub runs those tests and checks that the saved results still match `src/app.js`. A change to `src/app.js` therefore fails the build until the Kotlin engine matches again.
+It's tested against version 1 itself. Version 1's own code was run on 78 test accounts in 6 time zones, including daylight-saving changes, and every result is saved in `native/app/src/test/resources/golden/`. The Kotlin tests must match every value, and every build runs them.
 
-To change how the app calculates something, change it in both, then refresh the saved results with `node native/scripts/golden/make.mjs`.
+When you change how the app calculates something on purpose, update the saved results it differs from (the failing test lists each difference). The script that made them is in the repository's history (`native/scripts/golden/`), with version 1's code.
 
 ### Screens
 
@@ -197,7 +193,5 @@ bash scripts/unit-tests.sh                        # the engine, screen and sync 
 ```
 
 Or open `native/` in Android Studio. `google-services.json` and `firebase.properties` stay out of git.
-
-The web app (version 1) still builds with `npm install`, `npm run config`, `npm run build` and `npm run android`.
 
 Sleep Tracker is not a medical device and does not give medical advice.

@@ -27,7 +27,7 @@ class Now(val ms: Long, val zone: ZoneId) {
 }
 
 /**
- * Local times as the app stores them ("2026-11-14T23:05"), and the calendar rules of the current app:
+ * Local times as the app stores them ("2026-11-14T23:05"), and the calendar rules of version 1:
  * which night a sleep belongs to, how a sleep splits across midnight, and weeks that start on Saturday.
  */
 object Time {
@@ -39,7 +39,7 @@ object Time {
 
     /**
      * A stored local time, or null unless it's a real date and a time the clock shows in this zone
-     * (not skipped when clocks go forward). Years before 1000 aren't accepted, as in the current app.
+     * (not skipped when clocks go forward). Years before 1000 aren't accepted, as in version 1.
      */
     fun parse(s: String?, zone: ZoneId): LocalDateTime? {
         val m = DT.matchEntire(s ?: return null) ?: return null
@@ -125,7 +125,7 @@ object Time {
     fun weekStart(d: LocalDate): LocalDate = d.minusDays(((weekday(d) + 1) % 7).toLong())
 }
 
-/* Minute sums used across the engine, with the current app's rounding */
+/* Minute sums used across the engine, with version 1's rounding */
 
 /** Clock minutes on a night scale: times before noon count as after midnight (+1440). */
 internal fun adj(m: Int): Int = if (m < 720) m + 1440 else m

@@ -67,7 +67,7 @@ class QualityShow(val lead: Rich?, val rows: List<Pair<String, List<Cell>>>, val
     val best: List<Boolean> get() = rows.flatMap { r -> r.second.map { it.best } }
 }
 
-/** What the Trends screen shows (src/app.js renderTrends, prow and renderPatterns) */
+/** What the Trends screen shows (version 1's app.js renderTrends, prow and renderPatterns) */
 object TrendsShow {
     /** The period shown: [selected] kept between the first period with data and the current one */
     fun period(m: SleepModel, kind: PeriodKind, selected: LocalDate?): LocalDate? {

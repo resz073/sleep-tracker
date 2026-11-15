@@ -6,8 +6,7 @@ name: Build Android app
 on:
   push:
     branches: [main]
-    # src/app.js too: the sleep engine is tested against the earlier web app's own results
-    paths: ["native/**", ".github/workflows/native.yml", "scripts/sign.sh", "scripts/ci-run.sh", "src/app.js"]
+    paths: ["native/**", ".github/workflows/native.yml", "scripts/**", "ci/**"]
   workflow_dispatch:
 
 permissions:
@@ -42,10 +41,6 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: bash scripts/ci-run.sh "Firebase settings" node native/scripts/firebase-config.mjs
-
-      # The reference results must come from src/app.js (the earlier web app), so the engine is tested against it
-      - name: Check the reference results
-        run: bash scripts/ci-run.sh "Reference results" node native/scripts/golden/make.mjs --check
 
       - name: Test the sleep engine
         working-directory: native
@@ -147,7 +142,6 @@ jobs:
         if: always()
         env:
           ACCOUNTS: ${{ runner.temp }}/test-accounts.txt
-          FIREBASE_WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG }}
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: python3 native/scripts/emulator/cleanup.py
 

@@ -29,7 +29,7 @@ class HistoryView(
     else "‹[b]" + title + "[/b]›[b]" + total + "[/b]" + count + rows.joinToString("") { it.marked() }
 }
 
-/** What the History screen shows (src/app.js renderHistory) */
+/** What the History screen shows (version 1's app.js renderHistory) */
 object HistoryShow {
     private fun weekOf(weeks: List<HistoryWeek>, selected: LocalDate?): HistoryWeek? = weeks.firstOrNull { it.start == selected } ?: weeks.firstOrNull()
 

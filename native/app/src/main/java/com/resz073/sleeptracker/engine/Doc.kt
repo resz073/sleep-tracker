@@ -35,8 +35,8 @@ data class Prefs(val weekend: String, val wake: String?, val lat: Int, val born:
 }
 
 /**
- * The account's document (users/{uid}): entries, the sleep in progress and settings, as the current app
- * reads and writes it. [read] turns the stored map into this, accepting exactly what the current app accepts.
+ * The account's document (users/{uid}): entries, the sleep in progress and settings, as version 1
+ * reads and writes it. [read] turns the stored map into this, accepting exactly what version 1 accepts.
  */
 data class SleepDoc(val items: List<Item>, val pending: Pending, val prefs: Prefs) {
 
@@ -63,7 +63,7 @@ data class SleepDoc(val items: List<Item>, val pending: Pending, val prefs: Pref
     val isEmpty: Boolean get() = items.isEmpty() && pending.t == 0.0 && prefs.t == 0.0
 
     /**
-     * The document as the current app writes it to Firestore: the same fields and order as [canon], whole
+     * The document as version 1 writes it to Firestore: the same fields and order as [canon], whole
      * numbers as integers (as the JavaScript SDK stores them), nulls kept.
      */
     fun toFirestore(): Map<String, Any?> = linkedMapOf(
@@ -104,7 +104,7 @@ data class SleepDoc(val items: List<Item>, val pending: Pending, val prefs: Pref
             return d in 1..1440
         }
 
-        /** Reads the stored document (as Firestore gives it: maps, lists, strings, numbers) the way the current app does. */
+        /** Reads the stored document (as Firestore gives it: maps, lists, strings, numbers) the way version 1 does. */
         fun read(raw: Any?, now: Now): SleepDoc {
             val d = raw as? Map<*, *> ?: return BLANK
             val items = ArrayList<Item>()

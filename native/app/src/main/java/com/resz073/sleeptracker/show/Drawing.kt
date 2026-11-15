@@ -2,7 +2,7 @@ package com.resz073.sleeptracker.show
 
 import com.resz073.sleeptracker.engine.Js
 
-/** One shape of a chart, with the attributes the current app gives its SVG element */
+/** One shape of a chart, with the attributes version 1 gives its SVG element */
 class Shape(val tag: String, val attrs: Map<String, String>, val text: String? = null, val title: String? = null) {
     operator fun get(k: String): String? = attrs[k]
     fun num(k: String, default: Float = 0f): Float = attrs[k]?.toFloatOrNull() ?: default

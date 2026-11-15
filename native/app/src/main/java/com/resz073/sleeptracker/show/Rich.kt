@@ -1,12 +1,12 @@
 package com.resz073.sleeptracker.show
 
-/** The current app's colours for meaning: good (on or over the goal), bad (under), warn (a night not logged) */
+/** Version 1's colours for meaning: good (on or over the goal), bad (under), warn (a night not logged) */
 enum class Tone { NONE, GOOD, BAD, WARN }
 
 /** A run of text, maybe bold, maybe coloured */
 data class Span(val text: String, val bold: Boolean = false, val tone: Tone = Tone.NONE)
 
-/** Text with emphasis, as the current app writes it with <b> and coloured <span>s */
+/** Text with emphasis, as version 1 writes it with <b> and coloured <span>s */
 class Rich(val spans: List<Span>) {
     val text: String get() = spans.joinToString("") { it.text }
 
@@ -49,7 +49,7 @@ data class Stat(val big: String, val label: String, val tone: Tone = Tone.NONE) 
     fun marked() = markSpan(Span(big, true, tone)) + label
 }
 
-/** The colour of a balance: positive is a deficit (the current app's cls) */
+/** The colour of a balance: positive is a deficit (version 1's cls) */
 fun deficitTone(m: Int): Tone = if (m > 0) Tone.BAD else Tone.GOOD
 fun deficitTone(m: Double): Tone = if (m > 0) Tone.BAD else Tone.GOOD
 

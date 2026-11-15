@@ -5,9 +5,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
- * The current app's English wording for clock times, lengths of sleep and dates, in British style
+ * Version 1's English wording for clock times, lengths of sleep and dates, in British style
  * ("Sat 14 Nov", "Sept"). Spelled out here rather than taken from the phone's locale data, which differs
- * between Android versions, so every phone shows the same text as the current app.
+ * between Android versions, so every phone shows the same text as version 1.
  */
 object Words {
     private val MONTHS = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")

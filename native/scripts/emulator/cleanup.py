@@ -2,31 +2,39 @@
 """
 Deletes the emulator test's throwaway accounts (emulator-results/accounts.txt) if the test didn't get to
 delete them itself, with Firebase's REST API: the sleep data (users/{uid}), then the account.
-Needs FIREBASE_WEB_CONFIG or GOOGLE_SERVICES_JSON for the project and an API key.
+Needs GOOGLE_SERVICES_JSON for the project and its API key.
 """
-import json, os, re, sys, urllib.error, urllib.request
+import base64, binascii, json, os, sys, urllib.error, urllib.request
 
 path = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("ACCOUNTS", "emulator-results/accounts.txt")
 if not os.path.exists(path):
     sys.exit(0)
 
-keys, project = [], None
-web = os.environ.get("FIREBASE_WEB_CONFIG", "")
-m = re.search(r"apiKey\W+([A-Za-z0-9_\-]{20,})", web)
-if m:
-    keys.append(m.group(1))
-m = re.search(r"projectId\W+([a-z0-9\-]+)", web)
-if m:
-    project = m.group(1)
-try:
-    gs = json.loads(os.environ.get("GOOGLE_SERVICES_JSON", "") or "{}")
-    project = project or gs.get("project_info", {}).get("project_id")
-    for c in gs.get("client", []):
-        for k in c.get("api_key", []):
-            if k.get("current_key") and k["current_key"] not in keys:
-                keys.append(k["current_key"])
-except ValueError:
-    pass
+def services(text):
+    """google-services.json from the secret: the file, the file with text around it, or the file in base64"""
+    text = text.strip()
+    tries = [text, text[text.find("{"):text.rfind("}") + 1]]
+    try:
+        tries.append(base64.b64decode("".join(text.split()), validate=True).decode())
+    except (binascii.Error, ValueError):
+        pass
+    for t in tries:
+        try:
+            j = json.loads(t)
+            if isinstance(j, dict) and "project_info" in j:
+                return j
+        except ValueError:
+            pass
+    return {}
+
+
+keys = []
+gs = services(os.environ.get("GOOGLE_SERVICES_JSON", ""))
+project = gs.get("project_info", {}).get("project_id")
+for c in gs.get("client", []):
+    for k in c.get("api_key", []):
+        if k.get("current_key") and k["current_key"] not in keys:
+            keys.append(k["current_key"])
 
 
 def call(url, body=None, token=None, method="POST"):

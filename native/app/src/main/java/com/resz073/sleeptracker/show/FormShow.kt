@@ -12,7 +12,7 @@ import com.resz073.sleeptracker.engine.Words
 import java.time.LocalDateTime
 
 /**
- * The add/edit entry form as it's being filled in (src/app.js: bd, bt, wd, wt, q, edit, bdManual, fresh).
+ * The add/edit entry form as it's being filled in (version 1's app.js: bd, bt, wd, wt, q, edit, bdManual, fresh).
  * Dates are "YYYY-MM-DD" and times "HH:MM". Until the bedtime date is changed by hand ([bedDateManual]),
  * it follows the times: the day before the wake-up date when bedtime is later in the day than wake-up.
  */
@@ -72,7 +72,7 @@ data class EntryForm(
         /** "I'm awake" found times to check: they go in the form, unrated */
         fun check(bed: LocalDateTime, wake: LocalDateTime) = EntryForm(Time.day(bed.toLocalDate()), Time.clockText(bed), Time.day(wake.toLocalDate()), Time.clockText(wake), 0, null, true, false)
 
-        /** Quality choices, as in the current app's menu */
+        /** Quality choices, as in version 1's menu */
         val QUALITY = listOf(0 to "Not rated", 1 to "1 – Poor", 2 to "2", 3 to "3 – OK", 4 to "4", 5 to "5 – Great")
     }
 }
@@ -80,7 +80,7 @@ data class EntryForm(
 /** The sleep goal setting */
 class GoalSetting(val value: String, val note: Rich, val canDown: Boolean, val canUp: Boolean, val born: Int?, val years: List<Int>)
 
-/** What Settings shows (src/app.js renderGoalUI and the birth year menu) */
+/** What Settings shows (version 1's app.js renderGoalUI and the birth year menu) */
 object SettingsShow {
     fun goal(m: SleepModel): GoalSetting {
         val year = m.now.year

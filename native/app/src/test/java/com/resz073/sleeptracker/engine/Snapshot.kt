@@ -13,8 +13,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 /**
- * Runs the Kotlin engine on one reference case and lays out the results exactly as
- * native/scripts/golden/extract.js lays out the current app's, so the two can be compared value by value.
+ * Runs the Kotlin engine on one reference case and lays out the results exactly as version 1's were saved
+ * (by native/scripts/golden/extract.js, in the repository's history), so the two can be compared value by value.
  */
 internal object Snapshot {
     private fun day(d: LocalDate) = Time.day(d)
@@ -189,7 +189,7 @@ internal object Snapshot {
                 val o = raw as Map<*, *>
                 val at = Now((o["nowMs"] as Number).toLong(), zone)
                 val model = SleepModel(d0, at)
-                // the current app's ids for new entries, so both sides save the same thing
+                // version 1's ids for new entries, so both sides save the same thing
                 val ids = ArrayDeque((((expected.getOrNull(i) as? List<*>)?.getOrNull(2) as? List<*>) ?: emptyList<Any?>()).map { it as String })
                 val newId = { ids.removeFirstOrNull() ?: "unexpected-new-id" }
                 val id = if (o["id"] == "\$last") last else o["id"] as String?

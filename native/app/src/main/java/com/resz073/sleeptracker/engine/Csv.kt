@@ -1,6 +1,6 @@
 package com.resz073.sleeptracker.engine
 
-/** Backup files: the current app's CSV export, and importing one (or a file in the same columns). */
+/** Backup files: version 1's CSV export, and importing one (or a file in the same columns). */
 object Csv {
     private val TIME = Regex("""^(\d{1,2}):(\d\d)$""")
     private val LINE = Regex("\r?\n")
@@ -18,7 +18,7 @@ object Csv {
 
     /** What an import did. [problem] is set when the file couldn't be read at all. */
     class Import(val added: List<Entry>, val skipped: Int, val problem: String?) {
-        /** The message the current app shows afterwards */
+        /** The message version 1 shows afterwards */
         val message: String
             get() = problem ?: if (added.isNotEmpty()) "Imported " + added.size + (if (skipped > 0) ", skipped $skipped already logged or invalid" else "") else "Nothing new to import"
     }

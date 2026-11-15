@@ -27,7 +27,7 @@ class DiaryCard(val lead: String?, val legend: List<LegendItem>, val chart: Draw
 /** The wake-up setting: automatic or a set time ("HH:MM"), what it means, and the time to fall asleep */
 class WakeSetting(val fixed: Boolean, val time: String?, val note: String, val latency: Int)
 
-/** What the Schedule screen shows (src/app.js renderSchedule and diary) */
+/** What the Schedule screen shows (version 1's app.js renderSchedule and diary) */
 object ScheduleShow {
     fun sky(m: SleepModel, plan: Plan?): ScheduleSky {
         if (plan == null) return ScheduleSky("Not set yet", true, listOf(Rich.of("Log at least 3 nights, or set your wake-up time below. Your bedtime appears here.")), null, null)

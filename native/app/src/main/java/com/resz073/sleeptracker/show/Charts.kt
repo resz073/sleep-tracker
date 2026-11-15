@@ -12,7 +12,7 @@ import com.resz073.sleeptracker.engine.adj
 import java.time.LocalDate
 
 /**
- * The current app's charts, shape by shape (src/app.js strip, the ring in renderToday, mini, draw, mono and
+ * Version 1's charts, shape by shape (version 1's app.js strip, the ring in renderToday, mini, draw, mono and
  * diary). Numbers are worked out in the same order as there, so the shapes come out the same.
  */
 object Charts {

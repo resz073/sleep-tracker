@@ -2,18 +2,18 @@ package com.resz073.sleeptracker.engine
 
 import kotlin.random.Random
 
-/** A change to the account's data and the message the current app shows for it (null: none) */
+/** A change to the account's data and the message version 1 shows for it (null: none) */
 class Change(val doc: SleepDoc, val message: String?)
 
 /**
- * The current app's buttons and settings, as changes to the account's data. Each change carries its time
+ * Version 1's buttons and settings, as changes to the account's data. Each change carries its time
  * ("t"), which decides which copy wins when copies are merged. A null result means nothing changes.
  */
 object Edits {
     private val HM = Regex("""^([01]\d|2[0-3]):[0-5]\d$""")
     private const val DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
-    /** A new entry id like the current app's: the time in base 36 and 6 random characters */
+    /** A new entry id like version 1's: the time in base 36 and 6 random characters */
     fun newId(now: Now, random: Random = Random): String =
         java.lang.Long.toString(now.ms, 36) + (1..6).map { DIGITS[random.nextInt(36)] }.joinToString("")
 
@@ -35,7 +35,7 @@ object Edits {
 
     /**
      * "I'm awake". The sleep in progress ends either way. It's logged unless it's under 10 minutes, or it
-     * needs checking (over 24 hours, or overlapping): then the current app opens the add-entry form with
+     * needs checking (over 24 hours, or overlapping): then version 1 opens the add-entry form with
      * these times (outcome [WakeUp.Check]) instead of saving. Null when nobody is asleep.
      */
     fun wakeUp(model: SleepModel, newId: () -> String): Woke? {

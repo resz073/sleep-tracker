@@ -73,7 +73,7 @@ import com.resz073.sleeptracker.show.TodayShow
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 
-/** The four views, named as the current app keeps them ("today", "trends", "schedule", "history") */
+/** The four views, named as version 1 keeps them ("today", "trends", "schedule", "history") */
 enum class Tab(val title: String, val key: String, val icon: Int) {
     Today("Today", "today", R.drawable.ic_nav_today),
     Trends("Trends", "trends", R.drawable.ic_nav_trends),
@@ -143,7 +143,7 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
     }
     csvText?.let { text -> CsvDialog(text, ctx) { csvText = null } }
 
-    // Every 30 seconds, like the current app: the bedtime countdown and the strip move on, a new day starts
+    // Every 30 seconds, like version 1: the bedtime countdown and the strip move on, a new day starts
     LaunchedEffect(Unit) {
         while (true) {
             delay(30_000)
@@ -151,7 +151,7 @@ fun AppShell(session: Session.SignedIn, vm: MainViewModel) {
         }
     }
 
-    // Messages after a button, like the current app's (Undo after a deletion)
+    // Messages after a button, like version 1's (Undo after a deletion)
     val toast = vm.toast
     LaunchedEffect(toast) {
         if (toast != null) {
@@ -241,7 +241,7 @@ private fun openNotificationSettings(ctx: Context) {
     }
 }
 
-/** When no app can take the CSV file: the text itself, to copy (as the current app shows it) */
+/** When no app can take the CSV file: the text itself, to copy (as version 1 shows it) */
 @Composable
 private fun CsvDialog(text: String, ctx: Context, onClose: () -> Unit) {
     val c = LocalAppColors.current

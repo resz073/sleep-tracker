@@ -41,7 +41,7 @@ data class Stats(val minutes: Int, val days: Int, val metGoal: Int, val missing:
 }
 
 /**
- * The day accounting of the current app. A day is complete when the night ending that morning and the
+ * The day accounting of version 1. A day is complete when the night ending that morning and the
  * night ending the next morning are both logged; complete days count toward averages and sleep debt.
  * A missed night (named by its wake-up date) leaves the day before and the day after incomplete, and is
  * counted once, as a night not logged. Today, and any day touched by a sleep still in progress, is open.

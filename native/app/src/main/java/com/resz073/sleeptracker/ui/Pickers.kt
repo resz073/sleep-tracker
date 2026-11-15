@@ -7,7 +7,7 @@ import android.text.format.DateFormat
 import com.resz073.sleeptracker.engine.Time
 import java.time.LocalDate
 
-/** Android's own time and date pickers (the current app uses the browser's), in light or dark to match the phone */
+/** Android's own time and date pickers (version 1 uses the browser's), in light or dark to match the phone */
 object Pickers {
     private fun theme(dark: Boolean) = if (dark) android.R.style.Theme_Material_Dialog else android.R.style.Theme_Material_Light_Dialog
 

@@ -51,7 +51,7 @@ import com.resz073.sleeptracker.show.Rich
 import com.resz073.sleeptracker.show.Stat
 import com.resz073.sleeptracker.show.Tone
 
-/* The current app's building blocks (src/styles.css), so each screen reads like the web app. */
+/* Version 1's building blocks (src/styles.css), so each screen reads like the web app. */
 
 /** Nunito at a size in sp (the web app's px) */
 fun font(size: Float, weight: FontWeight = FontWeight.Normal): TextStyle =
@@ -113,7 +113,7 @@ fun RichText(r: Rich, style: TextStyle, color: Color, modifier: Modifier = Modif
     Text(richString(r, LocalAppColors.current, boldColor), modifier = modifier, style = style, color = color, textAlign = align ?: TextAlign.Start)
 }
 
-/** The current app's button styles: .btn, .tonal, .text, .danger, .dangerfill, and the sky card's three */
+/** Version 1's button styles: .btn, .tonal, .text, .danger, .dangerfill, and the sky card's three */
 enum class Btn { FILLED, TONAL, TEXT, DANGER, DANGER_FILL, SKY, SKY_DAWN, SKY_GHOST }
 
 @Composable
@@ -241,7 +241,7 @@ private fun Swatch(mark: LegendItem.Mark) {
     }
 }
 
-/** A menu like the current app's <select>: the chosen option, and the list when tapped. [small]: the compact one in a card's title row */
+/** A menu like version 1's <select>: the chosen option, and the list when tapped. [small]: the compact one in a card's title row */
 @Composable
 fun <T> MenuField(options: List<Pair<T, String>>, selected: T?, placeholder: String, onSelect: (T) -> Unit, modifier: Modifier = Modifier, small: Boolean = false) {
     val c = LocalAppColors.current

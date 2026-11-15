@@ -71,7 +71,7 @@ fun EntrySheet(form: EntryForm, model: SleepModel, vm: MainViewModel) {
             }
             Text("Quality", style = font(15f, FontWeight.ExtraBold), color = c.ink, modifier = Modifier.padding(top = 14.dp, bottom = 6.dp))
             MenuField(EntryForm.QUALITY, form.q, "Not rated", { q -> update { it.withQuality(q) } }, Modifier.fillMaxWidth())
-            // Hints ("Set the times for this entry.") are quieter than the result or a problem, as in the current app
+            // Hints ("Set the times for this entry.") are quieter than the result or a problem, as in version 1
             val msg = form.message(model)
             val hint = msg.spans.all { !it.bold && it.tone == Tone.NONE }
             RichText(msg, font(if (hint) 13f else 14f), if (hint) c.mute else c.ink, Modifier.padding(top = 10.dp).heightIn(min = 20.dp))

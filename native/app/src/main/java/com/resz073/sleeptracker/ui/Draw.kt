@@ -32,7 +32,7 @@ import com.resz073.sleeptracker.show.Drawing
 import com.resz073.sleeptracker.show.Shape
 
 /**
- * Draws one of the current app's charts (a [Drawing]: SVG-like shapes in its own coordinates), scaled to the
+ * Draws one of version 1's charts (a [Drawing]: SVG-like shapes in its own coordinates), scaled to the
  * available width. [onTap] gets the x of a tap in the chart's coordinates.
  */
 @Composable
@@ -52,7 +52,7 @@ fun DrawingView(d: Drawing, modifier: Modifier = Modifier, onTap: ((Float) -> Un
     }
 }
 
-/** A colour role from the current app's stylesheet ("var(--acc)") */
+/** A colour role from version 1's stylesheet ("var(--acc)") */
 fun role(colors: AppColors, v: String?): Color? {
     if (v == null || v == "none") return null
     return when (v.removePrefix("var(--").removeSuffix(")")) {

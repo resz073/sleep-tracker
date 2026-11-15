@@ -5,7 +5,7 @@ import com.resz073.sleeptracker.engine.ReminderKind
 import com.resz073.sleeptracker.engine.ReminderSwitches
 
 /**
- * Which reminders are on, kept on this phone as the current app keeps them (each phone has its own).
+ * Which reminders are on, kept on this phone as version 1 keeps them (each phone has its own).
  * [asked]: the "Get reminders" card on Today has been answered, so it doesn't show again.
  */
 data class ReminderPrefs(val wind: Boolean, val bed: Boolean, val morning: Boolean, val asked: Boolean) {

@@ -90,17 +90,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     var form by mutableStateOf<EntryForm?>(null)
         private set
 
-    /** "Not now" on the card asking for a birth year (kept on this phone, like the current app) */
+    /** "Not now" on the card asking for a birth year (kept on this phone, like version 1) */
     var goalCardDismissed by mutableStateOf(ui.getBoolean("goal-card-off", false))
         private set
 
-    /** The open view ("today", "trends", "schedule", "history") and Trends tab, kept on this phone like the current app keeps them */
+    /** The open view ("today", "trends", "schedule", "history") and Trends tab, kept on this phone like version 1 keeps them */
     var view by mutableStateOf(ui.getString("view", null) ?: "today")
         private set
     var trendsTab by mutableStateOf(ui.getInt("trends-tab", 0))
         private set
 
-    /** Reminders, set on this phone (as in the current app), and what Android allows */
+    /** Reminders, set on this phone (as in version 1), and what Android allows */
     var reminders by mutableStateOf(ReminderPrefs.read(app))
         private set
     var notificationsAllowed by mutableStateOf(Alarms.notificationsAllowed(app))
@@ -172,7 +172,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 val p = pendingNotification
                 if (p != null && store === created) onNotification(p.first, p.second)
             }
-            // Once the account's copy is in, keep the goal inside the range for the person's age, as the current app does at start
+            // Once the account's copy is in, keep the goal inside the range for the person's age, as version 1 does at start
             if (!fitted && state.sync == SyncState.SYNCED) {
                 fitted = true
                 viewModelScope.launch {
@@ -317,7 +317,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     /* ---------- reminders ---------- */
 
-    /** A reminder switch in Settings. Turning one on asks to show notifications first, as the current app does */
+    /** A reminder switch in Settings. Turning one on asks to show notifications first, as version 1 does */
     fun setReminder(kind: ReminderKind, on: Boolean) {
         if (!on) {
             saveReminders(reminders.with(kind, false).copy(asked = true))
@@ -430,7 +430,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** A reminder, or one of its buttons, was tapped: what the current app does, once the account's data is open */
+    /** A reminder, or one of its buttons, was tapped: what version 1 does, once the account's data is open */
     fun onNotification(action: String, kind: String?) {
         val s = store
         if (s == null || sleepState.value !is SleepState.Ready) {
@@ -498,7 +498,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     /* ---------- backup ---------- */
 
-    /** Export CSV: every entry, shared as a file ("Save or send your sleep log"), as the current app does */
+    /** Export CSV: every entry, shared as a file ("Save or send your sleep log"), as version 1 does */
     fun exportCsv() {
         val s = store ?: return
         val m = SleepModel(s.doc, Now.system())
@@ -583,7 +583,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun signInWithGoogle(activity: Activity) = act { account.signInWithGoogle(activity) }
 
     /**
-     * Signs out and deletes this phone's copy, as the current app does. Refused (false) while some changes
+     * Signs out and deletes this phone's copy, as version 1 does. Refused (false) while some changes
      * are only on this phone, so they aren't lost.
      */
     fun signOut(): Boolean {
@@ -606,7 +606,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Deletes the account and all its sleep data, as the current app does: confirmed with the password (or
+     * Deletes the account and all its sleep data, as version 1 does: confirmed with the password (or
      * with Google), then the data and the account are deleted, and this phone's copy and reminders with them.
      */
     fun deleteAccount(password: String?, activity: Activity) {

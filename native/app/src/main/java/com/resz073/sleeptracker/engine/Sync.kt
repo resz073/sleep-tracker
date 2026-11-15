@@ -38,7 +38,7 @@ enum class SyncState {
 }
 
 /**
- * Keeps this phone's copy of the account's data and the account's copy in step, the way the current app
+ * Keeps this phone's copy of the account's data and the account's copy in step, the way version 1
  * does, so both apps can be used side by side:
  * - every change is saved on this phone first, so nothing is lost offline or if the app closes;
  * - whenever the account's copy arrives it's merged in entry by entry, the newest change of each winning;
@@ -146,7 +146,7 @@ class Sync(private val remote: Remote, private val local: LocalCopy, private val
         val server = data?.let { SleepDoc.read(it, clock()) }
         val copy = server?.canon()
         if (!seen || copy != account) rounds = 0 // something new from elsewhere, not the echo of our own write
-        // The document disappearing from the server means the account was deleted (the current app's Delete
+        // The document disappearing from the server means the account was deleted (version 1's Delete
         // account): this phone mustn't upload the data again. It comes back if the document does.
         if (!fromCache) gone = seen && account != null && data == null || (gone && data == null)
         account = copy

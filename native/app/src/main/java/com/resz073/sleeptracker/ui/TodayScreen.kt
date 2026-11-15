@@ -54,7 +54,7 @@ fun TodayScreen(state: SleepState.Ready, vm: MainViewModel, onSetWake: () -> Uni
                 }
             }
         }
-        // The current app's card offering reminders, until it's answered
+        // Version 1's card offering reminders, until it's answered
         if (!vm.reminders.asked && !vm.reminders.any) {
             AppCard {
                 CardTitle("Get reminders")

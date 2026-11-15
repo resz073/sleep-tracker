@@ -6,7 +6,7 @@ import com.resz073.sleeptracker.engine.Listening
 import com.resz073.sleeptracker.engine.Remote
 
 /**
- * The account's document, users/{uid}: the same one the current app reads and writes.
+ * The account's document, users/{uid}: the same one version 1 reads and writes.
  * Firestore calls back on the main thread, as [com.resz073.sleeptracker.engine.Sync] expects.
  */
 class FirestoreRemote(uid: String) : Remote {

@@ -76,7 +76,7 @@ fun SignInScreen(vm: MainViewModel, configured: Boolean, onGoogle: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            // The night-sky header, as in the current app
+            // The night-sky header, as in version 1
             Surface(shape = RoundedCornerShape(28.dp), color = c.sky, contentColor = c.skyInk, modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(horizontal = 24.dp, vertical = 26.dp)) {
                     Icon(painterResource(R.drawable.ic_moon), contentDescription = null, tint = c.skyAcc, modifier = Modifier.size(44.dp))

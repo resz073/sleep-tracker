@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 /**
- * Sync against a stand-in for the account: it can go offline, be slow, and have the current app (on
+ * Sync against a stand-in for the account: it can go offline, be slow, and have version 1 (on
  * another phone) save in the middle of things. Nothing saved on either side may ever be lost.
  */
 class SyncTest {
@@ -41,7 +41,7 @@ class SyncTest {
             val l = listener ?: return
             if (online) { cache = data; l(copy(data), false) } else l(copy(cache), true)
         }
-        /** The current app, on another phone, saves the whole document (as it does) */
+        /** Version 1, on another phone, saves the whole document (as it does) */
         fun otherAppSaves(doc: Map<String, Any?>?) { data = copy(doc); if (online) deliver() }
         fun goOnline() { online = true; deliver() }
         fun goOffline() { online = false; deliver() }
@@ -123,7 +123,7 @@ class SyncTest {
         assertEquals("2026-11-14T23:05", (account.data!!["pending"] as Map<*, *>)["bed"])
         assertEquals(SyncState.SYNCED, s.state)
         assertEquals(s.doc.canon(), disk.text)
-        // the current app reading it gets exactly the same data, so it has nothing to write back
+        // version 1 reading it gets exactly the same data, so it has nothing to write back
         assertEquals(s.doc.canon(), accountDoc().canon())
     }
 
@@ -151,7 +151,7 @@ class SyncTest {
         account.goOffline()
         at("2026-11-15T07:00")
         saveNight(s, "2026-11-14T23:00", "2026-11-15T06:40", "mine")
-        // meanwhile the current app, on another phone, deletes n1 and logs a nap
+        // meanwhile version 1, on another phone, deletes n1 and logs a nap
         account.otherAppSaves(doc(linkedMapOf("id" to "n1", "del" to 1L, "t" to 2000L), entry("theirs", "2026-11-14T14:00", "2026-11-14T15:00", 0, 2000)))
         account.goOnline()
         assertEquals(listOf("mine", "n1", "theirs"), ids(account.data))
@@ -283,7 +283,7 @@ class SyncTest {
         s.edit { Edits.delete(it, "n2", now())?.doc }
         assertTrue(accountDoc().items.single { it.id == "n2" } is Deleted)
         assertEquals(listOf("n1"), SleepModel(s.doc, now()).entries.map { it.id })
-        // the current app restores it later
+        // version 1 restores it later
         account.otherAppSaves(doc(night1, entry("n2", "2026-11-13T23:10", "2026-11-14T06:50", 0, ms("2026-11-14T21:06"))))
         assertEquals(listOf("n1", "n2"), SleepModel(s.doc, now()).entries.map { it.id })
         assertEquals(1, account.writes)
@@ -345,7 +345,7 @@ class SyncTest {
         at("2026-11-14T23:00")
         s.edit { Edits.goToSleep(it, now()).doc }
         assertEquals(1, account.writes)
-        account.otherAppSaves(null) // Delete account in the current app removes the document
+        account.otherAppSaves(null) // Delete account in version 1 removes the document
         assertNull(account.data)
         assertEquals(1, account.writes)
         assertTrue(s.canSignOut)

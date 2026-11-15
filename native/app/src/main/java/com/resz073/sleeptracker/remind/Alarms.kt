@@ -23,7 +23,7 @@ import com.resz073.sleeptracker.engine.Reminders
 import com.resz073.sleeptracker.engine.SleepModel
 
 /**
- * Reminder notifications, as the current app sends them: wind-down, bedtime (with a Going to sleep button)
+ * Reminder notifications, as version 1 sends them: wind-down, bedtime (with a Going to sleep button)
  * and morning (with Log it), planned for the next 7 days by the sleep engine (engine/Reminders.kt).
  * Each is an alarm that shows its notification when it's due. They're planned again whenever the data or
  * the schedule changes, when one is shown, after a restart, and when the clock or time zone changes.
@@ -38,7 +38,7 @@ object Alarms {
     private const val EXTRA_BODY = "reminder-body"
     private const val EXTRA_TYPE = "reminder-type"
     private const val ACTION_REMIND = "com.resz073.sleeptracker.REMIND"
-    /** The ids the engine uses: 100–106 wind-down, 110–116 bedtime, 120–126 morning (the current app clears 100–139) */
+    /** The ids the engine uses: 100–106 wind-down, 110–116 bedtime, 120–126 morning (version 1 clears 100–139) */
     private val IDS = 100 until 140
 
     fun notificationsAllowed(context: Context): Boolean = NotificationManagerCompat.from(context).areNotificationsEnabled()

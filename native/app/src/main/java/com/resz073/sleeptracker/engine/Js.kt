@@ -8,7 +8,7 @@ import java.math.RoundingMode
 /**
  * The places where JavaScript and Kotlin give different answers for the same sum or text: rounding,
  * printing numbers, reading loosely typed values from the account, and JSON text. The engine uses these
- * so that it matches the current app (src/app.js) exactly, including how halves are rounded.
+ * so that it matches version 1 (its app.js) exactly, including how halves are rounded.
  */
 internal object Js {
     /** Math.round: halves round up, so 2.5 → 3 and -2.5 → -2. (Kotlin's round() would give 2.) */

@@ -86,6 +86,6 @@ dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
-    // The sleep engine is checked against the current app (src/test, reference results from native/scripts/golden)
+    // The sleep engine is checked against version 1's saved results (src/test/resources/golden)
     testImplementation(libs.junit)
 }

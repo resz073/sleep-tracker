@@ -63,7 +63,7 @@ object Entries {
         return WakeUp.Logged(Entry(newId(), bed, wake, 0, model.now.ms.toDouble()), d)
     }
 
-    /** The message the current app shows after "I'm awake" */
+    /** The message version 1 shows after "I'm awake" */
     fun wakeUpMessage(w: WakeUp): String? = when (w) {
         WakeUp.NotAsleep -> null
         WakeUp.TooShort -> "Under 10 minutes, so nothing was logged"
@@ -98,7 +98,7 @@ object Entries {
         return Suggestion(Time.day(if (bt > wt) wakeDay.minusDays(1) else wakeDay), bt, Time.day(wakeDay), wt, false)
     }
 
-    /** The message the add-entry form shows for a check (plain text; the current app bolds the length) */
+    /** The message the add-entry form shows for a check (plain text; version 1 bolds the length) */
     fun checkMessage(c: EntryCheck): String = when (c) {
         EntryCheck.Incomplete -> ""
         EntryCheck.Invalid -> "Wake-up must be after bedtime and within 24 hours."
