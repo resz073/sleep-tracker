@@ -39,6 +39,17 @@ DUMP_ERROR = [""]  # why the screen couldn't be read, the last time it couldn't
 
 
 def dump():
+    """The screen's accessibility tree. A system "isn't responding" dialog in the way is waited out first."""
+    last = None
+    for _ in range(4):
+        root = read_screen()
+        if root is None or not system_dialogs(root):
+            return root if root is not None else last
+        last = root
+    return last
+
+
+def read_screen():
     for _ in range(3):
         try:
             r = run(["adb", "shell", "uiautomator dump /sdcard/ui.xml"], 40)
@@ -299,26 +310,39 @@ def focus():
     return m.group(1).strip() if m else ""
 
 
+def texts(root):
+    return [n.get("text", "") for n, _ in nodes(root)] if root is not None else []
+
+
+def play_services_prompt(root):
+    """Google Play services asking to be updated (the emulators' copies are old)"""
+    return any("update Google Play services" in t or t == "Update Google Play services" for t in texts(root))
+
+
 @step("Continue with Google opens Google's window, and the app works after it closes")
 def s_google():
     tap("Continue with Google")
-    # The emulator has no Google account: Google's window opens (to add one), or the app says there's none
-    seen, message = [], None
+    # The emulator has no Google account: Google's window opens (to add one), or the app says what happened
+    seen, message, update = [], None, False
     for _ in range(25):
         time.sleep(1)
+        root = dump()
         f = focus()
         if f and f not in seen:
             seen.append(f)
+        if play_services_prompt(root):
+            update = True
+            break
         if f and "MainActivity" not in f:
             break
-        root = dump()
-        message = next((n.get("text") for n, _ in nodes(root) if "Google" in n.get("text", "") and "sign-in" in n.get("text", "").lower()
-                        or "No Google account" in n.get("text", "")), None) if root is not None else None
+        message = next((t for t in texts(root) if "Google" in t and ("sign-in" in t.lower() or "account" in t)
+                        and t != "Continue with Google"), None)
         if message:
             break
     shot("01c-google")
-    for _ in range(3):  # close Google's window
-        if "MainActivity" in focus():
+    for _ in range(3):  # close Google's window, or Play services' prompt to update
+        root = dump()
+        if "MainActivity" in focus() and not play_services_prompt(root):
             break
         sh("input keyevent KEYCODE_BACK")
         time.sleep(3)
@@ -330,6 +354,8 @@ def s_google():
         wait("Continue with Google", timeout=40)
         raise Fail("still waiting for Google after its window closed (windows: %s)" % ", ".join(seen))
     shot("01d-google-closed")
+    if update:
+        return "this emulator's Google Play services is too old for Google sign-in (it asks to be updated)"
     return ("message: " + message) if message else "windows: " + ", ".join(seen)
 
 
