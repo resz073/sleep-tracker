@@ -1,6 +1,8 @@
 package com.resz073.sleeptracker.data
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.tasks.Task
@@ -16,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.resz073.sleeptracker.BuildConfig
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.security.MessageDigest
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -30,7 +33,10 @@ object Backend {
     var ready = false
         private set
 
+    private var app: Context? = null
+
     fun init(context: Context) {
+        app = context.applicationContext
         if (!configured) return
         if (FirebaseApp.getApps(context).isEmpty()) {
             val options = FirebaseOptions.Builder()
@@ -53,7 +59,9 @@ object Backend {
             CommonStatusCodes.CANCELED -> if (closedByPerson(e)) null else "Google sign-in stopped${reason(e)}. Try again, or use email."
             CommonStatusCodes.NETWORK_ERROR -> "Can't reach Google. Check your connection and try again."
             // The app's package and signing key aren't registered for Google sign-in in Firebase
-            CommonStatusCodes.DEVELOPER_ERROR -> "Google sign-in isn't set up for this version of the app (code 10). Use email for now."
+            // with the key it was signed with: the fingerprint to add (Google Play signs with its own key)
+            CommonStatusCodes.DEVELOPER_ERROR -> "Google sign-in isn't set up for this version of the app (code 10" +
+                (signingKey()?.let { ", key SHA-1 $it" } ?: "") + "). Use email for now."
             else -> "Google sign-in didn't work (code ${e.statusCode}${reason(e).replace(" (", ": ").removeSuffix(")")}). Try again, or use email."
         }
         is GoogleRefused -> "Google sign-in didn't work${reason(e)}." +
@@ -75,6 +83,19 @@ object Backend {
             else "Your entries couldn't be loaded. Check your connection."
         else -> e.message?.takeIf { it.isNotBlank() } ?: "Something went wrong. Try again."
     }
+
+    /** SHA-1 of the certificate this copy of the app is signed with, as Firebase shows fingerprints */
+    private fun signingKey(): String? = runCatching {
+        val c = app ?: return null
+        val signers = if (Build.VERSION.SDK_INT >= 28) {
+            c.packageManager.getPackageInfo(c.packageName, PackageManager.GET_SIGNING_CERTIFICATES).signingInfo?.apkContentsSigners
+        } else {
+            @Suppress("DEPRECATION")
+            c.packageManager.getPackageInfo(c.packageName, PackageManager.GET_SIGNATURES).signatures
+        }
+        val cert = signers?.firstOrNull()?.toByteArray() ?: return null
+        MessageDigest.getInstance("SHA-1").digest(cert).joinToString(":") { "%02X".format(it) }
+    }.getOrNull()
 
     /** The person closed Google's window ("16: Cancelled by user."); when unsure, something is said */
     private fun closedByPerson(e: Throwable): Boolean {
